@@ -1086,104 +1086,149 @@
 
             processBtn.style.pointerEvents = "none";
             spinner.style.display = "inline-block";
-            btnText.innerHTML = '<span class="processing-text">✨ AI đang vẽ Sticker...</span>';
+            btnText.innerHTML = '<span class="processing-text">✨ Bộ giải mã màu sắc Đang chạy...</span>';
             resultBento.style.display = "flex";
             resultGrid.innerHTML = `
                 <div style="width: 100%; text-align: center; padding: 20px;">
-                    <p style="color: #FFF; font-size: 1.1rem; margin-bottom: 15px; font-weight: bold;">Đang kết nối siêu máy tính Hugging Face...</p>
                     <div class="processing-text" style="font-size: 2.5rem; letter-spacing: 15px;">🚀🪄🎨</div>
-                    <p style="color: #bbb; font-size: 0.9rem; margin-top: 10px;">(Tốc độ phản hồi tuỳ thuộc vào lượng người dùng chung trên thế giới)</p>
                 </div>
             `;
             resultBento.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-            try {
-                // Lấy style hiện tại (do người dùng click bên giao diện)
-                const activeCard = document.querySelector("#viewSticker .style-card.active");
-                const styleName = activeCard ? activeCard.getAttribute("data-style") : "anime";
-                
-                // Xây dựng câu lệnh (Prompt) siêu cấp cho AI
-                const prompts = {
-                    anime: "vibrant anime style, high quality chibi character sticker, isolated on white background, cute expression",
-                    chibi: "super deformed chibi head, cute casual clothing, solid white background, sticker outline",
-                    cyberpunk: "cyberpunk edgerunners style, neon colors, glowing cyber eyes, sticker isolated on white background",
-                    kawaii: "pastel color kawaii aesthetic, cute blushing face, soft lighting, isolated on white background",
-                    monster: "cute little friendly monster costume, fluffy texture, cartoon style, isolated on white background"
-                };
-                
-                const prompt = prompts[styleName] + ", extremely detailed, masterpiece, no messy background, die-cut sticker edge";
-                
-                // MÃ BÍ MẬT CỦA BẠN (Hugging Face API Token)
-                const HF_TOKEN = "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";
-                
-                console.log("Đang gọi FLUX.1 từ Hugging Face...");
-                const response = await fetch(
-                    "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
-                    {
-                        headers: { 
-                            "Authorization": `Bearer ${HF_TOKEN}`,
-                            "Content-Type": "application/json"
-                        },
-                        method: "POST",
-                        body: JSON.stringify({ inputs: prompt }),
-                    }
-                );
-                
-                if (!response.ok) {
-                    throw new Error("Lỗi từ máy chủ Hugging Face. Thường do AI đang quá tải (Model is loading), bạn hãy click [Tạo Lại] ở trên để chờ máy chủ khởi động nhé!");
-                }
-
-                const blob = await response.blob();
-                const imageUrl = URL.createObjectURL(blob);
-                
-                // Tính phí (Credit)
-                if (access.useCredit) deductCredit();
-
-                // Hiển thị kết quả tuyệt đẹp
-                resultGrid.innerHTML = "";
-                
-                const itemDiv = document.createElement("div");
-                itemDiv.className = "result-item";
-                itemDiv.style.width = "240px";
-                itemDiv.style.margin = "0 auto"; // Canh giữa
-                itemDiv.style.gridColumn = "1 / -1"; 
-                itemDiv.style.display = "flex";
-                itemDiv.style.flexDirection = "column";
-                itemDiv.style.alignItems = "center";
-                
-                const img = document.createElement("img");
-                img.src = imageUrl;
-                img.className = "sticker-img";
-                img.style.width = "100%";
-                img.style.borderRadius = "20px";
-                img.style.boxShadow = "0 8px 30px rgba(255,139,167,0.4)";
-                img.style.border = "4px solid #fff";
-                
-                const dlBtn = document.createElement("button");
-                dlBtn.className = "btn-magic";
-                dlBtn.innerHTML = "Tải ảnh về máy 📥";
-                dlBtn.style.marginTop = "20px";
-                dlBtn.style.padding = "10px 25px";
-                dlBtn.style.borderRadius = "100px";
-                dlBtn.onclick = () => {
-                    const link = document.createElement('a');
-                    link.href = img.src;
-                    link.download = `AI_Sticker_${styleName}.png`;
-                    link.click();
-                };
-                
-                itemDiv.appendChild(img);
-                itemDiv.appendChild(dlBtn);
-                resultGrid.appendChild(itemDiv);
-
-            } catch (err) {
-                console.error(err);
-                resultGrid.innerHTML = `<div style="color: #ffaa00; text-align: center; width: 100%; padding: 20px; font-weight: 600;">⚠️ ${err.message}</div>`;
-            } finally {
+            setTimeout(() => {
                 processBtn.style.pointerEvents = "auto";
                 spinner.style.display = "none";
-                btnText.innerText = "Tạo Lại Bản Khác 🎲";
-            }
+                btnText.innerText = "Tạo Lại Cảm Xúc (Re-roll) 🎲";
+                resultGrid.innerHTML = "";
+
+                if (access.useCredit) deductCredit();
+
+                const emotionsList = ["Vui vẻ", "Mừng rỡ", "Giận dữ", "Buồn bã", "Ngạc nhiên", "Cười lớn", "Khóc", "Nháy mắt"];
+                const activeCard = document.querySelector("#viewSticker .style-card.active");
+                const styleName = activeCard ? activeCard.getAttribute("data-style") : "anime";
+
+                // Emotion Overlay Config
+                const emotionCues = [
+                    { emoji: "✨", tint: "rgba(255, 223, 0, 0.15)" }, // Happy
+                    { emoji: "❤️", tint: "rgba(255, 105, 180, 0.15)" }, // Joyful
+                    { emoji: "💢", tint: "rgba(255, 0, 0, 0.2)" },  // Angry
+                    { emoji: "☁️", tint: "rgba(0, 0, 255, 0.15)" },   // Sad
+                    { emoji: "❗", tint: "rgba(255, 165, 0, 0.15)" }, // Surprised
+                    { emoji: "😂", tint: "rgba(255, 255, 0, 0.15)" }, // Laughing
+                    { emoji: "😭", tint: "rgba(0, 191, 255, 0.2)" }, // Crying
+                    { emoji: "😉", tint: "rgba(255, 255, 255, 0.15)" } // Winking
+                ];
+
+                for (let i = 0; i < 8; i++) {
+                    const isLocked = !access.useCredit && i >= 3;
+                    const itemDiv = document.createElement("div");
+                    itemDiv.className = `result-item ${isLocked ? 'locked-item' : ''}`;
+
+                    // Giữ lại khuôn mặt cũ hoàn toàn (Sử dụng code vẽ Canvas)
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+                    const imgSource = previewImg;
+
+                    canvas.width = 400;
+                    canvas.height = 400;
+
+                    ctx.save();
+                    ctx.beginPath();
+                    // Cắt thành hình tròn sticker siêu dễ thương
+                    ctx.arc(200, 200, 180, 0, Math.PI * 2);
+                    ctx.clip();
+
+                    // Áp dụng bộ lọc màu HTML5 mô phỏng AI AI tùy theo phong cách (styleName)
+                    let filterStr = "contrast(1.15) saturate(1.25) brightness(1.05)"; // Anime
+                    if (styleName === "cyberpunk") filterStr = "contrast(1.5) saturate(2) hue-rotate(30deg) sepia(0.3)";
+                    if (styleName === "kawaii") filterStr = "contrast(1) saturate(1.5) brightness(1.2) sepia(0.2)";
+                    if (styleName === "monster") filterStr = "contrast(1.2) saturate(1) hue-rotate(-50deg)";
+                    if (styleName === "chibi") filterStr = "contrast(1.3) saturate(1.4) drop-shadow(0 0 10px pink)";
+                    
+                    ctx.filter = filterStr;
+                    ctx.drawImage(imgSource, 0, 0, 400, 400);
+
+                    // Lớp màu cảm xúc mờ mờ lên trên
+                    ctx.globalAlpha = 0.25;
+                    ctx.fillStyle = emotionCues[i].tint;
+                    ctx.fillRect(0, 0, 400, 400);
+                    ctx.globalAlpha = 1.0;
+                    ctx.restore();
+
+                    // Vẽ các icon cảm xúc Cute
+                    ctx.font = "90px Arial";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+
+                    if (i === 6) { // Khóc
+                        ctx.font = "70px Arial";
+                        ctx.fillText("💧", 140, 230);
+                        ctx.fillText("💧", 260, 230);
+                        ctx.font = "40px Arial";
+                        ctx.fillText("〰️", 200, 280); 
+                    } else if (i === 2) { // Giận dữ
+                        ctx.fillText("💢", 300, 100);
+                        ctx.font = "40px Arial";
+                        ctx.fillText("⚡", 100, 100);
+                    } else if (i === 0) { // Vui vẻ
+                        ctx.fillText("✨", 310, 100);
+                        ctx.fillText("✨", 90, 280);
+                    } else if (i === 4) { // Ngạc nhiên
+                        ctx.fillText("❓", 310, 100);
+                        ctx.fillText("❗", 90, 100);
+                    } else {
+                        ctx.fillText(emotionCues[i].emoji, 300, 100);
+                    }
+
+                    const img = document.createElement("img");
+                    img.src = canvas.toDataURL("image/png");
+                    img.className = "sticker-img";
+                    img.title = emotionsList[i];
+
+                    // Tạo viền trắng xung quanh mượt mà giống hệt iMessage Sticker
+                    img.style.filter = `
+                        drop-shadow(4px 0 0 white) 
+                        drop-shadow(-4px 0 0 white) 
+                        drop-shadow(0 4px 0 white) 
+                        drop-shadow(0 -4px 0 white)
+                        ${isLocked ? 'blur(10px) grayscale(1)' : ''}
+                    `;
+                    img.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
+                    img.style.borderRadius = "40px";
+                    img.style.transform = `rotate(${(Math.random() * 10 - 5).toFixed(1)}deg)`;
+
+                    if (isLocked) {
+                        const lockOverlay = document.createElement("div");
+                        lockOverlay.className = "lock-overlay";
+                        lockOverlay.innerHTML = "🔒";
+                        itemDiv.appendChild(lockOverlay);
+                    } else {
+                        const dlBtn = document.createElement("button");
+                        dlBtn.className = "download-btn";
+                        dlBtn.innerHTML = "⬇️";
+                        dlBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            const link = document.createElement('a');
+                            link.href = img.src;
+                            link.download = `sticker_${emotionsList[i]}.png`;
+                            link.click();
+                        };
+                        itemDiv.appendChild(dlBtn);
+                    }
+
+                    itemDiv.appendChild(img);
+                    resultGrid.appendChild(itemDiv);
+                }
+
+                if (!access.useCredit) {
+                    const upgradeBanner = document.createElement("div");
+                    upgradeBanner.className = "upgrade-banner";
+                    upgradeBanner.innerHTML = "🌟 Mua lượt (VIP) để nhận trọn bộ";
+                    upgradeBanner.onclick = openPaymentTab;
+                    resultGrid.appendChild(upgradeBanner);
+                }
+                resultBento.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 1000); // 1s để tạo cảm giác xử lý xịn xò
         };
 
         processBtnIdol.onclick = function () {
