@@ -1,0 +1,572 @@
+@import url('index.css');
+
+/* Photo AI Landing Page Layout Overrides */
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Outfit', sans-serif;
+    color: #FFF;
+    background: #0a0a0a; /* Dark theme for whole homepage */
+    overflow-x: hidden;
+    display: block; /* Fix: Overrides index.css flex layout that breaks vertical stacking */
+}
+
+/* Header & Navbar */
+.photoai-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.photoai-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--primary);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+/* Layout Containers */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Hero Section */
+.photoai-hero {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    padding: 120px 40px 100px 40px;
+    gap: 60px;
+    background: #0d0d0d; /* Pure dark aesthetic */
+    position: relative;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+/* Light overlay to keep text readable */
+.photoai-hero::before {
+    display: none;
+}
+
+/* Hero Background Grid */
+.hero-bg-wrapper {
+    position: absolute;
+    top: -50%;
+    left: -20%;
+    width: 140%;
+    height: 200%;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-bg-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 15px;
+    opacity: 0.35;
+    width: 100%;
+    animation: bgDrift 80s linear infinite alternate;
+}
+
+@keyframes bgDrift {
+    0% {
+        transform: rotate(-15deg) scale(1.3) translate(0%, 0%);
+    }
+    100% {
+        transform: rotate(-15deg) scale(1.3) translate(-8%, -15%);
+    }
+}
+
+.hero-bg-grid img {
+    width: 100%;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+    border-radius: 8px;
+    opacity: 0.8;
+}
+
+.hero-fade-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 0%, #0d0d0d 65%),
+                linear-gradient(to bottom, transparent 60%, #0d0d0d 100%);
+}
+
+.hero-left, .hero-right {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-left {
+    flex: 1;
+    max-width: 650px;
+}
+
+.hero-left h1 {
+    font-size: 3.8rem;
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 25px;
+    letter-spacing: -1.5px;
+    color: #FFF;
+    max-width: 900px;
+}
+
+.hero-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #BBB;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 6px;
+}
+
+.hero-right {
+    width: 100%;
+    max-width: 420px;
+    margin-top: 10px;
+}
+
+/* Modern Login Box matching the image exactly */
+.photoai-login-custom {
+    background: #FFF;
+    padding: 12px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    width: 100%;
+    margin: 0 auto;
+}
+
+.login-inner-dark {
+    background: #2D2426; /* Dark brown/black matching image */
+    padding: 24px;
+    border-radius: 12px;
+}
+
+.input-modern {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 2px solid #FF8BA7;
+    background: #FFF;
+    color: #000;
+    font-size: 0.95rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    outline: none;
+}
+.input-modern::placeholder { color: #999; }
+
+.btn-google-modern {
+    width: 100%;
+    background: #FFF;
+    color: #000;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.btn-google-modern:hover { transform: translateY(-2px); }
+.btn-google-modern svg { width: 18px; height: 18px; }
+
+.login-footer-modern {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.75rem;
+    margin-top: 14px;
+}
+
+/* App Area */
+.photoai-app-area {
+    padding: 20px;
+    background: transparent;
+    margin: 20px auto;
+    max-width: 1200px;
+}
+
+.app-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Tabs Redesign */
+.bento-header.photoai-tabs {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin-bottom: 30px;
+}
+
+.tab-nav.photoai-tab-nav {
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.photoai-tab-nav {
+    gap: 15px;
+    padding: 10px;
+}
+
+.photoai-tab-nav .tab-btn {
+    color: #FFF;
+    background: rgba(72, 52, 212, 0.15);
+    border: 2px solid #4834d4;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.photoai-tab-nav .tab-btn:hover {
+    background: #686de0;
+    border-color: #00d2ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(104, 109, 224, 0.4);
+}
+
+.photoai-tab-nav .tab-btn.active {
+    background: linear-gradient(135deg, #4834d4, #686de0);
+    border-color: #FFF;
+    box-shadow: 0 0 25px rgba(72, 52, 212, 0.6);
+    transform: scale(1.08);
+}
+
+.upload-zone {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 2px dashed rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.upload-zone:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--primary) !important;
+}
+
+#customScenarioInput {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FFF !important;
+}
+
+/* Showcase Grid - Masonry-like */
+.photoai-showcase {
+    padding: 80px 20px;
+}
+
+.showcase-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+}
+
+.masonry-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.masonry-col {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.masonry-col img {
+    width: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.masonry-col img:hover {
+    transform: scale(1.03);
+}
+
+/* Testimonials */
+.photoai-testimonials {
+    padding: 60px 20px;
+    background: #111; /* Blend from Hero */
+    color: #FFF;
+    text-align: center;
+}
+
+.photoai-testimonials h2 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+}
+
+.testimonial-row {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.testimonial-card.photoai-card {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    box-shadow: none;
+    color: #FFF;
+    min-width: 250px;
+    flex: 1;
+}
+
+/* Multi-person Feature */
+.photoai-multiperson {
+    background: #111; /* dark background like the screenshot */
+    color: #FFF;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.multiperson-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 50px;
+}
+
+.multiperson-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: nowrap;
+}
+
+.multiperson-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    width: 300px;
+}
+
+.multiperson-inputs img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.multiperson-arrow {
+    flex: 0 0 100px;
+    display: flex;
+    justify-content: center;
+}
+
+.multiperson-result {
+    position: relative;
+    width: 400px;
+    max-width: 100%;
+}
+
+.multiperson-result img {
+    width: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.result-badge {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: #00FF88;
+    color: #000;
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 5px 10px;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,255,136,0.3);
+}
+
+/* Marquee Section */
+.photoai-marquee {
+    width: 100%;
+    background: #111;
+    color: #FFF;
+    padding: 8px 0; /* thinner for sleeker look */
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 1px;
+    border-bottom: none; /* remove border to fit sleek header */
+}
+
+.marquee-content {
+    display: inline-block;
+    animation: marquee 30s linear infinite; /* Slower 30s as requested */
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* Responsive Chibi Pairs Gallery */
+.chibi-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.chibi-pair {
+    display: flex;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 15px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: transform 0.3s ease;
+}
+
+.chibi-pair:hover {
+    transform: translateY(-5px);
+}
+
+.chibi-original, .chibi-result {
+    flex: 1; /* Exactly 50% split */
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.chibi-original img, .chibi-result img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 4/5;
+    display: block;
+    transition: transform 0.3s;
+}
+
+.chibi-pair:hover img {
+    transform: scale(1.05);
+}
+
+.chibi-result img {
+    border-radius: 12px;
+    border: 3px solid var(--primary); /* highlight */
+    box-sizing: border-box;
+}
+
+.chibi-badge {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    backdrop-filter: blur(4px);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.hidden-pair {
+    display: none !important;
+}
+
+/* Mobile specifically guarantees 1 pair per row, side by side */
+@media (max-width: 600px) {
+    .chibi-gallery {
+        grid-template-columns: 1fr; 
+        padding: 10px;
+        gap: 15px;
+    }
+    .chibi-pair {
+        padding: 10px;
+    }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .multiperson-container {
+        flex-wrap: wrap;
+    }
+    .multiperson-arrow {
+        transform: rotate(90deg);
+        margin: 20px 0;
+    }
+    .photoai-hero {
+        flex-direction: column;
+        padding: 40px 20px;
+    }
+    .hero-right {
+        flex: 1;
+        width: 100%;
+        max-width: 400px;
+    }
+    .masonry-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .nav-brand {
+        font-size: 1.2rem;
+    }
+    .hero-left h1 {
+        font-size: 2.5rem;
+    }
+}
+
+/* Dark Theme Form Overrides */
+.upload-sub, .style-desc { color: rgba(255, 255, 255, 0.6) !important; }
+.style-card { background: rgba(255, 255, 255, 0.03); border: 2px solid rgba(255,255,255,0.05); color: #FFF; }
+.style-card:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--secondary); }
+.style-card.active { background: rgba(255, 139, 167, 0.1); border-color: var(--primary); }
+
+/* Button theme overrides (Blue/Violet) */
+.btn-generate { background: linear-gradient(135deg, #4834d4, #686de0) !important; box-shadow: 0 10px 30px rgba(72, 52, 212, 0.4) !important; border: 2px solid rgba(255,255,255,0.1) !important; }
+.btn-generate:hover { background: linear-gradient(135deg, #686de0, #00d2ff) !important; box-shadow: 0 15px 40px rgba(0, 210, 255, 0.5) !important; }
+.btn-magic { color: #4834d4 !important; border-color: #4834d4 !important; }
+.btn-magic:hover { background: rgba(72, 52, 212, 0.05) !important; }

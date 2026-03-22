@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticker Magic - Cổng Thanh Toán / Payment Gateway</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/payment.css">
+</head>
+<body>
+
+    <div class="payment-container" id="pContainer">
+        
+        <div class="header-top">
+            <div class="toggle-box">
+                <button class="toggle-btn active" id="btnVN">VNĐ</button>
+                <button class="toggle-btn" id="btnIntl">USD</button>
+            </div>
+        </div>
+
+        <div class="payment-icon">💳✨</div>
+        <h1 id="pageTitle">Chi Tiết Thanh Toán</h1>
+        <p class="desc" id="pageDesc">Vui lòng kiểm tra lại đơn hàng trước khi tiếp tục.</p>
+        
+        <!-- Detailed Order Summary -->
+        <div class="order-details" id="orderSummary">
+            <div class="order-row">
+                <span id="labelItem">Gói Sticker AI (1 Lượt)</span>
+                <span id="priceItem">25.000đ</span>
+            </div>
+            <div class="order-row sub">
+                <span id="labelDiscount">Giảm giá thành viên mới</span>
+                <span id="priceDiscount" style="color: var(--success);">-5.000đ</span>
+            </div>
+            <div class="order-row total">
+                <span id="labelTotal">Tổng Cộng:</span>
+                <span id="priceTotal">20.000đ</span>
+            </div>
+        </div>
+
+        <div class="methods-title" id="methodsTitle">Chọn Phương Thức:</div>
+        
+        <!-- Domestic Methods -->
+        <div class="methods-grid" id="domesticMethods">
+            <label class="method-label">
+                <input type="radio" name="payment_method" value="QR" checked>
+                <div class="method-content">
+                    <span class="method-icon">📱</span>
+                    Quét Mã QR
+                </div>
+            </label>
+            <label class="method-label">
+                <input type="radio" name="payment_method" value="Momo">
+                <div class="method-content">
+                    <span class="method-icon">🌸</span>
+                    MoMo
+                </div>
+            </label>
+            <label class="method-label">
+                <input type="radio" name="payment_method" value="Thẻ tín dụng">
+                <div class="method-content">
+                    <span class="method-icon">💳</span>
+                    Thẻ Ngân Hàng
+                </div>
+            </label>
+        </div>
+
+        <!-- International Methods (hidden by default) -->
+        <div class="methods-grid" id="intlMethods" style="display: none;">
+            <label class="method-label">
+                <input type="radio" name="payment_method_intl" value="PayPal" checked>
+                <div class="method-content">
+                    <span class="method-icon">🅿️</span>
+                    PayPal
+                </div>
+            </label>
+            <label class="method-label">
+                <input type="radio" name="payment_method_intl" value="Stripe">
+                <div class="method-content">
+                    <span class="method-icon">💳</span>
+                    Credit/Debit Card (Stripe)
+                </div>
+            </label>
+        </div>
+
+        <button class="btn-pay" id="payBtn">
+            <span class="spinner" id="spinner"></span>
+            <span id="btnText">Tiến Hành Thanh Toán</span>
+        </button>
+
+        <div class="secure-note" id="secureNote">
+            🔒 Thanh toán được mã hóa và bảo mật tuyệt đối
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div class="modal-overlay" id="qrModal">
+        <div class="modal-content">
+            <h3 id="qrTitle">Quét mã QR để thanh toán</h3>
+            <p id="qrDesc" style="color: var(--text-muted); font-size: 0.95rem;">Mở ứng dụng Ngân hàng hoặc Ví điện tử của bạn để quét mã bên dưới.</p>
+            
+            <!-- Dummy QR image using an API -->
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=MockPaymentStickerBento" alt="QR Code" class="qr-img">
+            
+            <p id="qrWaitText" style="font-weight: 700; color: var(--primary); margin-bottom: 20px;">Đang chờ thanh toán... <span class="spinner" style="display:inline-block; border-color: var(--primary); border-top-color: transparent; width: 15px; height: 15px;"></span></p>
+            
+            <button class="btn-close-modal" id="closeQrBtn">Hủy & Quay lại</button>
+        </div>
+    </div>
+
+    <script>
+        const payBtn = document.getElementById("payBtn");
+        const btnText = document.getElementById("btnText");
+        const spinner = document.getElementById("spinner");
+
+        // Toggle UI elements
+        const btnVN = document.getElementById("btnVN");
+        const btnIntl = document.getElementById("btnIntl");
+        
+        const pageTitle = document.getElementById("pageTitle");
+        const pageDesc = document.getElementById("pageDesc");
+        const methodsTitle = document.getElementById("methodsTitle");
+        const secureNote = document.getElementById("secureNote");
+
+        // Order Summary Elements
+        const labelItem = document.getElementById("labelItem");
+        const priceItem = document.getElementById("priceItem");
+        const labelDiscount = document.getElementById("labelDiscount");
+        const priceDiscount = document.getElementById("priceDiscount");
+        const labelTotal = document.getElementById("labelTotal");
+        const priceTotal = document.getElementById("priceTotal");
+
+        const domesticMethods = document.getElementById("domesticMethods");
+        const intlMethods = document.getElementById("intlMethods");
+
+        // Modal Elements
+        const qrModal = document.getElementById("qrModal");
+        const closeQrBtn = document.getElementById("closeQrBtn");
+        const qrTitle = document.getElementById("qrTitle");
+        const qrDesc = document.getElementById("qrDesc");
+        const qrWaitText = document.getElementById("qrWaitText");
+
+        let currentMode = "VN"; // VN or INTL
+        let qrPaymentTimeout = null;
+
+        btnVN.onclick = function() {
+            if(currentMode === "VN") return;
+            currentMode = "VN";
+            btnVN.classList.add("active");
+            btnIntl.classList.remove("active");
+
+            // Update Text
+            pageTitle.innerText = "Chi Tiết Thanh Toán";
+            pageDesc.innerText = "Vui lòng kiểm tra lại đơn hàng trước khi tiếp tục.";
+            methodsTitle.innerText = "Chọn Phương Thức:";
+            btnText.innerText = "Tiến Hành Thanh Toán";
+            secureNote.innerText = "🔒 Thanh toán được mã hóa và bảo mật tuyệt đối";
+
+            labelItem.innerText = "Gói Sticker AI (1 Lượt)";
+            priceItem.innerText = "25.000đ";
+            labelDiscount.innerText = "Giảm giá thành viên mới";
+            priceDiscount.innerText = "-5.000đ";
+            labelTotal.innerText = "Tổng Cộng:";
+            priceTotal.innerText = "20.000đ";
+
+            // Update Method Grid
+            domesticMethods.style.display = "grid";
+            intlMethods.style.display = "none";
+        };
+
+        btnIntl.onclick = function() {
+            if(currentMode === "INTL") return;
+            currentMode = "INTL";
+            btnIntl.classList.add("active");
+            btnVN.classList.remove("active");
+
+            // Update Text
+            pageTitle.innerText = "Order Details";
+            pageDesc.innerText = "Please review your order before making a payment.";
+            methodsTitle.innerText = "Select Payment Method:";
+            btnText.innerText = "Proceed to Payment";
+            secureNote.innerText = "🔒 Payments are fully encrypted and secure";
+
+            labelItem.innerText = "AI Sticker Plan (1 Gen)";
+            priceItem.innerText = "$1.20";
+            labelDiscount.innerText = "New user discount";
+            priceDiscount.innerText = "-$0.21";
+            labelTotal.innerText = "Total:";
+            priceTotal.innerText = "$0.99";
+
+            // Update Method Grid
+            domesticMethods.style.display = "none";
+            intlMethods.style.display = "grid";
+        };
+
+        // QR Modal Controls
+        closeQrBtn.onclick = function() {
+            qrModal.style.display = "none";
+            clearTimeout(qrPaymentTimeout);
+            
+            // Reset main button
+            payBtn.style.pointerEvents = "auto";
+            spinner.style.display = "none";
+            if(currentMode === "VN") {
+                btnText.innerText = "Tiến Hành Thanh Toán";
+            } else {
+                btnText.innerText = "Proceed to Payment";
+            }
+            payBtn.style.opacity = "1";
+        };
+
+        function simulateSuccess(method) {
+            localStorage.setItem("didMockPayment", "true");
+            if(currentMode === "VN") {
+                alert(`Giao dịch qua ${method} thành công!\nHệ thống sẽ đóng tab này để quay lại trang tạo Sticker.`);
+            } else {
+                alert(`Transaction via ${method} was successful!\nThe system will close this tab to return to the Studio.`);
+            }
+            
+            if (window.opener) {
+                window.opener.postMessage("payment_success", "*");
+                window.close();
+            } else {
+                window.location.href = "index.html";
+            }
+        }
+
+        payBtn.onclick = function() {
+            // Get selected payment method
+            let selectedMethod = "";
+            if (currentMode === "VN") {
+                selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
+            } else {
+                selectedMethod = document.querySelector('input[name="payment_method_intl"]:checked').value;
+            }
+
+            // Ngăn click nhiều lần
+            payBtn.style.pointerEvents = "none";
+            
+            // Handle QR Code specific logic
+            if (selectedMethod === "QR") {
+                if(currentMode === "VN") {
+                    btnText.innerText = `Đang tạo mã QR...`;
+                    qrTitle.innerText = "Quét mã QR để thanh toán";
+                    qrDesc.innerText = "Mở ứng dụng Ngân hàng hoặc Ví điện tử của bạn để quét mã bên dưới.";
+                    qrWaitText.innerHTML = `Đang chờ thanh toán... <span class="spinner" style="display:inline-block; border-color: var(--primary); border-top-color: transparent; width: 15px; height: 15px;"></span>`;
+                    closeQrBtn.innerText = "Hủy & Quay lại";
+                }
+                
+                spinner.style.display = "inline-block";
+                payBtn.style.opacity = "0.8";
+
+                // Show modal after a tiny delay
+                setTimeout(() => {
+                    qrModal.style.display = "flex";
+                    // Simulate waiting for user to scan QR
+                    qrPaymentTimeout = setTimeout(() => {
+                        qrModal.style.display = "none";
+                        simulateSuccess("Mã QR");
+                    }, 4000); // Wait 4 seconds for scan simulation
+                }, 800);
+                return;
+            }
+
+            if(currentMode === "VN") {
+                btnText.innerText = `Đang kết nối ${selectedMethod}...`;
+            } else {
+                btnText.innerText = `Connecting to ${selectedMethod}...`;
+            }
+            
+            spinner.style.display = "inline-block";
+            payBtn.style.opacity = "0.8";
+
+            // Giả lập giao dịch
+            setTimeout(() => {
+                spinner.style.display = "none";
+                
+                if(currentMode === "VN") {
+                    btnText.innerText = "Thanh toán thành công! ✓";
+                } else {
+                    btnText.innerText = "Payment Successful! ✓";
+                }
+                
+                payBtn.classList.add("success");
+                payBtn.style.opacity = "1";
+                
+                setTimeout(() => {
+                    simulateSuccess(selectedMethod);
+                }, 1000);
+
+            }, 2000);
+        };
+    </script>
+</body>
+</html>
