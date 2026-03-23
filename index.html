@@ -245,8 +245,7 @@
                 style="font-size: 2.8rem; letter-spacing: -1px; margin-bottom: 60px; font-weight: 800;">Hãy chọn hình
                 ảnh mình muốn và tạo ra ảnh phong cách cho riêng mình</h2>
             <div class="multiperson-container">
-                <div class="multiperson-inputs" id="styleThumbnails"
-                    style="width: 380px; max-width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="multiperson-inputs" id="styleThumbnails">
                     <!-- Style 1: Beach -->
                     <div class="style-thumb active" data-result="assets/images/samples/beach_portrait_result.png"
                         data-badge="✨ BEACH AI STYLE" data-bg="linear-gradient(135deg, #00DBDE 0%, #FC00FF 100%)"
@@ -352,8 +351,7 @@
                 <div class="multiperson-main-container"
                     style="display: flex; align-items: flex-start; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 20px;">
                     <!-- LEFT: VERTICAL THUMBNAILS (Visual Pairs) -->
-                    <div class="multiperson-thumbnails-v3"
-                        style="display: flex; flex-direction: column; gap: 15px; width: 220px;">
+                    <div class="multiperson-thumbnails-v3">
                         <!-- Coffee Date -->
                         <div class="multi-card active" data-scenario="coffee"
                             style="cursor: pointer; border-radius: 20px; overflow: hidden; border: 2px solid #FF8BA7; background: rgba(255,255,255,0.05); transition: all 0.3s; padding: 8px; position: relative;">
@@ -1263,8 +1261,8 @@
         const GOOGLE_CLIENT_ID = "156235885516-vct53chm1770dub2s35cldk8br5hnv74.apps.googleusercontent.com"; // TODO: THAY BẰNG CLIENT ID CỦA BẠN TỪ GOOGLE CLOUD CONSOLE
         let googleTokenClient;
 
-        window.addEventListener('load', () => {
-            if (window.google) {
+        function initGoogleClient() {
+            if (window.google && !googleTokenClient) {
                 googleTokenClient = google.accounts.oauth2.initTokenClient({
                     client_id: GOOGLE_CLIENT_ID,
                     scope: 'email profile openid',
@@ -1285,6 +1283,10 @@
                     },
                 });
             }
+        }
+
+        window.addEventListener('load', () => {
+            initGoogleClient();
         });
 
         function handleLoginSuccess(userInfo) {
@@ -1303,6 +1305,7 @@
                 handleLoginSuccess({ name: "Thành viên", picture: "" });
                 return;
             }
+            initGoogleClient();
             if (googleTokenClient) {
                 googleTokenClient.requestAccessToken();
             } else {
