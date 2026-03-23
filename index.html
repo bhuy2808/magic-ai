@@ -7,8 +7,6 @@
     <title>Sticker Chibi - Borderless & Magic (Photo AI Version)</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/photoai.css"> <!-- New PhotoAI specific CSS -->
-    <!-- Google Identity Services -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
@@ -1262,7 +1260,7 @@
         let googleTokenClient;
 
         function initGoogleClient() {
-            if (window.google && !googleTokenClient) {
+            if (typeof google !== 'undefined' && google.accounts && !googleTokenClient) {
                 googleTokenClient = google.accounts.oauth2.initTokenClient({
                     client_id: GOOGLE_CLIENT_ID,
                     scope: 'email profile openid',
@@ -1305,11 +1303,21 @@
                 handleLoginSuccess({ name: "Thành viên", picture: "" });
                 return;
             }
+            
             initGoogleClient();
+
             if (googleTokenClient) {
-                googleTokenClient.requestAccessToken();
+                try {
+                    googleTokenClient.requestAccessToken();
+                } catch (e) {
+                    alert("Trình duyệt đang chặn cửa sổ đăng nhập. Vui lòng tắt chặn quảng cáo hoặc mở bằng Chrome/Safari gốc.");
+                }
+            } else if (window.googleFailed) {
+                alert("Hệ thống bị chặn bởi trình duyệt (thường gặp khi mở từ Zalo/Facebook). Vui lòng chọn MỞ BẰNG TRÌNH DUYỆT GỐC (Safari/Chrome) để sử dụng.");
+            } else if (typeof google === 'undefined') {
+                alert("Không thể tải hệ thống Google (có thể do mạng hoặc trình chặn). Mẹo: Hãy thử mở trang này bằng trình duyệt Safari hoặc Chrome gốc nhé!");
             } else {
-                alert("Google Login chưa tải xong, vui lòng thử lại sau giây lát.");
+                alert("Google Login đang khởi tạo hoặc bị chặn ẩn, vui lòng thử lại...");
             }
         };
 
@@ -1331,6 +1339,8 @@
         };
 
     </script>
+    <!-- Tránh lỗi chặn mạng của Zalo/Facebook và Load script bằng chuẩn async -->
+    <script src="https://accounts.google.com/gsi/client" async defer onload="initGoogleClient()" onerror="window.googleFailed=true"></script>
 </body>
 
 </html>
