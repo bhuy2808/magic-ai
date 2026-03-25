@@ -1059,6 +1059,9 @@
             }
         });
 
+        // Admin bypass: thêm ?admin=true vào URL để bỏ giới hạn lượt miễn phí
+        const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+
         function requireCredits(actionType) {
             if (actionType === 'sticker') {
                 if (isLoggedIn) {
@@ -1070,6 +1073,11 @@
                         }
                         return { allowed: false, useCredit: false };
                     }
+                }
+
+                // Admin không bị giới hạn lượt
+                if (isAdmin) {
+                    return { allowed: true, useCredit: false };
                 }
 
                 let currentIp = localStorage.getItem("userIpHash") || "unknown_ip";
@@ -1119,7 +1127,7 @@
             const access = requireCredits('sticker');
             if (!access.allowed) return;
 
-            if (!access.useCredit) {
+            if (!access.useCredit && !isAdmin) {
                 let currentIp = localStorage.getItem("userIpHash") || "unknown_ip";
                 let ipUsageCount = parseInt(localStorage.getItem("free_usage_" + currentIp)) || 0;
                 localStorage.setItem("free_usage_" + currentIp, ipUsageCount + 1);
@@ -1194,7 +1202,7 @@
                     const formData = new FormData();
                     formData.append("image", uploadedFile);
                     formData.append("prompt", fullPrompt);
-                    formData.append("strength", "0.65");
+                    formData.append("strength", "0.35");
                     formData.append("output_format", "png");
 
                     const response = await fetch("https://api.stability.ai/v2beta/stable-image/generate/core", {
