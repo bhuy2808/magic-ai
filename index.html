@@ -1165,6 +1165,119 @@
                 if (styleName === "monster") stylePromptText = "cute little monster style, furry, adorable";
                 if (styleName === "chibi") stylePromptText = "chibi style, big head small body, extreme cute";
 
+                // === CANVAS-BASED STICKER GENERATOR (Dùng chính ảnh người dùng upload) ===
+                const emotionEmojis = ["😄", "🥳", "😡", "😢", "😲", "🤣", "😭", "😜"];
+                const emotionColors = [
+                    { filter: "saturate(1.4) brightness(1.1)", overlay: "rgba(255, 200, 50, 0.15)" },   // Vui vẻ - ấm áp
+                    { filter: "saturate(1.6) brightness(1.15) hue-rotate(10deg)", overlay: "rgba(255, 100, 200, 0.12)" }, // Mừng rỡ - rực rỡ
+                    { filter: "saturate(1.3) contrast(1.2) hue-rotate(-10deg)", overlay: "rgba(255, 50, 50, 0.18)" },    // Giận dữ - đỏ
+                    { filter: "saturate(0.4) brightness(0.85)", overlay: "rgba(50, 100, 200, 0.2)" },    // Buồn bã - xanh lạnh
+                    { filter: "saturate(1.2) brightness(1.2) contrast(1.1)", overlay: "rgba(255, 255, 100, 0.12)" },   // Ngạc nhiên - sáng
+                    { filter: "saturate(1.5) brightness(1.1) hue-rotate(20deg)", overlay: "rgba(255, 150, 50, 0.12)" },  // Cười lớn - cam vui
+                    { filter: "saturate(0.3) brightness(0.75) contrast(1.1)", overlay: "rgba(80, 80, 150, 0.25)" },    // Khóc - tím buồn
+                    { filter: "saturate(1.3) brightness(1.05) hue-rotate(30deg)", overlay: "rgba(200, 100, 255, 0.1)" }  // Nháy mắt - tím hồng
+                ];
+
+                // Style-specific adjustments  
+                let styleHueShift = 0;
+                let styleBorderColor = "#FF8BA7";
+                if (styleName === "cyberpunk") { styleHueShift = 40; styleBorderColor = "#00FFFF"; }
+                if (styleName === "kawaii") { styleHueShift = -15; styleBorderColor = "#FFB6C1"; }
+                if (styleName === "monster") { styleHueShift = 90; styleBorderColor = "#66FF66"; }
+                if (styleName === "chibi") { styleHueShift = 0; styleBorderColor = "#FFD700"; }
+
+                const userImgSrc = previewImg.src; // Ảnh mà người dùng đã upload
+
+                function createStickerCanvas(emotionIndex) {
+                    return new Promise((resolve, reject) => {
+                        const sourceImg = new Image();
+                        sourceImg.crossOrigin = "anonymous";
+                        sourceImg.onload = () => {
+                            const size = 512;
+                            const canvas = document.createElement("canvas");
+                            canvas.width = size;
+                            canvas.height = size;
+                            const ctx = canvas.getContext("2d");
+
+                            // 1. Vẽ nền tròn trắng (viền sticker)
+                            ctx.fillStyle = "#ffffff";
+                            ctx.beginPath();
+                            ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+                            ctx.fill();
+
+                            // 2. Clip vùng tròn để vẽ ảnh người dùng
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.arc(size / 2, size / 2, size / 2 - 12, 0, Math.PI * 2);
+                            ctx.clip();
+
+                            // 3. Áp dụng filter theo cảm xúc
+                            const emo = emotionColors[emotionIndex];
+                            let finalFilter = emo.filter;
+                            if (styleHueShift !== 0) {
+                                finalFilter += ` hue-rotate(${styleHueShift}deg)`;
+                            }
+                            ctx.filter = finalFilter;
+
+                            // 4. Vẽ ảnh người dùng vào canvas (crop center)
+                            const sw = sourceImg.width;
+                            const sh = sourceImg.height;
+                            const minDim = Math.min(sw, sh);
+                            const sx = (sw - minDim) / 2;
+                            const sy = (sh - minDim) / 2;
+                            ctx.drawImage(sourceImg, sx, sy, minDim, minDim, 0, 0, size, size);
+
+                            // 5. Lớp phủ màu theo cảm xúc
+                            ctx.filter = "none";
+                            ctx.fillStyle = emo.overlay;
+                            ctx.fillRect(0, 0, size, size);
+                            ctx.restore();
+
+                            // 6. Viền tròn xịn sò theo style
+                            ctx.strokeStyle = styleBorderColor;
+                            ctx.lineWidth = 8;
+                            ctx.beginPath();
+                            ctx.arc(size / 2, size / 2, size / 2 - 4, 0, Math.PI * 2);
+                            ctx.stroke();
+
+                            // 7. Viền trắng ngoài cùng (sticker border)
+                            ctx.strokeStyle = "#ffffff";
+                            ctx.lineWidth = 6;
+                            ctx.beginPath();
+                            ctx.arc(size / 2, size / 2, size / 2 - 1, 0, Math.PI * 2);
+                            ctx.stroke();
+
+                            // 8. Emoji cảm xúc (góc dưới bên phải)
+                            ctx.font = "80px serif";
+                            ctx.textAlign = "center";
+                            ctx.textBaseline = "middle";
+                            // Nền tròn cho emoji
+                            ctx.fillStyle = "rgba(255,255,255,0.9)";
+                            ctx.beginPath();
+                            ctx.arc(size - 75, size - 75, 55, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.strokeStyle = styleBorderColor;
+                            ctx.lineWidth = 4;
+                            ctx.stroke();
+                            // Vẽ emoji
+                            ctx.fillText(emotionEmojis[emotionIndex], size - 75, size - 70);
+
+                            // 9. Tên cảm xúc (góc trên)
+                            ctx.font = "bold 22px 'Inter', sans-serif";
+                            ctx.fillStyle = "rgba(255,255,255,0.95)";
+                            ctx.strokeStyle = "rgba(0,0,0,0.6)";
+                            ctx.lineWidth = 4;
+                            ctx.textAlign = "center";
+                            ctx.strokeText(emotionsList[emotionIndex], size / 2, 35);
+                            ctx.fillText(emotionsList[emotionIndex], size / 2, 35);
+
+                            resolve(canvas.toDataURL("image/png"));
+                        };
+                        sourceImg.onerror = () => reject(new Error("Không thể đọc ảnh"));
+                        sourceImg.src = userImgSrc;
+                    });
+                }
+
                 const generateStickers = async () => {
                     for (let i = 0; i < 8; i++) {
                         const isLocked = !access.useCredit && i >= 3;
@@ -1175,22 +1288,26 @@
                         itemDiv.style.alignItems = "center";
                         itemDiv.style.justifyContent = "center";
                         itemDiv.style.minHeight = "150px";
-
-                        // Loading state
-                        const loadingText = document.createElement("div");
-                        loadingText.innerHTML = "⏳<br><span style='font-size:0.8rem;'>Đang vẽ...</span>";
-                        loadingText.style.textAlign = "center";
-                        loadingText.style.color = "#FF8BA7";
-                        itemDiv.appendChild(loadingText);
                         resultGrid.appendChild(itemDiv);
 
                         if (isLocked) {
-                            loadingText.style.display = "none";
-                            const img = document.createElement("img");
-                            img.src = "https://ui-avatars.com/api/?name=Locked&background=random"; // Placeholder for locked
-                            img.className = "sticker-img";
-                            img.style.filter = "blur(10px) grayscale(1)";
-                            img.style.borderRadius = "40px";
+                            // Tạo sticker bị blur cho ô khóa
+                            try {
+                                const dataUrl = await createStickerCanvas(i);
+                                const img = document.createElement("img");
+                                img.src = dataUrl;
+                                img.className = "sticker-img";
+                                img.style.filter = "blur(10px) grayscale(1)";
+                                img.style.borderRadius = "50%";
+                                itemDiv.appendChild(img);
+                            } catch(e) {
+                                const img = document.createElement("img");
+                                img.src = "https://ui-avatars.com/api/?name=Locked&background=random";
+                                img.className = "sticker-img";
+                                img.style.filter = "blur(10px) grayscale(1)";
+                                img.style.borderRadius = "50%";
+                                itemDiv.appendChild(img);
+                            }
 
                             const lockOverlay = document.createElement("div");
                             lockOverlay.className = "lock-overlay";
@@ -1204,35 +1321,26 @@
                                 }
                             };
                             lockOverlay.style.cursor = "pointer";
-
-                            itemDiv.appendChild(img);
                             itemDiv.appendChild(lockOverlay);
                             continue;
                         }
 
-                        // Sử dụng API Free 100% (DiceBear) để tạo ảnh Sticker giả định xịn sò thay cho API thu phí
-                        const prompt = `${emotionsList[i]} ${styleName}`;
-                        const seed = Math.floor(Math.random() * 1000000);
-                        const apiUrl = `https://api.dicebear.com/8.x/adventurer/svg?seed=${encodeURIComponent(prompt + seed)}&backgroundColor=transparent`;
+                        // Tạo sticker từ ảnh người dùng upload
+                        try {
+                            const dataUrl = await createStickerCanvas(i);
+                            const img = document.createElement("img");
+                            img.src = dataUrl;
+                            img.className = "sticker-img";
+                            img.title = emotionsList[i];
 
-                        const img = document.createElement("img");
-                        img.className = "sticker-img";
-                        img.title = emotionsList[i];
-                        img.style.display = "none"; // Ẩn đi khi chưa tải xong
-                        
-                        // Sự kiện khi tải ảnh thành công từ AI
-                        img.onload = () => {
-                            loadingText.style.display = "none";
-                            img.style.display = "block";
-                            
                             img.style.filter = `
-                                drop-shadow(4px 0 0 white) 
-                                drop-shadow(-4px 0 0 white) 
-                                drop-shadow(0 4px 0 white) 
+                                drop-shadow(4px 0 0 white)
+                                drop-shadow(-4px 0 0 white)
+                                drop-shadow(0 4px 0 white)
                                 drop-shadow(0 -4px 0 white)
                             `;
                             img.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
-                            img.style.borderRadius = "40px";
+                            img.style.borderRadius = "50%";
                             img.style.transform = `rotate(${(Math.random() * 10 - 5).toFixed(1)}deg)`;
 
                             const dlBtn = document.createElement("button");
@@ -1241,22 +1349,19 @@
                             dlBtn.onclick = (e) => {
                                 e.stopPropagation();
                                 const link = document.createElement('a');
-                                link.href = img.src;
-                                link.download = `sticker_${emotionsList[i]}.svg`;
-                                link.target = "_blank"; // Phòng hờ lỗi tải file khác miền (trình duyệt sẽ mở tab mới)
+                                link.href = dataUrl;
+                                link.download = `sticker_${emotionsList[i]}.png`;
                                 link.click();
                             };
+
+                            itemDiv.appendChild(img);
                             itemDiv.appendChild(dlBtn);
-                        };
-
-                        // Sự kiện khi đường link ảnh bị lỗi mạng
-                        img.onerror = () => {
-                            loadingText.innerHTML = `❌<br><span style='font-size:0.75rem; color:#ff4444;'>Lỗi tải ảnh<br>từ AI</span>`;
-                        };
-
-                        // Kích hoạt việc nạp dữ liệu ảnh
-                        img.src = apiUrl;
-                        itemDiv.appendChild(img);
+                        } catch (err) {
+                            console.error(err);
+                            itemDiv.innerHTML = `❌<br><span style='font-size:0.75rem; color:#ff4444;'>Lỗi xử lý ảnh</span>`;
+                            itemDiv.style.textAlign = "center";
+                            itemDiv.style.color = "#FF8BA7";
+                        }
                     }
 
                     if (!access.useCredit) {
