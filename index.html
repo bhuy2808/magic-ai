@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sticker Chibi - Borderless & Magic (Photo AI Version)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/photoai.css"> <!-- New PhotoAI specific CSS -->
 </head>
 
@@ -96,9 +96,10 @@
             <div class="hero-right">
                 <!-- Login Box Modern -->
                 <div class="photoai-login-custom">
-                    <div class="login-inner-dark" id="loginStateGuest">
-                        <input type="email" placeholder="Nhập email của bạn..." class="input-modern">
-                        <button class="btn-google-modern" id="loginBtn">
+                    <div class="login-inner-dark" id="loginStateGuest" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 25px 20px;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.4rem; color: #FFF;">Đăng Nhập 🚀</h3>
+                        <p style="margin: 0 0 25px 0; color: #BBB; font-size: 0.95rem;">Đăng nhập siêu nhanh, không cần tạo tài khoản hay nhớ mật khẩu rườm rà.</p>
+                        <button class="btn-google-modern" id="loginBtn" style="width: 100%; justify-content: center;">
                             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path
                                     d="M23.51 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.46c-.28 1.45-1.07 2.68-2.25 3.47v2.88h3.64c2.13-1.96 3.36-4.85 3.36-8.59z"
@@ -115,7 +116,7 @@
                             </svg>
                             Tiếp tục với Google
                         </button>
-                        <div class="login-footer-modern">Nếu bạn đã có tài khoản, chúng tôi sẽ đăng nhập cho bạn</div>
+                        <div class="login-footer-modern" style="margin-top: 25px; color: #888;">Cam kết bảo mật tuyệt đối thông tin 🔒</div>
                     </div>
                     <div class="login-inner-dark" id="loginStateUser"
                         style="display: none; flex-direction: column; align-items: center;">
@@ -133,26 +134,178 @@
             </div>
         </section>
 
-        <!-- Testimonials Section -->
-        <section class="photoai-testimonials">
-            <h2>Báo chí nói gì về Sticker AI™</h2>
-            <div class="testimonial-row">
-                <div class="testimonial-card photoai-card">
-                    <p>"Sticker AI đang kiếm tiền bằng cách bán sức mạnh điện toán cần thiết để chạy prompt và tạo ra
-                        ảnh"</p>
-                    <div style="color: #00a650; font-weight: 800; margin-top: 15px;">TechCrunch</div>
+        <!-- Showcase Grid Section -->
+        <!-- Showcase Grid Section -->
+        <section class="photoai-showcase">
+            <h2 class="showcase-title">Thư viện phong cách AI Sticker 🪄</h2>
+            <div class="chibi-gallery">
+                <!-- Visible Pairs (1-6) -->
+                <div class="chibi-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_1.jpg" alt="Ảnh Gốc 1">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #FF8BA7;"><img
+                            src="assets/images/samples/chibi_1.png" alt="Chibi 1">
+                        <div class="chibi-badge" style="background: #FF8BA7; color: #FFF;">✨ Chibi AI</div>
+                    </div>
                 </div>
-                <div class="testimonial-card photoai-card">
-                    <p>"Giúp người sáng tạo nội dung tiết kiệm thời gian vì họ không còn cần thuê thợ chụp ảnh đắt tiền
-                        nữa"</p>
-                    <div style="font-family: serif; font-style: italic; margin-top: 15px;">ZDNET</div>
+                <!-- Angry Cyber moved to 2 -->
+                <div class="chibi-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_7.jpg" alt="Ảnh Gốc 7">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #A3D9A5;"><img
+                            src="assets/images/samples/chibi_7_angry.png" alt="Chibi 7">
+                        <div class="chibi-badge" style="background: #A3D9A5; color: #332;">⚡ Angry Cyber</div>
+                    </div>
                 </div>
-                <div class="testimonial-card photoai-card">
-                    <p>"Tạo ra vô số ảnh chân dung của một người với trang phục đa dạng..."</p>
-                    <div style="font-weight: 900; text-transform: uppercase; margin-top: 15px;">FAST COMPANY</div>
+                <!-- Laughing Monster moved to 3 -->
+                <div class="chibi-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_9.jpg" alt="Ảnh Gốc 9">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #FFD2A8;"><img
+                            src="assets/images/samples/chibi_9_laughing.png" alt="Chibi 9">
+                        <div class="chibi-badge" style="background: #FFD2A8; color: #332;">😂 Laughing Monster</div>
+                    </div>
+                </div>
+                <!-- Crying Anime moved to 4 -->
+                <div class="chibi-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_11.jpg" alt="Ảnh Gốc 11">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #FFC2C7;"><img
+                            src="assets/images/samples/chibi_11_crying.png" alt="Chibi 11">
+                        <div class="chibi-badge" style="background: #FFC2C7; color: #332;">😭 Crying Anime</div>
+                    </div>
+                </div>
+                <!-- Surprised Wizard moved to 5 -->
+                <div class="chibi-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_2.jpg" alt="Ảnh Gốc 12">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #FF8BA7;"><img
+                            src="assets/images/samples/chibi_12_surprised.png" alt="Chibi 12">
+                        <div class="chibi-badge" style="background: #FF8BA7; color: #FFF;">😲 Surprised Wizard</div>
+                    </div>
+                </div>
+                <div class="chibi-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_2.jpg" alt="Ảnh Gốc 2">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #A3D9A5;"><img
+                            src="assets/images/samples/chibi_2.png" alt="Chibi 2">
+                        <div class="chibi-badge" style="background: #A3D9A5; color: #332;">✨ Anime</div>
+                    </div>
+                </div>
+
+                <!-- Hidden Pairs (7-15) -->
+                <div class="chibi-pair hidden-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_3.jpg" alt="Ảnh Gốc 3">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #FFD2A8;"><img
+                            src="assets/images/samples/chibi_3.png" alt="Chibi 3">
+                        <div class="chibi-badge" style="background: #FFD2A8; color: #332;">✨ 2D Kawaii</div>
+                    </div>
+                </div>
+                <div class="chibi-pair hidden-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_4.jpg" alt="Ảnh Gốc 4">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #8bbBFF;"><img
+                            src="assets/images/samples/chibi_4.png" alt="Chibi 4">
+                        <div class="chibi-badge" style="background: #8bbBFF; color: #FFF;">✨ Pixar 3D</div>
+                    </div>
+                </div>
+                <div class="chibi-pair hidden-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_5.jpg" alt="Ảnh Gốc 5">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #FF8BA7;"><img
+                            src="assets/images/samples/chibi_5.png" alt="Chibi 5">
+                        <div class="chibi-badge" style="background: #FF8BA7; color: #FFF;">✨ 2D Anime</div>
+                    </div>
+                </div>
+                <div class="chibi-pair hidden-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_6.jpg" alt="Ảnh Gốc 6">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #FFC2C7;"><img
+                            src="assets/images/samples/chibi_6.png" alt="Chibi 6">
+                        <div class="chibi-badge" style="background: #FFC2C7; color: #332;">🍬 Pastel Kawaii</div>
+                    </div>
+                </div>
+                <div class="chibi-pair hidden-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_8.jpg" alt="Ảnh Gốc 8">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #FF8BA7;"><img
+                            src="assets/images/samples/chibi_8.png" alt="Chibi 8">
+                        <div class="chibi-badge" style="background: #FF8BA7; color: #FFF;">🌸 Smooth Anime</div>
+                    </div>
+                </div>
+                <div class="chibi-pair hidden-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_10.jpg" alt="Ảnh Gốc 10">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #8bbBFF;"><img
+                            src="assets/images/samples/chibi_10.png" alt="Chibi 10">
+                        <div class="chibi-badge" style="background: #8bbBFF; color: #FFF;">🕹️ 3D Toy</div>
+                    </div>
+                </div>
+                <div class="chibi-pair hidden-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_2.jpg" alt="Ảnh Gốc 13">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #8bbBFF;"><img
+                            src="assets/images/samples/chibi_13.png" alt="Chibi 13">
+                        <div class="chibi-badge" style="background: #8bbBFF; color: #FFF;">🚀 Space Chibi</div>
+                    </div>
+                </div>
+                <div class="chibi-pair hidden-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_14.jpg" alt="Ảnh Gốc 14">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #A3D9A5;"><img
+                            src="assets/images/samples/chibi_14.png" alt="Chibi 14">
+                        <div class="chibi-badge" style="background: #A3D9A5; color: #332;">🌸 Smooth Anime</div>
+                    </div>
+                </div>
+                <div class="chibi-pair hidden-pair">
+                    <div class="chibi-original"><img src="assets/images/samples/portrait_15.jpg" alt="Ảnh Gốc 15">
+                        <div class="chibi-badge">Ảnh Gốc</div>
+                    </div>
+                    <div class="chibi-result" style="border-color: #FFD2A8;"><img
+                            src="assets/images/samples/chibi_15.png" alt="Chibi 15">
+                        <div class="chibi-badge" style="background: #FFD2A8; color: #332;">✨ Magic Chibi</div>
+                    </div>
                 </div>
             </div>
+
+            <div class="show-more-container" style="text-align: center; margin-top: 30px;">
+                <button id="showMoreGalleryBtn" class="btn-magic"
+                    style="font-size: 1.1rem; padding: 12px 35px; border-radius: 30px; cursor: pointer; border: none; font-weight: bold; background: linear-gradient(90deg, #FF8BA7, #FFC2C7); color: #FFF; box-shadow: 0 4px 15px rgba(255,139,167,0.4); display: inline-flex; align-items: center; gap: 10px; transition: transform 0.2s;">
+                    Xem thêm tác phẩm ⬇️
+                </button>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const showMoreBtn = document.getElementById('showMoreGalleryBtn');
+                    if (showMoreBtn) {
+                        showMoreBtn.addEventListener('click', () => {
+                            const hiddens = document.querySelectorAll('.hidden-pair');
+                            hiddens.forEach(el => {
+                                el.classList.remove('hidden-pair');
+                            });
+                            showMoreBtn.style.display = 'none';
+                        });
+                    }
+                });
+            </script>
         </section>
+
 
         <!-- Intro Demo Section -->
         <section class="photoai-multiperson" id="styleShowcaseSection"
@@ -404,9 +557,6 @@
                             <img id="mResultDisplay" src="assets/images/samples/coffee_result.png" alt="Result"
                                 style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform: scale(1.1);">
                         </div>
-                        <p
-                            style="text-align: center; margin-top: 20px; color: #BBB; font-size: 1rem; font-weight: 500;">
-                            Chạm để xem điều kỳ diệu ✨</p>
                     </div>
                 </div>
             </div>
@@ -474,177 +624,6 @@
             </script>
         </section>
 
-        <!-- Showcase Grid Section -->
-        <!-- Showcase Grid Section -->
-        <section class="photoai-showcase">
-            <h2 class="showcase-title">Thư viện phong cách AI Sticker 🪄</h2>
-            <div class="chibi-gallery">
-                <!-- Visible Pairs (1-6) -->
-                <div class="chibi-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_1.jpg" alt="Ảnh Gốc 1">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #FF8BA7;"><img
-                            src="assets/images/samples/chibi_1.png" alt="Chibi 1">
-                        <div class="chibi-badge" style="background: #FF8BA7; color: #FFF;">✨ Chibi AI</div>
-                    </div>
-                </div>
-                <!-- Angry Cyber moved to 2 -->
-                <div class="chibi-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_7.jpg" alt="Ảnh Gốc 7">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #A3D9A5;"><img
-                            src="assets/images/samples/chibi_7_angry.png" alt="Chibi 7">
-                        <div class="chibi-badge" style="background: #A3D9A5; color: #332;">⚡ Angry Cyber</div>
-                    </div>
-                </div>
-                <!-- Laughing Monster moved to 3 -->
-                <div class="chibi-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_9.jpg" alt="Ảnh Gốc 9">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #FFD2A8;"><img
-                            src="assets/images/samples/chibi_9_laughing.png" alt="Chibi 9">
-                        <div class="chibi-badge" style="background: #FFD2A8; color: #332;">😂 Laughing Monster</div>
-                    </div>
-                </div>
-                <!-- Crying Anime moved to 4 -->
-                <div class="chibi-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_11.jpg" alt="Ảnh Gốc 11">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #FFC2C7;"><img
-                            src="assets/images/samples/chibi_11_crying.png" alt="Chibi 11">
-                        <div class="chibi-badge" style="background: #FFC2C7; color: #332;">😭 Crying Anime</div>
-                    </div>
-                </div>
-                <!-- Surprised Wizard moved to 5 -->
-                <div class="chibi-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_2.jpg" alt="Ảnh Gốc 12">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #FF8BA7;"><img
-                            src="assets/images/samples/chibi_12_surprised.png" alt="Chibi 12">
-                        <div class="chibi-badge" style="background: #FF8BA7; color: #FFF;">😲 Surprised Wizard</div>
-                    </div>
-                </div>
-                <div class="chibi-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_2.jpg" alt="Ảnh Gốc 2">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #A3D9A5;"><img
-                            src="assets/images/samples/chibi_2.png" alt="Chibi 2">
-                        <div class="chibi-badge" style="background: #A3D9A5; color: #332;">✨ Anime</div>
-                    </div>
-                </div>
-
-                <!-- Hidden Pairs (7-15) -->
-                <div class="chibi-pair hidden-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_3.jpg" alt="Ảnh Gốc 3">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #FFD2A8;"><img
-                            src="assets/images/samples/chibi_3.png" alt="Chibi 3">
-                        <div class="chibi-badge" style="background: #FFD2A8; color: #332;">✨ 2D Kawaii</div>
-                    </div>
-                </div>
-                <div class="chibi-pair hidden-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_4.jpg" alt="Ảnh Gốc 4">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #8bbBFF;"><img
-                            src="assets/images/samples/chibi_4.png" alt="Chibi 4">
-                        <div class="chibi-badge" style="background: #8bbBFF; color: #FFF;">✨ Pixar 3D</div>
-                    </div>
-                </div>
-                <div class="chibi-pair hidden-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_5.jpg" alt="Ảnh Gốc 5">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #FF8BA7;"><img
-                            src="assets/images/samples/chibi_5.png" alt="Chibi 5">
-                        <div class="chibi-badge" style="background: #FF8BA7; color: #FFF;">✨ 2D Anime</div>
-                    </div>
-                </div>
-                <div class="chibi-pair hidden-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_6.jpg" alt="Ảnh Gốc 6">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #FFC2C7;"><img
-                            src="assets/images/samples/chibi_6.png" alt="Chibi 6">
-                        <div class="chibi-badge" style="background: #FFC2C7; color: #332;">🍬 Pastel Kawaii</div>
-                    </div>
-                </div>
-                <div class="chibi-pair hidden-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_8.jpg" alt="Ảnh Gốc 8">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #FF8BA7;"><img
-                            src="assets/images/samples/chibi_8.png" alt="Chibi 8">
-                        <div class="chibi-badge" style="background: #FF8BA7; color: #FFF;">🌸 Smooth Anime</div>
-                    </div>
-                </div>
-                <div class="chibi-pair hidden-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_10.jpg" alt="Ảnh Gốc 10">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #8bbBFF;"><img
-                            src="assets/images/samples/chibi_10.png" alt="Chibi 10">
-                        <div class="chibi-badge" style="background: #8bbBFF; color: #FFF;">🕹️ 3D Toy</div>
-                    </div>
-                </div>
-                <div class="chibi-pair hidden-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_2.jpg" alt="Ảnh Gốc 13">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #8bbBFF;"><img
-                            src="assets/images/samples/chibi_13.png" alt="Chibi 13">
-                        <div class="chibi-badge" style="background: #8bbBFF; color: #FFF;">🚀 Space Chibi</div>
-                    </div>
-                </div>
-                <div class="chibi-pair hidden-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_14.jpg" alt="Ảnh Gốc 14">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #A3D9A5;"><img
-                            src="assets/images/samples/chibi_14.png" alt="Chibi 14">
-                        <div class="chibi-badge" style="background: #A3D9A5; color: #332;">🌸 Smooth Anime</div>
-                    </div>
-                </div>
-                <div class="chibi-pair hidden-pair">
-                    <div class="chibi-original"><img src="assets/images/samples/portrait_15.jpg" alt="Ảnh Gốc 15">
-                        <div class="chibi-badge">Ảnh Gốc</div>
-                    </div>
-                    <div class="chibi-result" style="border-color: #FFD2A8;"><img
-                            src="assets/images/samples/chibi_15.png" alt="Chibi 15">
-                        <div class="chibi-badge" style="background: #FFD2A8; color: #332;">✨ Magic Chibi</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="show-more-container" style="text-align: center; margin-top: 30px;">
-                <button id="showMoreGalleryBtn" class="btn-magic"
-                    style="font-size: 1.1rem; padding: 12px 35px; border-radius: 30px; cursor: pointer; border: none; font-weight: bold; background: linear-gradient(90deg, #FF8BA7, #FFC2C7); color: #FFF; box-shadow: 0 4px 15px rgba(255,139,167,0.4); display: inline-flex; align-items: center; gap: 10px; transition: transform 0.2s;">
-                    Xem thêm tác phẩm ⬇️
-                </button>
-            </div>
-
-            <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    const showMoreBtn = document.getElementById('showMoreGalleryBtn');
-                    if (showMoreBtn) {
-                        showMoreBtn.addEventListener('click', () => {
-                            const hiddens = document.querySelectorAll('.hidden-pair');
-                            hiddens.forEach(el => {
-                                el.classList.remove('hidden-pair');
-                            });
-                            showMoreBtn.style.display = 'none';
-                        });
-                    }
-                });
-            </script>
-        </section>
 
 
 
@@ -833,6 +812,27 @@
             </div>
         </section>
 
+        <!-- Testimonials Section -->
+        <section class="photoai-testimonials">
+            <h2>Báo chí nói gì về Sticker AI™</h2>
+            <div class="testimonial-row">
+                <div class="testimonial-card photoai-card">
+                    <p>"Sticker AI đang kiếm tiền bằng cách bán sức mạnh điện toán cần thiết để chạy prompt và tạo ra
+                        ảnh"</p>
+                    <div style="color: #00a650; font-weight: 800; margin-top: 15px;">TechCrunch</div>
+                </div>
+                <div class="testimonial-card photoai-card">
+                    <p>"Giúp người sáng tạo nội dung tiết kiệm thời gian vì họ không còn cần thuê thợ chụp ảnh đắt tiền
+                        nữa"</p>
+                    <div style="font-family: serif; font-style: italic; margin-top: 15px;">ZDNET</div>
+                </div>
+                <div class="testimonial-card photoai-card">
+                    <p>"Tạo ra vô số ảnh chân dung của một người với trang phục đa dạng..."</p>
+                    <div style="font-weight: 900; text-transform: uppercase; margin-top: 15px;">FAST COMPANY</div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- Footer -->
@@ -924,6 +924,18 @@
 
         let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
         let credits = parseInt(localStorage.getItem("credits")) || 0;
+
+        // Fetch User IP for free limits
+        let userIpHash = localStorage.getItem("userIpHash");
+        if (!userIpHash) {
+            fetch('https://api.ipify.org?format=json')
+                .then(r => r.json())
+                .then(d => {
+                    userIpHash = window.btoa(d.ip);
+                    localStorage.setItem("userIpHash", userIpHash);
+                })
+                .catch(e => { userIpHash = "unknown_ip"; });
+        }
 
         function updateUserUI(userInfo) {
             if (!userInfo) return;
@@ -1044,16 +1056,30 @@
         });
 
         function requireCredits(actionType) {
-            if (!isLoggedIn) {
-                alert("Vui lòng đăng nhập để sử dụng Phép Thuật 🪄!");
-                loginBtn.click();
-                return { allowed: false, useCredit: false };
+            if (actionType === 'sticker') {
+                if (isLoggedIn && credits >= 1) return { allowed: true, useCredit: true };
+                
+                let currentIp = localStorage.getItem("userIpHash") || "unknown_ip";
+                let ipUsageCount = parseInt(localStorage.getItem("free_usage_" + currentIp)) || 0;
+                
+                if (ipUsageCount >= 3) {
+                    alert("Bạn đã đạt giới hạn tạo miễn phí. Vui lòng đăng nhập và tiếp tục trải nghiệm nhé!");
+                    document.getElementById('loginBtn').click();
+                    return { allowed: false, useCredit: false };
+                }
+
+                return { allowed: true, useCredit: false }; // Guests / Free users get 3 stickers limits
             }
 
-            if (credits >= 1) return { allowed: true, useCredit: true };
-
-            if (actionType === 'sticker') return { allowed: true, useCredit: false };
             if (actionType === 'idol') {
+                if (!isLoggedIn) {
+                    alert("Vui lòng đăng nhập để Sống cùng Idol 📸!");
+                    document.getElementById('loginBtn').click();
+                    return { allowed: false, useCredit: false };
+                }
+
+                if (credits >= 1) return { allowed: true, useCredit: true };
+
                 const activeIdol = document.querySelector("#idolGrid .style-card.active");
                 const isCustomIdol = uploadCustomIdol.files[0];
                 if (isCustomIdol || (activeIdol && activeIdol.getAttribute("data-tier") === 'vip')) {
@@ -1080,6 +1106,12 @@
             const access = requireCredits('sticker');
             if (!access.allowed) return;
 
+            if (!access.useCredit) {
+                let currentIp = localStorage.getItem("userIpHash") || "unknown_ip";
+                let ipUsageCount = parseInt(localStorage.getItem("free_usage_" + currentIp)) || 0;
+                localStorage.setItem("free_usage_" + currentIp, ipUsageCount + 1);
+            }
+
             processBtn.style.pointerEvents = "none";
             spinner.style.display = "inline-block";
             btnText.innerHTML = '<span class="processing-text">✨ Bộ giải mã màu sắc Đang chạy...</span>';
@@ -1100,105 +1132,107 @@
                 if (access.useCredit) deductCredit();
 
                 const emotionsList = ["Vui vẻ", "Mừng rỡ", "Giận dữ", "Buồn bã", "Ngạc nhiên", "Cười lớn", "Khóc", "Nháy mắt"];
+                const emotionPrompts = [
+                    "happy, smiling playfully", 
+                    "joyful, ecstatic, huge smile", 
+                    "angry, mad, fierce expression", 
+                    "sad, melancholic, looking down", 
+                    "surprised, wide eyes, gasping", 
+                    "laughing out loud, hilarious", 
+                    "crying, tears flowing, heartbroken", 
+                    "winking affectionately, cheeky"
+                ];
+
                 const activeCard = document.querySelector("#viewSticker .style-card.active");
                 const styleName = activeCard ? activeCard.getAttribute("data-style") : "anime";
+                
+                let stylePromptText = "anime style, cute, vibrant";
+                if (styleName === "cyberpunk") stylePromptText = "cyberpunk style, neon lights, futuristic";
+                if (styleName === "kawaii") stylePromptText = "kawaii pastel style, sweet, magical";
+                if (styleName === "monster") stylePromptText = "cute little monster style, furry, adorable";
+                if (styleName === "chibi") stylePromptText = "chibi style, big head small body, extreme cute";
 
-                // Emotion Overlay Config
-                const emotionCues = [
-                    { emoji: "✨", tint: "rgba(255, 223, 0, 0.15)" }, // Happy
-                    { emoji: "❤️", tint: "rgba(255, 105, 180, 0.15)" }, // Joyful
-                    { emoji: "💢", tint: "rgba(255, 0, 0, 0.2)" },  // Angry
-                    { emoji: "☁️", tint: "rgba(0, 0, 255, 0.15)" },   // Sad
-                    { emoji: "❗", tint: "rgba(255, 165, 0, 0.15)" }, // Surprised
-                    { emoji: "😂", tint: "rgba(255, 255, 0, 0.15)" }, // Laughing
-                    { emoji: "😭", tint: "rgba(0, 191, 255, 0.2)" }, // Crying
-                    { emoji: "😉", tint: "rgba(255, 255, 255, 0.15)" } // Winking
-                ];
+                const HF_TOKEN = "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";
 
                 for (let i = 0; i < 8; i++) {
                     const isLocked = !access.useCredit && i >= 3;
                     const itemDiv = document.createElement("div");
                     itemDiv.className = `result-item ${isLocked ? 'locked-item' : ''}`;
-
-                    // Giữ lại khuôn mặt cũ hoàn toàn (Sử dụng code vẽ Canvas)
-                    const canvas = document.createElement("canvas");
-                    const ctx = canvas.getContext("2d");
-                    const imgSource = previewImg;
-
-                    canvas.width = 400;
-                    canvas.height = 400;
-
-                    ctx.save();
-                    ctx.beginPath();
-                    // Cắt thành hình tròn sticker siêu dễ thương
-                    ctx.arc(200, 200, 180, 0, Math.PI * 2);
-                    ctx.clip();
-
-                    // Áp dụng bộ lọc màu HTML5 mô phỏng AI AI tùy theo phong cách (styleName)
-                    let filterStr = "contrast(1.15) saturate(1.25) brightness(1.05)"; // Anime
-                    if (styleName === "cyberpunk") filterStr = "contrast(1.5) saturate(2) hue-rotate(30deg) sepia(0.3)";
-                    if (styleName === "kawaii") filterStr = "contrast(1) saturate(1.5) brightness(1.2) sepia(0.2)";
-                    if (styleName === "monster") filterStr = "contrast(1.2) saturate(1) hue-rotate(-50deg)";
-                    if (styleName === "chibi") filterStr = "contrast(1.3) saturate(1.4) drop-shadow(0 0 10px pink)";
+                    itemDiv.style.position = "relative";
+                    itemDiv.style.display = "flex";
+                    itemDiv.style.alignItems = "center";
+                    itemDiv.style.justifyContent = "center";
+                    itemDiv.style.minHeight = "150px";
                     
-                    ctx.filter = filterStr;
-                    ctx.drawImage(imgSource, 0, 0, 400, 400);
-
-                    // Lớp màu cảm xúc mờ mờ lên trên
-                    ctx.globalAlpha = 0.25;
-                    ctx.fillStyle = emotionCues[i].tint;
-                    ctx.fillRect(0, 0, 400, 400);
-                    ctx.globalAlpha = 1.0;
-                    ctx.restore();
-
-                    // Vẽ các icon cảm xúc Cute
-                    ctx.font = "90px Arial";
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
-
-                    if (i === 6) { // Khóc
-                        ctx.font = "70px Arial";
-                        ctx.fillText("💧", 140, 230);
-                        ctx.fillText("💧", 260, 230);
-                        ctx.font = "40px Arial";
-                        ctx.fillText("〰️", 200, 280); 
-                    } else if (i === 2) { // Giận dữ
-                        ctx.fillText("💢", 300, 100);
-                        ctx.font = "40px Arial";
-                        ctx.fillText("⚡", 100, 100);
-                    } else if (i === 0) { // Vui vẻ
-                        ctx.fillText("✨", 310, 100);
-                        ctx.fillText("✨", 90, 280);
-                    } else if (i === 4) { // Ngạc nhiên
-                        ctx.fillText("❓", 310, 100);
-                        ctx.fillText("❗", 90, 100);
-                    } else {
-                        ctx.fillText(emotionCues[i].emoji, 300, 100);
-                    }
-
-                    const img = document.createElement("img");
-                    img.src = canvas.toDataURL("image/png");
-                    img.className = "sticker-img";
-                    img.title = emotionsList[i];
-
-                    // Tạo viền trắng xung quanh mượt mà giống hệt iMessage Sticker
-                    img.style.filter = `
-                        drop-shadow(4px 0 0 white) 
-                        drop-shadow(-4px 0 0 white) 
-                        drop-shadow(0 4px 0 white) 
-                        drop-shadow(0 -4px 0 white)
-                        ${isLocked ? 'blur(10px) grayscale(1)' : ''}
-                    `;
-                    img.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
-                    img.style.borderRadius = "40px";
-                    img.style.transform = `rotate(${(Math.random() * 10 - 5).toFixed(1)}deg)`;
+                    // Loading state
+                    const loadingText = document.createElement("div");
+                    loadingText.innerHTML = "⏳<br><span style='font-size:0.8rem;'>Đang vẽ...</span>";
+                    loadingText.style.textAlign = "center";
+                    loadingText.style.color = "#FF8BA7";
+                    itemDiv.appendChild(loadingText);
+                    resultGrid.appendChild(itemDiv);
 
                     if (isLocked) {
+                        loadingText.style.display = "none";
+                        const img = document.createElement("img");
+                        img.src = "https://ui-avatars.com/api/?name=Locked&background=random"; // Placeholder for locked
+                        img.className = "sticker-img";
+                        img.style.filter = "blur(10px) grayscale(1)";
+                        img.style.borderRadius = "40px";
+                        
                         const lockOverlay = document.createElement("div");
                         lockOverlay.className = "lock-overlay";
                         lockOverlay.innerHTML = "🔒";
+                        lockOverlay.onclick = () => {
+                            if (!isLoggedIn) {
+                                alert("Bạn cần Đăng Nhập để nâng cấp (VIP) và mở khóa tất cả cảm xúc nhé!");
+                                document.getElementById('loginBtn').click();
+                            } else {
+                                openPaymentTab();
+                            }
+                        };
+                        lockOverlay.style.cursor = "pointer";
+                        
+                        itemDiv.appendChild(img);
                         itemDiv.appendChild(lockOverlay);
-                    } else {
+                        continue;
+                    }
+
+                    // Call Hugging Face API for Text-to-Image
+                    // Using a realistic prompt that combines the style and emotion
+                    const prompt = `A highly detailed die-cut sticker of a cute character, ${emotionPrompts[i]}, ${stylePromptText}, plain white background, masterpiece, 8k resolution`;
+                    
+                    fetch("https://api-inference.huggingface.co/models/prompthero/openjourney", {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${HF_TOKEN}`,
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ inputs: prompt }),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("API rate limit or error");
+                        }
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        loadingText.style.display = "none";
+                        const img = document.createElement("img");
+                        img.src = URL.createObjectURL(blob);
+                        img.className = "sticker-img";
+                        img.title = emotionsList[i];
+                        
+                        img.style.filter = `
+                            drop-shadow(4px 0 0 white) 
+                            drop-shadow(-4px 0 0 white) 
+                            drop-shadow(0 4px 0 white) 
+                            drop-shadow(0 -4px 0 white)
+                        `;
+                        img.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
+                        img.style.borderRadius = "40px";
+                        img.style.transform = `rotate(${(Math.random() * 10 - 5).toFixed(1)}deg)`;
+
                         const dlBtn = document.createElement("button");
                         dlBtn.className = "download-btn";
                         dlBtn.innerHTML = "⬇️";
@@ -1209,22 +1243,32 @@
                             link.download = `sticker_${emotionsList[i]}.png`;
                             link.click();
                         };
+                        
+                        itemDiv.appendChild(img);
                         itemDiv.appendChild(dlBtn);
-                    }
-
-                    itemDiv.appendChild(img);
-                    resultGrid.appendChild(itemDiv);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        loadingText.innerHTML = "❌<br><span style='font-size:0.8rem;'>Lỗi mạng/API</span>";
+                    });
                 }
 
                 if (!access.useCredit) {
                     const upgradeBanner = document.createElement("div");
                     upgradeBanner.className = "upgrade-banner";
                     upgradeBanner.innerHTML = "🌟 Mua lượt (VIP) để nhận trọn bộ";
-                    upgradeBanner.onclick = openPaymentTab;
+                    upgradeBanner.onclick = () => {
+                        if (!isLoggedIn) {
+                            alert("Bạn cần Đăng Nhập để nâng cấp (VIP) nhé!");
+                            document.getElementById('loginBtn').click();
+                        } else {
+                            openPaymentTab();
+                        }
+                    };
                     resultGrid.appendChild(upgradeBanner);
                 }
                 resultBento.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }, 1000); // 1s để tạo cảm giác xử lý xịn xò
+            }, 1000); // 1s delay for transition effect
         };
 
         processBtnIdol.onclick = function () {
