@@ -1210,25 +1210,21 @@
                             continue;
                         }
 
-                        // Sử dụng Pollinations AI (Hoàn toàn miễn phí, không yêu cầu Token, không lỗi CORS)
+                        // Sử dụng Pollinations AI (trực tiếp nạp vào thẻ thẻ ảnh để lách luật chặn truy cập của trình duyệt)
                         const prompt = `A highly detailed die-cut sticker of a cute character, ${emotionPrompts[i]}, ${stylePromptText}, plain white background, masterpiece, 8k resolution`;
                         const seed = Math.floor(Math.random() * 1000000);
                         const apiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&nologo=true&seed=${seed}`;
 
-                        try {
-                            const response = await fetch(apiUrl);
-
-                            if (!response.ok) {
-                                throw new Error("Lỗi máy chủ AI");
-                            }
-
-                            const blob = await response.blob();
+                        const img = document.createElement("img");
+                        img.className = "sticker-img";
+                        img.title = emotionsList[i];
+                        img.style.display = "none"; // Ẩn đi khi chưa tải xong
+                        
+                        // Sự kiện khi tải ảnh thành công từ AI
+                        img.onload = () => {
                             loadingText.style.display = "none";
-                            const img = document.createElement("img");
-                            img.src = URL.createObjectURL(blob);
-                            img.className = "sticker-img";
-                            img.title = emotionsList[i];
-
+                            img.style.display = "block";
+                            
                             img.style.filter = `
                                 drop-shadow(4px 0 0 white) 
                                 drop-shadow(-4px 0 0 white) 
@@ -1246,16 +1242,21 @@
                                 e.stopPropagation();
                                 const link = document.createElement('a');
                                 link.href = img.src;
-                                link.download = `sticker_${emotionsList[i]}.png`;
+                                link.download = `sticker_${emotionsList[i]}.jpg`;
+                                link.target = "_blank"; // Phòng hờ lỗi tải file khác miền (trình duyệt sẽ mở tab mới)
                                 link.click();
                             };
-
-                            itemDiv.appendChild(img);
                             itemDiv.appendChild(dlBtn);
-                        } catch (err) {
-                            console.error(err);
-                            loadingText.innerHTML = `❌<br><span style='font-size:0.75rem; color:#ff4444;'>${err.message.substring(0, 25)}...</span>`;
-                        }
+                        };
+
+                        // Sự kiện khi đường link ảnh bị lỗi mạng
+                        img.onerror = () => {
+                            loadingText.innerHTML = `❌<br><span style='font-size:0.75rem; color:#ff4444;'>Lỗi tải ảnh<br>từ AI</span>`;
+                        };
+
+                        // Kích hoạt việc nạp dữ liệu ảnh
+                        img.src = apiUrl;
+                        itemDiv.appendChild(img);
                     }
 
                     if (!access.useCredit) {
