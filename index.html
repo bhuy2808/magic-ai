@@ -1182,14 +1182,14 @@
                 ];
 
                 // Style prompt theo lựa chọn
-                let stickerStylePrompt = "anime style, cute";
-                if (styleName === "cyberpunk") stickerStylePrompt = "cyberpunk neon style, futuristic glowing";
-                if (styleName === "kawaii") stickerStylePrompt = "kawaii pastel style, super cute, soft colors";
-                if (styleName === "monster") stickerStylePrompt = "cute monster style, furry adorable creature";
-                if (styleName === "chibi") stickerStylePrompt = "chibi style, big head tiny body, extremely cute";
+                let stickerStylePrompt = "Transform this photo into an Anime-style sticker. Big round sparkling eyes, smooth skin, soft shading, vivid bright colors, clean outlines. Cute expression, glossy highlights, vibrant anime lighting. Sticker format: clear white outline, center composition, no background";
+                if (styleName === "cyberpunk") stickerStylePrompt = "Convert this photo into a Cyberpunk Neon sticker. Futuristic glowing edges, neon purple & cyan lights, high-tech vibes. Slight hologram effect, sharp highlights, cool futuristic expression. Sticker format: glowing outline, transparent background";
+                if (styleName === "kawaii") stickerStylePrompt = "Create a Kawaii Pastel sticker from this photo. Soft pastel pink-blue-purple palette, cute baby-like expression, simple shading. Rounded shapes, sparkles, hearts, charming soft-tone vibe. Sticker format: pastel outline, no background";
+                if (styleName === "monster") stickerStylePrompt = "Transform this person into a tiny Cute Monster sticker. Small chubby creature form, big expressive eyes, playful silly features, friendly cartoon monster design. Bright colors, soft shading, fun pose. Sticker format: white outline, transparent background";
+                if (styleName === "chibi") stickerStylePrompt = "Turn this person into a Chibi-style sticker. Huge head, tiny body, exaggerated cute proportions. Soft pastel colors, minimal shading, rounded shapes, kawaii expression. Sticker format: white outline, no background, full-body chibi pose";
 
                 async function generateStickerFromAI(emotionIdx) {
-                    const fullPrompt = `A die-cut sticker, ${emotionStickerPrompts[emotionIdx]}, ${stickerStylePrompt}, thick white sticker border, high quality illustration, masterpiece`;
+                    const fullPrompt = `${stickerStylePrompt}. Expression: ${emotionStickerPrompts[emotionIdx]}, masterpiece, best quality`;
 
                     const formData = new FormData();
                     formData.append("image", uploadedFile);
