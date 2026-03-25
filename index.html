@@ -1165,8 +1165,6 @@
                 if (styleName === "monster") stylePromptText = "cute little monster style, furry, adorable";
                 if (styleName === "chibi") stylePromptText = "chibi style, big head small body, extreme cute";
 
-                const HF_TOKEN = "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";
-
                 const generateStickers = async () => {
                     for (let i = 0; i < 8; i++) {
                         const isLocked = !access.useCredit && i >= 3;
@@ -1212,22 +1210,16 @@
                             continue;
                         }
 
-                        // Call Hugging Face API
+                        // Sử dụng Pollinations AI (Hoàn toàn miễn phí, không yêu cầu Token, không lỗi CORS)
                         const prompt = `A highly detailed die-cut sticker of a cute character, ${emotionPrompts[i]}, ${stylePromptText}, plain white background, masterpiece, 8k resolution`;
+                        const seed = Math.floor(Math.random() * 1000000);
+                        const apiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&nologo=true&seed=${seed}`;
 
                         try {
-                            const response = await fetch("https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell", {
-                                method: "POST",
-                                headers: {
-                                    "Authorization": `Bearer ${HF_TOKEN}`,
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({ inputs: prompt }),
-                            });
+                            const response = await fetch(apiUrl);
 
                             if (!response.ok) {
-                                const errorData = await response.json();
-                                throw new Error(errorData.error || "Lỗi API");
+                                throw new Error("Lỗi máy chủ AI");
                             }
 
                             const blob = await response.blob();
