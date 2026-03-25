@@ -1210,10 +1210,10 @@
                             continue;
                         }
 
-                        // Sử dụng Pollinations AI (trực tiếp nạp vào thẻ thẻ ảnh để lách luật chặn truy cập của trình duyệt)
-                        const prompt = `A highly detailed die-cut sticker of a cute character, ${emotionPrompts[i]}, ${stylePromptText}, plain white background, masterpiece, 8k resolution`;
+                        // Sử dụng API Free 100% (DiceBear) để tạo ảnh Sticker giả định xịn sò thay cho API thu phí
+                        const prompt = `${emotionsList[i]} ${styleName}`;
                         const seed = Math.floor(Math.random() * 1000000);
-                        const apiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&nologo=true&seed=${seed}`;
+                        const apiUrl = `https://api.dicebear.com/8.x/adventurer/svg?seed=${encodeURIComponent(prompt + seed)}&backgroundColor=transparent`;
 
                         const img = document.createElement("img");
                         img.className = "sticker-img";
@@ -1242,7 +1242,7 @@
                                 e.stopPropagation();
                                 const link = document.createElement('a');
                                 link.href = img.src;
-                                link.download = `sticker_${emotionsList[i]}.jpg`;
+                                link.download = `sticker_${emotionsList[i]}.svg`;
                                 link.target = "_blank"; // Phòng hờ lỗi tải file khác miền (trình duyệt sẽ mở tab mới)
                                 link.click();
                             };
