@@ -1193,21 +1193,49 @@
                     const fullPrompt = `${stickerStylePrompt}. Expression: ${emotionStickerPrompts[emotionIdx]}`;
                     const base64Image = await getBase64(uploadedFile);
 
-                    // Logic tự động tìm đường dẫn API (api/generate) linh hoạt hơn
+                    // Tự động tìm đường dẫn API linh hoạt (thử tương đối trước, tuyệt đối sau)
                     const currentPath = window.location.pathname;
-                    const apiEndpoint = currentPath.substring(0, currentPath.lastIndexOf('/') + 1) + "api/generate";
+                    let apiEndpoint = currentPath.substring(0, currentPath.lastIndexOf('/') + 1) + "api/generate";
 
-                    const response = await fetch(apiEndpoint, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            imageBase64: base64Image,
-                            prompt: fullPrompt,
-                            strength: "0.2"
-                        })
-                    });
+                    let response;
+                    try {
+                        response = await fetch(apiEndpoint, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                imageBase64: base64Image,
+                                prompt: fullPrompt,
+                                strength: "0.2"
+                            })
+                        });
+
+                        // Nếu 404, thử gọi /api/generate (đường dẫn tuyệt đối từ gốc)
+                        if (response.status === 404 && apiEndpoint !== "/api/generate") {
+                            console.log("Thử lại với đường dẫn API tuyệt đối...");
+                            apiEndpoint = "/api/generate";
+                            response = await fetch(apiEndpoint, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    imageBase64: base64Image,
+                                    prompt: fullPrompt,
+                                    strength: "0.2"
+                                })
+                            });
+                        }
+                    } catch (e) {
+                         // Nếu fetch bị lỗi mạng (cors/dns), thử phát cuối tuyệt đối
+                         apiEndpoint = "/api/generate";
+                         response = await fetch(apiEndpoint, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                imageBase64: base64Image,
+                                prompt: fullPrompt,
+                                strength: "0.2"
+                            })
+                        });
+                    }
 
                     if (!response.ok) {
                         const errText = await response.text();
