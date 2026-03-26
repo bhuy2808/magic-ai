@@ -5,7 +5,7 @@
 body {
     padding: 0;
     margin: 0;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Inter', sans-serif;
     color: #FFF;
     background: #0a0a0a; /* Dark theme for whole homepage */
     overflow-x: hidden;
@@ -377,10 +377,11 @@ body {
 }
 
 .multiperson-inputs {
+    width: 380px;
+    max-width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
-    width: 300px;
 }
 
 .multiperson-inputs img {
@@ -388,6 +389,13 @@ body {
     aspect-ratio: 1;
     object-fit: cover;
     border-radius: 12px;
+}
+
+.multiperson-thumbnails-v3 {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 220px;
 }
 
 .multiperson-arrow {
@@ -530,12 +538,54 @@ body {
 /* Responsive */
 @media (max-width: 900px) {
     .multiperson-container {
-        flex-wrap: wrap;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .multiperson-inputs {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        width: 100%;
+        padding-bottom: 15px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .multiperson-inputs::-webkit-scrollbar,
+    .multiperson-thumbnails-v3::-webkit-scrollbar {
+        height: 6px;
+    }
+    .multiperson-inputs::-webkit-scrollbar-thumb,
+    .multiperson-thumbnails-v3::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.2);
+        border-radius: 10px;
+    }
+    .multiperson-inputs .style-thumb {
+        flex: 0 0 140px;
     }
     .multiperson-arrow {
         transform: rotate(90deg);
-        margin: 20px 0;
+        margin: 5px 0;
+        height: 50px;
     }
+    .multiperson-arrow svg {
+        height: 40px;
+    }
+
+    .multiperson-main-container {
+        flex-direction: column !important;
+        gap: 20px !important;
+        align-items: center !important;
+    }
+    .multiperson-thumbnails-v3 {
+        flex-direction: row;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 15px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .multiperson-thumbnails-v3 .multi-card {
+        flex: 0 0 200px;
+    }
+
     .photoai-hero {
         flex-direction: column;
         padding: 40px 20px;
