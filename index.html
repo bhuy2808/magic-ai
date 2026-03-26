@@ -1181,9 +1181,9 @@
 
                 const negativePrompt = "ugly, deformed, extra fingers, blurry, low quality, watermark, text, nsfw";
 
-                // Resize ảnh xuống max 1024px để giảm dung lượng (tránh 422)
+                // Resize ảnh xuống max 512px + JPEG 60% → < 500KB (tránh 422 Replicate)
                 function getResizedBase64(file, maxSize) {
-                    maxSize = maxSize || 1024;
+                    maxSize = maxSize || 512;
                     return new Promise(function(resolve, reject) {
                         var img = new Image();
                         img.onload = function() {
@@ -1197,7 +1197,7 @@
                             canvas.height = h;
                             var ctx = canvas.getContext('2d');
                             ctx.drawImage(img, 0, 0, w, h);
-                            var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                            var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
                             resolve(dataUrl.split(',')[1]);
                         };
                         img.onerror = reject;

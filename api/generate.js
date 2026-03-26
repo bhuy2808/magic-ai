@@ -1,6 +1,5 @@
 // Dual API: Replicate face-to-sticker (ưu tiên) + Stability AI (fallback)
-// Replicate dùng InstantID + IP Adapter → giữ nét mặt tốt
-// Stability AI → fallback nếu Replicate không có token
+// Ảnh đã được resize trên frontend (512px, JPEG 60%) → data URI < 500KB → OK
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -8,7 +7,7 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const { prompt, imageBase64, negative_prompt, style } = req.body;
+        const { prompt, imageBase64, negative_prompt } = req.body;
         const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN;
         const STABILITY_API_KEY = process.env.STABILITY_API_KEY;
 
@@ -20,9 +19,9 @@ module.exports = async (req, res) => {
             return res.status(400).json({ message: 'Missing imageBase64' });
         }
 
-        // ============================
+        console.log('Image base64 length:', imageBase64.length, 'chars (~' + Math.round(imageBase64.length * 0.75 / 1024) + 'KB)');
+
         // ƯU TIÊN 1: REPLICATE
-        // ============================
         if (REPLICATE_API_TOKEN) {
             try {
                 const result = await generateWithReplicate(imageBase64, prompt, negative_prompt, REPLICATE_API_TOKEN);
@@ -33,14 +32,12 @@ module.exports = async (req, res) => {
                 if (STABILITY_API_KEY) {
                     console.log('Falling back to Stability AI...');
                 } else {
-                    return res.status(500).json({ message: `Replicate Error: ${repError.message}` });
+                    return res.status(500).json({ message: repError.message });
                 }
             }
         }
 
-        // ============================
         // FALLBACK: STABILITY AI
-        // ============================
         if (STABILITY_API_KEY) {
             const result = await generateWithStability(imageBase64, prompt, negative_prompt, STABILITY_API_KEY);
             res.setHeader('Content-Type', 'image/png');
@@ -54,56 +51,66 @@ module.exports = async (req, res) => {
 };
 
 // ====================================
-// REPLICATE - face-to-sticker (InstantID + IP Adapter)
-// Giữ nét mặt cực tốt - công nghệ chuyên biệt
+// REPLICATE face-to-sticker
+// Dùng data URI trực tiếp (ảnh đã resize < 1MB trên frontend)
 // ====================================
 async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiToken) {
-    const dataUri = `data:image/png;base64,${imageBase64}`;
+    // Ảnh đã được frontend resize xuống 512px + JPEG 60% → < 500KB
+    const dataUri = 'data:image/jpeg;base64,' + imageBase64;
+    console.log('Data URI length:', dataUri.length, 'chars');
 
-    const createResponse = await fetch("https://api.replicate.com/v1/predictions", {
+    // Dùng endpoint chuẩn /v1/predictions
+    const body = {
+        version: "764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
+        input: {
+            image: dataUri,
+            prompt: prompt || "a person",
+            steps: 20,
+            width: 1024,
+            height: 1024,
+            prompt_strength: 4.5,
+            instant_id_strength: 0.7,
+            ip_adapter_weight: 0.2,
+            ip_adapter_noise: 0.5,
+            upscale: false
+        }
+    };
+
+    if (negative_prompt) {
+        body.input.negative_prompt = negative_prompt;
+    }
+
+    console.log('Calling Replicate with prompt:', prompt);
+
+    const createRes = await fetch("https://api.replicate.com/v1/predictions", {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${apiToken}`,
+            "Authorization": "Bearer " + apiToken,
             "Content-Type": "application/json",
             "Prefer": "wait"
         },
-        body: JSON.stringify({
-            version: "764d4827ea159608571b1571571f7044dc3b7fcec340e6ba69c14e7720881ff8",
-            input: {
-                image: dataUri,
-                prompt: prompt || "a person",
-                negative_prompt: negative_prompt || "",
-                steps: 20,
-                width: 1024,
-                height: 1024,
-                prompt_strength: 4.5,
-                instant_id_strength: 0.7,
-                ip_adapter_weight: 0.2,
-                ip_adapter_noise: 0.5,
-                upscale: false
-            }
-        })
+        body: JSON.stringify(body)
     });
 
-    if (!createResponse.ok) {
-        const errText = await createResponse.text();
-        throw new Error(`${createResponse.status}: ${errText.substring(0, 200)}`);
+    if (!createRes.ok) {
+        const errBody = await createRes.text();
+        console.error('Replicate error:', createRes.status, errBody);
+        throw new Error('Replicate ' + createRes.status + ': ' + errBody.substring(0, 300));
     }
 
-    let prediction = await createResponse.json();
+    let prediction = await createRes.json();
+    console.log('Prediction status:', prediction.status, 'id:', prediction.id);
 
-    // Polling nếu "Prefer: wait" chưa xong
+    // Polling nếu chưa xong
     if (prediction.status !== "succeeded") {
-        for (let i = 0; i < 60; i++) {
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            const pollResponse = await fetch(prediction.urls.get, {
-                headers: {
-                    "Authorization": `Bearer ${apiToken}`,
-                    "Content-Type": "application/json"
-                }
+        for (let i = 0; i < 90; i++) {
+            await new Promise(function(r) { setTimeout(r, 2000); });
+            const pollRes = await fetch(prediction.urls.get, {
+                headers: { "Authorization": "Bearer " + apiToken }
             });
-            if (!pollResponse.ok) throw new Error('Poll failed');
-            prediction = await pollResponse.json();
+            if (!pollRes.ok) throw new Error('Poll failed');
+            prediction = await pollRes.json();
+            console.log('Poll #' + (i+1) + ': ' + prediction.status);
             if (prediction.status === "succeeded") break;
             if (prediction.status === "failed" || prediction.status === "canceled") {
                 throw new Error(prediction.error || 'Generation failed');
@@ -112,21 +119,21 @@ async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiTo
         if (prediction.status !== "succeeded") throw new Error('Timed out');
     }
 
+    // Lấy ảnh kết quả
     const outputUrl = Array.isArray(prediction.output)
         ? prediction.output[prediction.output.length - 1]
         : prediction.output;
 
-    if (!outputUrl) throw new Error('No output');
+    if (!outputUrl) throw new Error('No output image');
 
-    const imageResponse = await fetch(outputUrl);
-    if (!imageResponse.ok) throw new Error('Download failed');
+    const imgRes = await fetch(outputUrl);
+    if (!imgRes.ok) throw new Error('Download failed');
 
-    const arrayBuffer = await imageResponse.arrayBuffer();
-    return Buffer.from(arrayBuffer);
+    return Buffer.from(await imgRes.arrayBuffer());
 }
 
 // ====================================
-// STABILITY AI - Image-to-Image (fallback)
+// STABILITY AI (fallback)
 // ====================================
 async function generateWithStability(imageBase64, prompt, negative_prompt, apiKey) {
     const imageBuffer = Buffer.from(imageBase64, 'base64');
@@ -143,7 +150,7 @@ async function generateWithStability(imageBase64, prompt, negative_prompt, apiKe
     const response = await fetch("https://api.stability.ai/v2beta/stable-image/generate/core", {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${apiKey}`,
+            "Authorization": "Bearer " + apiKey,
             "Accept": "image/*"
         },
         body: formData
@@ -151,9 +158,8 @@ async function generateWithStability(imageBase64, prompt, negative_prompt, apiKe
 
     if (!response.ok) {
         const errText = await response.text();
-        throw new Error(`${response.status}: ${errText.substring(0, 200)}`);
+        throw new Error(response.status + ': ' + errText.substring(0, 200));
     }
 
-    const arrayBuffer = await response.arrayBuffer();
-    return Buffer.from(arrayBuffer);
+    return Buffer.from(await response.arrayBuffer());
 }
