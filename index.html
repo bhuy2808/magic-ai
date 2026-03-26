@@ -664,30 +664,32 @@
                         <div class="style-grid">
                             <div class="style-card active" data-style="anime">
                                 <div class="style-icon">🌸</div>
-                                <div class="style-name">Anime Mịn Màng</div>
-                                <div class="style-desc">Mắt to tròn, màu tươi</div>
+                                <div class="style-name">Anime</div>
+                                <div class="style-desc">3D Anime cao cấp</div>
                             </div>
                             <div class="style-card" data-style="chibi">
                                 <div class="style-icon">🍡</div>
-                                <div class="style-name">Chibi Đầu To</div>
-                                <div class="style-desc">Cute, lùn tịt</div>
+                                <div class="style-name">Chibi</div>
+                                <div class="style-desc">Dễ thương, đầu to</div>
                             </div>
                             <div class="style-card" data-style="cyberpunk">
                                 <div class="style-icon">⚡</div>
-                                <div class="style-name">Cyber Neon</div>
-                                <div class="style-desc">Tương lai chói lóa</div>
+                                <div class="style-name">Cyberpunk</div>
+                                <div class="style-desc">Neon tương lai</div>
                             </div>
                             <div class="style-card" data-style="kawaii">
                                 <div class="style-icon">🍬</div>
-                                <div class="style-name">Kawaii Pastel</div>
-                                <div class="style-desc">Ngọt lịm như kẹo</div>
+                                <div class="style-name">Kawaii</div>
+                                <div class="style-desc">Ngọt ngào, bồng bềnh</div>
                             </div>
                             <div class="style-card" data-style="monster">
                                 <div class="style-icon">👾</div>
-                                <div class="style-name">Cute Monster</div>
+                                <div class="style-name">Monster</div>
                                 <div class="style-desc">Quái vật tí hon</div>
                             </div>
                         </div>
+
+
                     </div>
 
                     <div class="action-row">
@@ -919,12 +921,14 @@
         const emotionsString = "8 biểu cảm khác nhau: Vui vẻ, Mừng rỡ, Giận dữ, Buồn bã, Ngạc nhiên, Cười lớn, Khóc, Nháy mắt";
         const transparencyReq = "- Nền TRONG SUỐT HOÀN TOÀN (PNG), xóa sạch background";
         const prompts = {
-            anime: `Hãy tạo một bộ 8 sticker phong cách Anime cao cấp, nét vẽ sắc sảo, màu sắc rực rỡ, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
-            chibi: `Hãy tạo một bộ 8 sticker Chibi dễ thương, đầu to tỉ lệ chuẩn, mắt to lấp lánh, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
-            cyberpunk: `Hãy tạo một bộ 8 sticker Cyberpunk neon rực rỡ, chi tiết công nghệ tương lai, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
-            kawaii: `Hãy tạo một bộ 8 sticker Kawaii siêu cấp dễ thương, tông màu pastel ấm áp, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
-            monster: `Hãy tạo một bộ 8 sticker quái vật dễ thương, thiết kế sinh vật sáng tạo, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`
+            "anime": `Hãy tạo bộ 8 sticker 3D Anime AI cao cấp, phong cách Showcase CGI, ánh sáng studio cực đẹp, đảm bảo giữ nguyên nét mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
+            "chibi": `Hãy tạo bộ 8 sticker 3D Chibi AI siêu cấp, tỉ lệ dễ thương, mắt bóng bẩy Disney phong cách, đảm bảo giữ nguyên nét mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
+            "cyberpunk": `Hãy tạo bộ 8 sticker 3D Cyberpunk Showcase, hiệu ứng neon Unreal Engine 5, chi tiết cơ khí cao cấp, đảm bảo giữ nguyên nét mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
+            "kawaii": `Hãy tạo bộ 8 sticker 3D Kawaii Showcase, phong cách Pixar ngọt ngào, chất liệu bồng bềnh mượt mà, đảm bảo giữ nguyên nét mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
+            "monster": `Hãy tạo bộ 8 sticker 3D Monster Showcase, tạo hình quái vật tí hon từ Illumination style, màu sắc rực rỡ, đảm bảo giữ nguyên nét mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`
         };
+
+
 
 
         let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -1136,7 +1140,8 @@
 
             processBtn.style.pointerEvents = "none";
             spinner.style.display = "inline-block";
-            btnText.innerHTML = '<span class="processing-text">✨ Bộ giải mã màu sắc Đang chạy...</span>';
+            btnText.innerHTML = '<span class="processing-text">✨ Loading...</span>';
+
             resultBento.style.display = "flex";
             resultGrid.innerHTML = `
                 <div style="width: 100%; text-align: center; padding: 20px;">
@@ -1153,32 +1158,37 @@
 
                 if (access.useCredit) deductCredit();
 
-                const emotionsList = ["Vui vẻ", "Mừng rỡ", "Giận dữ", "Buồn bã", "Ngạc nhiên", "Cười lớn", "Khóc", "Nháy mắt"];
+                const emotionsList = ["Vui vẻ", "Mừng rỡ", "Giận dữ", "Buồn bã", "Ngạc nhiên", "Cười lớn", "Showcase (3D Chibi)", "Showcase (Smooth Anime)"];
                 const activeCard = document.querySelector("#viewSticker .style-card.active");
                 const styleName = activeCard ? activeCard.getAttribute("data-style") : "anime";
 
                 // === REPLICATE face-to-sticker (InstantID + IP Adapter) ===
                 const uploadedFile = upload.files[0];
 
-                // 8 prompt cảm xúc - ngắn gọn vì model face-to-sticker tự giữ nét mặt
+                // 8 prompt cảm xúc + Mix phong cách Showcase (Đặc biệt để giống mẫu bạn gửi)
                 const emotionStickerPrompts = [
-                    "happy smiling person, joyful expression, sparkling eyes",
-                    "excited celebrating person, party mood, cheerful",
-                    "angry furious person, intense fierce expression",
-                    "sad melancholy person, teary eyes, sorrowful",
-                    "surprised shocked person, wide open mouth, amazed",
-                    "laughing person, tears of joy, very happy",
-                    "crying person, tears flowing, very emotional",
-                    "winking playful person, cheeky charming smile"
+                    "happy smiling person, joyful expression, sparkling eyes, premium 3D art",
+                    "excited celebrating person, party mood, cheerful, premium 3D art",
+                    "angry furious person, intense fierce expression, premium 3D art",
+                    "sad melancholy person, teary eyes, sorrowful, premium 3D art",
+                    "surprised shocked person, wide open mouth, amazed, premium 3D art",
+                    "laughing person, tears of joy, very happy, premium 3D art",
+                    "premium 3D chibi AI character, high-quality digital art, adorable big glossy eyes, soft 3D shading, toy-like aesthetic, cute proportions, smooth surfaces, matching hairstyle and features from input", // Slot 7: Chibi AI Showcase
+                    "smooth 3D anime style, polished skin, big expressive eyes, high-end toy aesthetic, professional CGI render, premium character design" // Slot 8: Smooth Anime Showcase
                 ];
 
-                // Style prompt - tối ưu hóa cực mạnh cho model fofr/face-to-sticker để đạt chất lượng Showcase
-                let stickerStylePrompt = "premium anime sticker, high-quality Japanese anime art style, cel-shaded, vibrant colors, expressive features, die-cut sticker, thick white border, clean vector lines, 4k resolution, professional illustration, transparent background";
+                // Style prompt - ĐẠI TU TOÀN DIỆN 5 phong cách chuẩn SHOWCASE 3D/CGI cao cấp nhất
+                let stickerStylePrompt = "premium 3D anime AI character, high-quality CGI, octane render, beautiful studio lighting, soft shadows, expressive features, matching hairstyle and face from input, die-cut sticker, thick white border, 8k resolution, professional 3D art, transparent background";
                 
-                if (styleName === "cyberpunk") stickerStylePrompt = "cyberpunk neon sticker, futuristic sci-fi aesthetic, glowing neon purple and cyan lighting, holographic reflective edges, high-tech metallic details, synthwave style, die-cut sticker, thick white border, sharp vector art, transparent background";
-                if (styleName === "kawaii") stickerStylePrompt = "ultra-kawaii pastel sticker, Chibi-inspired soft aesthetic, adorable sparkling accents and hearts, pastel color palette, soft shading, cuteness overload, die-cut sticker, pastel white border, smooth vector lines, transparent background";
-                if (styleName === "monster") stickerStylePrompt = "playful monster sticker, cute creature character design, vibrant textures, whimsical fantasy style, friendly monster aesthetic, bright saturated colors, die-cut sticker, thick white border, high-quality character art, transparent background";
-                if (styleName === "chibi") stickerStylePrompt = "premium chibi sticker, adorable big glossy eyes, tiny body proportions, cute toy aesthetic, smooth gradients, clean bold outlines, super deformed style, die-cut sticker, thick white border, professional vector design, transparent background";
+                if (styleName === "cyberpunk") stickerStylePrompt = "high-end 3D cyberpunk character, futuristic sci-fi aesthetic, Unreal Engine 5 cinematic render, neon glow effects, premium metallic textures, synthwave lighting, matching facial features, die-cut sticker, white border, sharp professional 3D render, transparent background";
+                if (styleName === "kawaii") stickerStylePrompt = "adorable premium 3D kawaii character, soft Pixar-inspired aesthetic, cute big glossy eyes, pastel 3D materials, Disney animation style, matching face and features, die-cut sticker, white border, ultra-smooth 3D render, transparent background";
+                if (styleName === "monster") stickerStylePrompt = "expressive premium 3D monster character, Illumination animation style, vibrant colorful textures, playful creature design, cinematic lighting, 3D character art, matching input face, die-cut sticker, white border, high-quality CGI render, transparent background";
+                if (styleName === "chibi") stickerStylePrompt = "extra-premium 3D chibi AI style, high-quality digital art, adorable big glossy eyes, soft 3D shading, toy-like aesthetic, cute proportions, smooth surfaces, matching hairstyle and facial features from input, die-cut sticker, thick white border, 4k CGI render, transparent background";
+
+
+
+
+
 
                 const negativePrompt = "photo, realistic, 3d render, grainy, messy outlines, shadow on background, blurry, low resolution, ugly, deformed features, extra limbs, watermark, text, out of frame";
 
@@ -1257,7 +1267,8 @@
 
                         // Loading state
                         const loadingText = document.createElement("div");
-                        loadingText.innerHTML = `⏳<br><span style='font-size:0.8rem;'>Đang vẽ ${emotionsList[i]}...</span>`;
+                        loadingText.innerHTML = `⏳<br><span style='font-size:0.8rem;'>Loading...</span>`;
+
                         loadingText.style.textAlign = "center";
                         loadingText.style.color = "#FF8BA7";
                         itemDiv.appendChild(loadingText);
