@@ -1181,45 +1181,66 @@
 
                 const negativePrompt = "ugly, deformed, extra fingers, blurry, low quality, watermark, text, nsfw";
 
-                function getBase64(file) {
-                    return new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.readAsDataURL(file);
-                        reader.onload = () => resolve(reader.result.split(',')[1]);
-                        reader.onerror = error => reject(error);
+                // Resize ảnh xuống max 1024px để giảm dung lượng (tránh 422)
+                function getResizedBase64(file, maxSize) {
+                    maxSize = maxSize || 1024;
+                    return new Promise(function(resolve, reject) {
+                        var img = new Image();
+                        img.onload = function() {
+                            var w = img.width, h = img.height;
+                            if (w > maxSize || h > maxSize) {
+                                if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+                                else { w = Math.round(w * maxSize / h); h = maxSize; }
+                            }
+                            var canvas = document.createElement('canvas');
+                            canvas.width = w;
+                            canvas.height = h;
+                            var ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, w, h);
+                            var dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                            resolve(dataUrl.split(',')[1]);
+                        };
+                        img.onerror = reject;
+                        img.src = URL.createObjectURL(file);
                     });
                 }
 
-                async function generateStickerFromAI(emotionIdx) {
-                    const fullPrompt = `${stickerStylePrompt}, ${emotionStickerPrompts[emotionIdx]}`;
-                    const base64Image = await getBase64(uploadedFile);
+                // Cache base64 (resize 1 lần, dùng cho cả 8 sticker)
+                var cachedBase64 = null;
 
-                    const response = await fetch("/api/generate", {
+                async function generateStickerFromAI(emotionIdx) {
+                    var fullPrompt = stickerStylePrompt + ", " + emotionStickerPrompts[emotionIdx];
+                    
+                    if (!cachedBase64) {
+                        cachedBase64 = await getResizedBase64(uploadedFile);
+                        console.log('Resized image base64 length:', cachedBase64.length);
+                    }
+
+                    var response = await fetch("/api/generate", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                            imageBase64: base64Image,
+                            imageBase64: cachedBase64,
                             prompt: fullPrompt,
                             negative_prompt: negativePrompt,
                             style: styleName
                         })
                     });
 
-
-
                     if (!response.ok) {
-                        const errText = await response.text();
-                        let errMsg = "Lỗi API";
+                        var errText = await response.text();
+                        var errMsg = "Lỗi API";
                         try {
-                            const errJson = JSON.parse(errText);
+                            var errJson = JSON.parse(errText);
                             errMsg = errJson.message || errJson.name || errMsg;
-                        } catch(e) { errMsg = `Error ${response.status}: ${errText.substring(0, 50)}`; }
+                        } catch(e) { errMsg = "Error " + response.status + ": " + errText.substring(0, 50); }
                         throw new Error(errMsg);
                     }
 
-                    const blob = await response.blob();
+                    var blob = await response.blob();
                     return URL.createObjectURL(blob);
                 }
+
 
                 const generateStickers = async () => {
                     for (let i = 0; i < 8; i++) {
@@ -1295,6 +1316,10 @@
                             console.error("Sticker error:", err);
                             loadingText.innerHTML = `❌<br><span style='font-size:0.7rem; color:#ff4444;'>${err.message.substring(0, 40)}</span>`;
                         }
+
+                        // Delay 2s giữa mỗi request để tránh 429 rate limit
+                        if (i < 7) await new Promise(r => setTimeout(r, 2000));
+
                     }
 
                     if (!access.useCredit) {
