@@ -1,5 +1,6 @@
-// Removed node-fetch and form-data to use native Node 18+ fetch/FormData
-// This ensures compatibility even without a package.json
+// Stability AI - Structure Control Endpoint
+// Sử dụng endpoint control/structure để giữ nguyên cấu trúc khuôn mặt
+// khi biến đổi phong cách ảnh thành sticker
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -7,7 +8,7 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const { prompt, strength, imageBase64 } = req.body;
+        const { prompt, imageBase64, negative_prompt } = req.body;
         const STABILITY_API_KEY = process.env.STABILITY_API_KEY;
 
         if (!STABILITY_API_KEY) {
@@ -20,23 +21,27 @@ module.exports = async (req, res) => {
 
         const imageBuffer = Buffer.from(imageBase64, 'base64');
         
-        // Use native FormData (available in Node 18+)
         const formData = new FormData();
-        // Native FormData.append takes a Blob/File or string. 
-        // We use a Blob to represent the image buffer.
         const blob = new Blob([imageBuffer], { type: 'image/png' });
+        
         formData.append("image", blob, 'image.png');
         formData.append("prompt", prompt);
-        formData.append("strength", strength || "0.2");
-        formData.append("mode", "image-to-image");
+        // control_strength: 0.0 đến 1.0
+        // Giá trị cao hơn = giữ cấu trúc ảnh gốc tốt hơn (nét mặt, pose)
+        formData.append("control_strength", "0.7");
         formData.append("output_format", "png");
+        
+        if (negative_prompt) {
+            formData.append("negative_prompt", negative_prompt);
+        }
 
-        const response = await fetch("https://api.stability.ai/v2beta/stable-image/generate/core", {
+        // Sử dụng endpoint CONTROL/STRUCTURE thay vì GENERATE/CORE
+        // Endpoint này chuyên giữ nguyên cấu trúc (khuôn mặt, tư thế) của ảnh gốc
+        const response = await fetch("https://api.stability.ai/v2beta/stable-image/control/structure", {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${STABILITY_API_KEY}`,
                 "Accept": "image/*"
-                // Do NOT set Content-Type header manually with native FormData and fetch
             },
             body: formData
         });
@@ -44,6 +49,42 @@ module.exports = async (req, res) => {
         if (!response.ok) {
             const errText = await response.text();
             console.error('Stability AI Error:', errText);
+            
+            // Nếu endpoint structure không khả dụng, fallback về generate/core
+            if (response.status === 404 || response.status === 403) {
+                console.log('Fallback to generate/core endpoint...');
+                const fallbackForm = new FormData();
+                const fallbackBlob = new Blob([imageBuffer], { type: 'image/png' });
+                fallbackForm.append("image", fallbackBlob, 'image.png');
+                fallbackForm.append("prompt", prompt);
+                fallbackForm.append("strength", "0.15"); // Rất thấp để giữ nét mặt tối đa
+                fallbackForm.append("mode", "image-to-image");
+                fallbackForm.append("output_format", "png");
+                
+                if (negative_prompt) {
+                    fallbackForm.append("negative_prompt", negative_prompt);
+                }
+
+                const fallbackResponse = await fetch("https://api.stability.ai/v2beta/stable-image/generate/core", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${STABILITY_API_KEY}`,
+                        "Accept": "image/*"
+                    },
+                    body: fallbackForm
+                });
+
+                if (!fallbackResponse.ok) {
+                    const fallbackErr = await fallbackResponse.text();
+                    console.error('Fallback Error:', fallbackErr);
+                    return res.status(fallbackResponse.status).send(fallbackErr);
+                }
+
+                const fbArrayBuffer = await fallbackResponse.arrayBuffer();
+                res.setHeader('Content-Type', 'image/png');
+                return res.send(Buffer.from(fbArrayBuffer));
+            }
+            
             return res.status(response.status).send(errText);
         }
 

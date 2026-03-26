@@ -1161,23 +1161,26 @@
 
                 // 8 prompt cảm xúc khác nhau
                 const emotionStickerPrompts = [
-                    "happy, joyful, beaming joy, wide warm smile, sparkling eyes, masterpiece, best quality",
-                    "excited, celebrating, party mood, confetti and stars around, exuberant expression",
-                    "angry, furious pout, red vein icon, steam from ears, intense gaze",
-                    "sad, melancholy, glossy teary eyes, looking down, blue rainy mood",
-                    "surprised, shocked, wide open mouth, big eyes, exclamation marks icon",
-                    "laughing hard, tears of joy, holding belly, wide open mouth, pure happiness",
-                    "crying, sobbing, big tears flowing down cheeks, very sad",
-                    "winking, playful, tongue out, cheeky and charming expression"
+                    "happy, joyful, beaming warm smile, sparkling eyes",
+                    "excited, celebrating, party mood, confetti around",
+                    "angry, furious pout, red veins, steam from ears",
+                    "sad, melancholy, teary eyes, looking down",
+                    "surprised, shocked, wide open mouth, big eyes",
+                    "laughing hard, tears of joy, holding belly laughing",
+                    "crying, sobbing, big tears flowing down cheeks",
+                    "winking, playful, tongue out, cheeky charming"
                 ];
 
-                // Style prompt theo lựa chọn (Đã được tối ưu để giữ nét mặt cực kỳ tốt)
-                let stickerStylePrompt = "Faithful professional anime-style sticker transformation of the person in the input photo. STRICTLY preserve the person's unique facial features, eyes, hair color, and clothing style. High-quality Japanese anime illustration style but maintaining high fidelity to the original person. Clean outlines, bright vibrant colors, cel shading, adorable and expressive. Solid white die-cut sticker border, no background, masterpiece quality";
+                // Style prompt - tập trung vào việc GIỮ NGUYÊN khuôn mặt người thật
+                let stickerStylePrompt = "Transform this exact person into anime sticker art style. CRITICAL: keep the EXACT SAME face, eyes, nose, mouth, hairstyle, hair color, skin tone, and all facial features identical to the input photo. Only change the art style to anime illustration. Clean outlines, vibrant colors, white sticker border, no background";
                 
-                if (styleName === "cyberpunk") stickerStylePrompt = "Faithful professional Cyberpunk sticker transformation of the person in the input photo. Futuristic neon purple & cyan lighting, high-tech glowing cybernetic details, sharp highlights. STRICTLY preserve the person's facial features and recognizable identity. Cool futuristic expression, cyberpunk aesthetic. Solid holographic die-cut sticker border, transparent background, masterpiece quality";
-                if (styleName === "kawaii") stickerStylePrompt = "Faithful professional Kawaii Pastel sticker transformation of the person in the input photo. Soft pastel pink-blue-purple palette, charming baby-like expression, simple soft shading. STRICTLY preserve the person's unique facial features and identity. Rounded shapes, sparkles, hearts, extremely cute vibe. Solid pastel die-cut sticker border, no background, masterpiece quality";
-                if (styleName === "monster") stickerStylePrompt = "Faithful professional Cute Monster sticker transformation of the person in the input photo. Small chubby creature form but STRICTLY preserving the person's face and recognizable features within the monster design. Playful silly monster features, friendly cartoon monster aesthetic. Bright colors, soft shading, fun pose. Solid white die-cut sticker border, transparent background, masterpiece quality";
-                if (styleName === "chibi") stickerStylePrompt = "Faithful professional Chibi-style sticker transformation of the person in the input photo. Huge adorable head, tiny expressive body, exaggerated cute proportions. STRICTLY preserve the person's unique facial features, eyes, hair style, and identifying accessories. High-quality boutique sticker art, clean black outlines, vibrant colors, soft cel shading. Solid white die-cut sticker border, transparent background, masterpiece quality, extremely cute and recognizable.";
+                if (styleName === "cyberpunk") stickerStylePrompt = "Transform this exact person into cyberpunk neon sticker. CRITICAL: keep the EXACT SAME face, eyes, nose, mouth, hairstyle, hair color, skin tone identical to input. Add neon purple and cyan lighting effects, cyberpunk aesthetic. Holographic sticker border, no background";
+                if (styleName === "kawaii") stickerStylePrompt = "Transform this exact person into kawaii pastel sticker. CRITICAL: keep the EXACT SAME face, eyes, nose, mouth, hairstyle, hair color, skin tone identical to input. Soft pastel pink-blue palette, sparkles and hearts. Pastel sticker border, no background";
+                if (styleName === "monster") stickerStylePrompt = "Transform this exact person into cute chibi monster sticker. CRITICAL: keep the person's EXACT SAME face and recognizable features. Add cute monster elements around the person. Bright colors, fun pose. White sticker border, no background";
+                if (styleName === "chibi") stickerStylePrompt = "Transform this exact person into chibi sticker with big head tiny body. CRITICAL: keep the EXACT SAME face, eyes, hairstyle, hair color, skin tone, accessories identical to input. Cute proportions, clean outlines, vibrant colors. White sticker border, no background";
+
+                // Negative prompt để tránh AI thay đổi khuôn mặt
+                const negativePrompt = "different person, changed face, different hair color, different eyes, different skin tone, extra fingers, deformed, blurry, low quality, watermark, text, different identity, generic face";
 
                 // Function chuyển ảnh sang base64 để gửi lên server
                 function getBase64(file) {
@@ -1193,49 +1196,16 @@
                     const fullPrompt = `${stickerStylePrompt}. Expression: ${emotionStickerPrompts[emotionIdx]}`;
                     const base64Image = await getBase64(uploadedFile);
 
-                    // Tự động tìm đường dẫn API linh hoạt (thử tương đối trước, tuyệt đối sau)
-                    const currentPath = window.location.pathname;
-                    let apiEndpoint = currentPath.substring(0, currentPath.lastIndexOf('/') + 1) + "api/generate";
+                    const response = await fetch("/api/generate", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            imageBase64: base64Image,
+                            prompt: fullPrompt,
+                            negative_prompt: negativePrompt
+                        })
+                    });
 
-                    let response;
-                    try {
-                        response = await fetch(apiEndpoint, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                imageBase64: base64Image,
-                                prompt: fullPrompt,
-                                strength: "0.2"
-                            })
-                        });
-
-                        // Nếu 404, thử gọi /api/generate (đường dẫn tuyệt đối từ gốc)
-                        if (response.status === 404 && apiEndpoint !== "/api/generate") {
-                            console.log("Thử lại với đường dẫn API tuyệt đối...");
-                            apiEndpoint = "/api/generate";
-                            response = await fetch(apiEndpoint, {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    imageBase64: base64Image,
-                                    prompt: fullPrompt,
-                                    strength: "0.2"
-                                })
-                            });
-                        }
-                    } catch (e) {
-                         // Nếu fetch bị lỗi mạng (cors/dns), thử phát cuối tuyệt đối
-                         apiEndpoint = "/api/generate";
-                         response = await fetch(apiEndpoint, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                imageBase64: base64Image,
-                                prompt: fullPrompt,
-                                strength: "0.2"
-                            })
-                        });
-                    }
 
                     if (!response.ok) {
                         const errText = await response.text();
