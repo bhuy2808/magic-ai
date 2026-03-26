@@ -919,12 +919,13 @@
         const emotionsString = "8 biểu cảm khác nhau: Vui vẻ, Mừng rỡ, Giận dữ, Buồn bã, Ngạc nhiên, Cười lớn, Khóc, Nháy mắt";
         const transparencyReq = "- Nền TRONG SUỐT HOÀN TOÀN (PNG), xóa sạch background";
         const prompts = {
-            anime: `Hãy tạo một bộ 8 sticker phong cách Anime từ người này, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
-            chibi: `Hãy tạo một bộ 8 sticker kiểu Chibi đầu to dễ thương, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
-            cyberpunk: `Hãy tạo một bộ 8 sticker phong cách Cyberpunk từ người này, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
-            kawaii: `Hãy tạo một bộ 8 sticker Kawaii từ người này, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
-            monster: `Hãy tạo một bộ 8 sticker biến người này thành Quái vật dễ thương, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`
+            anime: `Hãy tạo một bộ 8 sticker phong cách Anime cao cấp, nét vẽ sắc sảo, màu sắc rực rỡ, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
+            chibi: `Hãy tạo một bộ 8 sticker Chibi dễ thương, đầu to tỉ lệ chuẩn, mắt to lấp lánh, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
+            cyberpunk: `Hãy tạo một bộ 8 sticker Cyberpunk neon rực rỡ, chi tiết công nghệ tương lai, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
+            kawaii: `Hãy tạo một bộ 8 sticker Kawaii siêu cấp dễ thương, tông màu pastel ấm áp, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`,
+            monster: `Hãy tạo một bộ 8 sticker quái vật dễ thương, thiết kế sinh vật sáng tạo, đảm bảo giữ nguyên khuôn mặt thật:\n- ${emotionsString}\n- ${transparencyReq}`
         };
+
 
         let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
         let credits = parseInt(localStorage.getItem("credits")) || 0;
@@ -1171,15 +1172,16 @@
                     "winking playful person, cheeky charming smile"
                 ];
 
-                // Style prompt - model face-to-sticker tự xử lý việc giữ nét mặt
-                let stickerStylePrompt = "anime sticker, cute anime art style, clean outlines, vibrant colors, die-cut sticker, white border, transparent background, high quality illustration";
+                // Style prompt - tối ưu hóa cực mạnh cho model fofr/face-to-sticker để đạt chất lượng Showcase
+                let stickerStylePrompt = "premium anime sticker, high-quality Japanese anime art style, cel-shaded, vibrant colors, expressive features, die-cut sticker, thick white border, clean vector lines, 4k resolution, professional illustration, transparent background";
                 
-                if (styleName === "cyberpunk") stickerStylePrompt = "cyberpunk neon sticker, futuristic neon purple and cyan lighting, glowing effects, cyberpunk aesthetic, die-cut sticker, holographic border";
-                if (styleName === "kawaii") stickerStylePrompt = "kawaii pastel sticker, soft pastel colors, cute sparkles and hearts, adorable art style, die-cut sticker, pastel border";
-                if (styleName === "monster") stickerStylePrompt = "cute monster sticker, chibi monster character, playful creature, bright colors, fun pose, die-cut sticker";
-                if (styleName === "chibi") stickerStylePrompt = "chibi sticker, big head tiny body, adorable proportions, cute art style, clean outlines, vibrant colors, die-cut sticker";
+                if (styleName === "cyberpunk") stickerStylePrompt = "cyberpunk neon sticker, futuristic sci-fi aesthetic, glowing neon purple and cyan lighting, holographic reflective edges, high-tech metallic details, synthwave style, die-cut sticker, thick white border, sharp vector art, transparent background";
+                if (styleName === "kawaii") stickerStylePrompt = "ultra-kawaii pastel sticker, Chibi-inspired soft aesthetic, adorable sparkling accents and hearts, pastel color palette, soft shading, cuteness overload, die-cut sticker, pastel white border, smooth vector lines, transparent background";
+                if (styleName === "monster") stickerStylePrompt = "playful monster sticker, cute creature character design, vibrant textures, whimsical fantasy style, friendly monster aesthetic, bright saturated colors, die-cut sticker, thick white border, high-quality character art, transparent background";
+                if (styleName === "chibi") stickerStylePrompt = "premium chibi sticker, adorable big glossy eyes, tiny body proportions, cute toy aesthetic, smooth gradients, clean bold outlines, super deformed style, die-cut sticker, thick white border, professional vector design, transparent background";
 
-                const negativePrompt = "ugly, deformed, extra fingers, blurry, low quality, watermark, text, nsfw";
+                const negativePrompt = "photo, realistic, 3d render, grainy, messy outlines, shadow on background, blurry, low resolution, ugly, deformed features, extra limbs, watermark, text, out of frame";
+
 
                 // Resize ảnh xuống max 512px + JPEG 60% → < 500KB (tránh 422 Replicate)
                 function getResizedBase64(file, maxSize) {
