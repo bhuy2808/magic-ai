@@ -1193,7 +1193,11 @@
                     const fullPrompt = `${stickerStylePrompt}. Expression: ${emotionStickerPrompts[emotionIdx]}`;
                     const base64Image = await getBase64(uploadedFile);
 
-                    const response = await fetch("api/generate", {
+                    // Logic tự động tìm đường dẫn API (api/generate) linh hoạt hơn
+                    const currentPath = window.location.pathname;
+                    const apiEndpoint = currentPath.substring(0, currentPath.lastIndexOf('/') + 1) + "api/generate";
+
+                    const response = await fetch(apiEndpoint, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
