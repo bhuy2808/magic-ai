@@ -1156,33 +1156,31 @@
                 const activeCard = document.querySelector("#viewSticker .style-card.active");
                 const styleName = activeCard ? activeCard.getAttribute("data-style") : "anime";
 
-                // === STABILITY AI IMAGE-TO-IMAGE STICKER GENERATOR (SERVER-SIDE) ===
+                // === REPLICATE face-to-sticker (InstantID + IP Adapter) ===
                 const uploadedFile = upload.files[0];
 
-                // 8 prompt cảm xúc khác nhau
+                // 8 prompt cảm xúc - ngắn gọn vì model face-to-sticker tự giữ nét mặt
                 const emotionStickerPrompts = [
-                    "happy, joyful, beaming warm smile, sparkling eyes",
-                    "excited, celebrating, party mood, confetti around",
-                    "angry, furious pout, red veins, steam from ears",
-                    "sad, melancholy, teary eyes, looking down",
-                    "surprised, shocked, wide open mouth, big eyes",
-                    "laughing hard, tears of joy, holding belly laughing",
-                    "crying, sobbing, big tears flowing down cheeks",
-                    "winking, playful, tongue out, cheeky charming"
+                    "happy smiling person, joyful expression, sparkling eyes",
+                    "excited celebrating person, party mood, cheerful",
+                    "angry furious person, intense fierce expression",
+                    "sad melancholy person, teary eyes, sorrowful",
+                    "surprised shocked person, wide open mouth, amazed",
+                    "laughing person, tears of joy, very happy",
+                    "crying person, tears flowing, very emotional",
+                    "winking playful person, cheeky charming smile"
                 ];
 
-                // Style prompt - tập trung vào việc GIỮ NGUYÊN khuôn mặt người thật
-                let stickerStylePrompt = "Transform this exact person into anime sticker art style. CRITICAL: keep the EXACT SAME face, eyes, nose, mouth, hairstyle, hair color, skin tone, and all facial features identical to the input photo. Only change the art style to anime illustration. Clean outlines, vibrant colors, white sticker border, no background";
+                // Style prompt - model face-to-sticker tự xử lý việc giữ nét mặt
+                let stickerStylePrompt = "anime sticker, cute anime art style, clean outlines, vibrant colors, die-cut sticker, white border, transparent background, high quality illustration";
                 
-                if (styleName === "cyberpunk") stickerStylePrompt = "Transform this exact person into cyberpunk neon sticker. CRITICAL: keep the EXACT SAME face, eyes, nose, mouth, hairstyle, hair color, skin tone identical to input. Add neon purple and cyan lighting effects, cyberpunk aesthetic. Holographic sticker border, no background";
-                if (styleName === "kawaii") stickerStylePrompt = "Transform this exact person into kawaii pastel sticker. CRITICAL: keep the EXACT SAME face, eyes, nose, mouth, hairstyle, hair color, skin tone identical to input. Soft pastel pink-blue palette, sparkles and hearts. Pastel sticker border, no background";
-                if (styleName === "monster") stickerStylePrompt = "Transform this exact person into cute chibi monster sticker. CRITICAL: keep the person's EXACT SAME face and recognizable features. Add cute monster elements around the person. Bright colors, fun pose. White sticker border, no background";
-                if (styleName === "chibi") stickerStylePrompt = "Transform this exact person into chibi sticker with big head tiny body. CRITICAL: keep the EXACT SAME face, eyes, hairstyle, hair color, skin tone, accessories identical to input. Cute proportions, clean outlines, vibrant colors. White sticker border, no background";
+                if (styleName === "cyberpunk") stickerStylePrompt = "cyberpunk neon sticker, futuristic neon purple and cyan lighting, glowing effects, cyberpunk aesthetic, die-cut sticker, holographic border";
+                if (styleName === "kawaii") stickerStylePrompt = "kawaii pastel sticker, soft pastel colors, cute sparkles and hearts, adorable art style, die-cut sticker, pastel border";
+                if (styleName === "monster") stickerStylePrompt = "cute monster sticker, chibi monster character, playful creature, bright colors, fun pose, die-cut sticker";
+                if (styleName === "chibi") stickerStylePrompt = "chibi sticker, big head tiny body, adorable proportions, cute art style, clean outlines, vibrant colors, die-cut sticker";
 
-                // Negative prompt để tránh AI thay đổi khuôn mặt
-                const negativePrompt = "different person, changed face, different hair color, different eyes, different skin tone, extra fingers, deformed, blurry, low quality, watermark, text, different identity, generic face";
+                const negativePrompt = "ugly, deformed, extra fingers, blurry, low quality, watermark, text, nsfw";
 
-                // Function chuyển ảnh sang base64 để gửi lên server
                 function getBase64(file) {
                     return new Promise((resolve, reject) => {
                         const reader = new FileReader();
@@ -1193,7 +1191,7 @@
                 }
 
                 async function generateStickerFromAI(emotionIdx) {
-                    const fullPrompt = `${stickerStylePrompt}. Expression: ${emotionStickerPrompts[emotionIdx]}`;
+                    const fullPrompt = `${stickerStylePrompt}, ${emotionStickerPrompts[emotionIdx]}`;
                     const base64Image = await getBase64(uploadedFile);
 
                     const response = await fetch("/api/generate", {
@@ -1202,9 +1200,11 @@
                         body: JSON.stringify({
                             imageBase64: base64Image,
                             prompt: fullPrompt,
-                            negative_prompt: negativePrompt
+                            negative_prompt: negativePrompt,
+                            style: styleName
                         })
                     });
+
 
 
                     if (!response.ok) {

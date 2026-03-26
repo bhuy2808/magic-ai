@@ -1,6 +1,6 @@
-// Stability AI - Structure Control Endpoint
-// Sử dụng endpoint control/structure để giữ nguyên cấu trúc khuôn mặt
-// khi biến đổi phong cách ảnh thành sticker
+// Dual API: Replicate face-to-sticker (ưu tiên) + Stability AI (fallback)
+// Replicate dùng InstantID + IP Adapter → giữ nét mặt tốt
+// Stability AI → fallback nếu Replicate không có token
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -8,94 +8,152 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const { prompt, imageBase64, negative_prompt } = req.body;
+        const { prompt, imageBase64, negative_prompt, style } = req.body;
+        const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN;
         const STABILITY_API_KEY = process.env.STABILITY_API_KEY;
 
-        if (!STABILITY_API_KEY) {
-            return res.status(500).json({ message: 'API key not configured in Vercel' });
+        if (!REPLICATE_API_TOKEN && !STABILITY_API_KEY) {
+            return res.status(500).json({ message: 'No API key configured. Set REPLICATE_API_TOKEN in Vercel.' });
         }
 
         if (!imageBase64) {
             return res.status(400).json({ message: 'Missing imageBase64' });
         }
 
-        const imageBuffer = Buffer.from(imageBase64, 'base64');
-        
-        const formData = new FormData();
-        const blob = new Blob([imageBuffer], { type: 'image/png' });
-        
-        formData.append("image", blob, 'image.png');
-        formData.append("prompt", prompt);
-        // control_strength: 0.0 đến 1.0
-        // Giá trị cao hơn = giữ cấu trúc ảnh gốc tốt hơn (nét mặt, pose)
-        formData.append("control_strength", "0.7");
-        formData.append("output_format", "png");
-        
-        if (negative_prompt) {
-            formData.append("negative_prompt", negative_prompt);
-        }
-
-        // Sử dụng endpoint CONTROL/STRUCTURE thay vì GENERATE/CORE
-        // Endpoint này chuyên giữ nguyên cấu trúc (khuôn mặt, tư thế) của ảnh gốc
-        const response = await fetch("https://api.stability.ai/v2beta/stable-image/control/structure", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${STABILITY_API_KEY}`,
-                "Accept": "image/*"
-            },
-            body: formData
-        });
-
-        if (!response.ok) {
-            const errText = await response.text();
-            console.error('Stability AI Error:', errText);
-            
-            // Nếu endpoint structure không khả dụng, fallback về generate/core
-            if (response.status === 404 || response.status === 403) {
-                console.log('Fallback to generate/core endpoint...');
-                const fallbackForm = new FormData();
-                const fallbackBlob = new Blob([imageBuffer], { type: 'image/png' });
-                fallbackForm.append("image", fallbackBlob, 'image.png');
-                fallbackForm.append("prompt", prompt);
-                fallbackForm.append("strength", "0.15"); // Rất thấp để giữ nét mặt tối đa
-                fallbackForm.append("mode", "image-to-image");
-                fallbackForm.append("output_format", "png");
-                
-                if (negative_prompt) {
-                    fallbackForm.append("negative_prompt", negative_prompt);
-                }
-
-                const fallbackResponse = await fetch("https://api.stability.ai/v2beta/stable-image/generate/core", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${STABILITY_API_KEY}`,
-                        "Accept": "image/*"
-                    },
-                    body: fallbackForm
-                });
-
-                if (!fallbackResponse.ok) {
-                    const fallbackErr = await fallbackResponse.text();
-                    console.error('Fallback Error:', fallbackErr);
-                    return res.status(fallbackResponse.status).send(fallbackErr);
-                }
-
-                const fbArrayBuffer = await fallbackResponse.arrayBuffer();
+        // ============================
+        // ƯU TIÊN 1: REPLICATE
+        // ============================
+        if (REPLICATE_API_TOKEN) {
+            try {
+                const result = await generateWithReplicate(imageBase64, prompt, negative_prompt, REPLICATE_API_TOKEN);
                 res.setHeader('Content-Type', 'image/png');
-                return res.send(Buffer.from(fbArrayBuffer));
+                return res.send(result);
+            } catch (repError) {
+                console.error('Replicate failed:', repError.message);
+                if (STABILITY_API_KEY) {
+                    console.log('Falling back to Stability AI...');
+                } else {
+                    return res.status(500).json({ message: `Replicate Error: ${repError.message}` });
+                }
             }
-            
-            return res.status(response.status).send(errText);
         }
 
-        const arrayBuffer = await response.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-        
-        res.setHeader('Content-Type', 'image/png');
-        res.send(buffer);
+        // ============================
+        // FALLBACK: STABILITY AI
+        // ============================
+        if (STABILITY_API_KEY) {
+            const result = await generateWithStability(imageBase64, prompt, negative_prompt, STABILITY_API_KEY);
+            res.setHeader('Content-Type', 'image/png');
+            return res.send(result);
+        }
 
     } catch (error) {
         console.error('API Error:', error);
         res.status(500).json({ message: error.message });
     }
 };
+
+// ====================================
+// REPLICATE - face-to-sticker (InstantID + IP Adapter)
+// Giữ nét mặt cực tốt - công nghệ chuyên biệt
+// ====================================
+async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiToken) {
+    const dataUri = `data:image/png;base64,${imageBase64}`;
+
+    const createResponse = await fetch("https://api.replicate.com/v1/predictions", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${apiToken}`,
+            "Content-Type": "application/json",
+            "Prefer": "wait"
+        },
+        body: JSON.stringify({
+            version: "764d4827ea159608571b1571571f7044dc3b7fcec340e6ba69c14e7720881ff8",
+            input: {
+                image: dataUri,
+                prompt: prompt || "a person",
+                negative_prompt: negative_prompt || "",
+                steps: 20,
+                width: 1024,
+                height: 1024,
+                prompt_strength: 4.5,
+                instant_id_strength: 0.7,
+                ip_adapter_weight: 0.2,
+                ip_adapter_noise: 0.5,
+                upscale: false
+            }
+        })
+    });
+
+    if (!createResponse.ok) {
+        const errText = await createResponse.text();
+        throw new Error(`${createResponse.status}: ${errText.substring(0, 200)}`);
+    }
+
+    let prediction = await createResponse.json();
+
+    // Polling nếu "Prefer: wait" chưa xong
+    if (prediction.status !== "succeeded") {
+        for (let i = 0; i < 60; i++) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            const pollResponse = await fetch(prediction.urls.get, {
+                headers: {
+                    "Authorization": `Bearer ${apiToken}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            if (!pollResponse.ok) throw new Error('Poll failed');
+            prediction = await pollResponse.json();
+            if (prediction.status === "succeeded") break;
+            if (prediction.status === "failed" || prediction.status === "canceled") {
+                throw new Error(prediction.error || 'Generation failed');
+            }
+        }
+        if (prediction.status !== "succeeded") throw new Error('Timed out');
+    }
+
+    const outputUrl = Array.isArray(prediction.output)
+        ? prediction.output[prediction.output.length - 1]
+        : prediction.output;
+
+    if (!outputUrl) throw new Error('No output');
+
+    const imageResponse = await fetch(outputUrl);
+    if (!imageResponse.ok) throw new Error('Download failed');
+
+    const arrayBuffer = await imageResponse.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+}
+
+// ====================================
+// STABILITY AI - Image-to-Image (fallback)
+// ====================================
+async function generateWithStability(imageBase64, prompt, negative_prompt, apiKey) {
+    const imageBuffer = Buffer.from(imageBase64, 'base64');
+    const formData = new FormData();
+    const blob = new Blob([imageBuffer], { type: 'image/png' });
+
+    formData.append("image", blob, 'image.png');
+    formData.append("prompt", prompt);
+    formData.append("strength", "0.15");
+    formData.append("mode", "image-to-image");
+    formData.append("output_format", "png");
+    if (negative_prompt) formData.append("negative_prompt", negative_prompt);
+
+    const response = await fetch("https://api.stability.ai/v2beta/stable-image/generate/core", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Accept": "image/*"
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`${response.status}: ${errText.substring(0, 200)}`);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+}
