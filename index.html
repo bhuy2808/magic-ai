@@ -1193,7 +1193,7 @@
                     const fullPrompt = `${stickerStylePrompt}. Expression: ${emotionStickerPrompts[emotionIdx]}`;
                     const base64Image = await getBase64(uploadedFile);
 
-                    const response = await fetch("/api/generate", {
+                    const response = await fetch("api/generate", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -1211,7 +1211,7 @@
                         try {
                             const errJson = JSON.parse(errText);
                             errMsg = errJson.message || errJson.name || errMsg;
-                        } catch(e) { errMsg = errText.substring(0, 50); }
+                        } catch(e) { errMsg = `Error ${response.status}: ${errText.substring(0, 50)}`; }
                         throw new Error(errMsg);
                     }
 
