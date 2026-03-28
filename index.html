@@ -650,8 +650,9 @@
                     <div class="bento-box bento-upload"
                         style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05);">
                         <h3>Khuôn mặt của bạn 🙎‍♂️</h3>
-                        <label class="upload-zone">
-                            <input type="file" id="uploadIdol" accept="image/*" />
+                        <label class="upload-zone"
+                            onclick="document.getElementById('uploadIdol').click()">
+                            <input type="file" id="uploadIdol" accept="image/*" style="display: none;" />
                             <div class="upload-icon" id="upIconIdol">📸</div>
                             <div class="upload-text" id="upTextIdol">Tải lên ảnh Selfie rõ mặt</div>
                             <div class="upload-sub" id="upSubIdol">Góc chụp thẳng là tốt nhất</div>
@@ -783,8 +784,7 @@
                         </label>
 
                         <div style="margin-top: 30px;">
-                            <h3 style="margin-bottom: 20px; font-size: 1.1rem; text-align: center; color: #FF8BA7;">Bộ 9 Sticker Cảm Xúc (Chibi Edition) 🍭</h3>
-                            <p style="color: #888; text-align: center; font-size: 0.9rem; margin-bottom: 30px;">AI sẽ tự động tạo đủ bộ 9 biểu cảm khác nhau chỉ với 1 ảnh chân dung của bạn.</p>
+                            <h3 style="margin-bottom: 20px; font-size: 1.1rem; text-align: center; color: #FF8BA7;">Bộ 3 Sticker Cảm Xúc (Chibi Edition) 🍭</h3>
                         </div>
 
                         <button class="btn-generate" id="generateCustomStickerBtn"
@@ -1388,26 +1388,40 @@
         let googleTokenClient;
 
         function initGoogleClient() {
-            if (typeof google !== 'undefined' && google.accounts && !googleTokenClient) {
-                googleTokenClient = google.accounts.oauth2.initTokenClient({
-                    client_id: GOOGLE_CLIENT_ID,
-                    scope: 'email profile openid',
-                    callback: (tokenResponse) => {
-                        if (tokenResponse && tokenResponse.access_token) {
-                            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                                headers: { 'Authorization': 'Bearer ' + tokenResponse.access_token }
-                            })
-                                .then(res => res.json())
-                                .then(userInfo => {
-                                    handleLoginSuccess(userInfo);
+            try {
+                if (typeof google !== 'undefined' && google.accounts && !googleTokenClient) {
+                    console.log("Initializing Google OAuth Client...");
+                    googleTokenClient = google.accounts.oauth2.initTokenClient({
+                        client_id: GOOGLE_CLIENT_ID,
+                        scope: 'email profile openid',
+                        callback: (tokenResponse) => {
+                            if (tokenResponse && tokenResponse.access_token) {
+                                console.log("Google token received, fetching user info...");
+                                fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                                    headers: { 'Authorization': 'Bearer ' + tokenResponse.access_token }
                                 })
-                                .catch(err => {
-                                    console.error("Lỗi lấy thông tin:", err);
-                                    alert("Có lỗi xảy ra khi lấy thông tin từ Google!");
-                                });
+                                    .then(res => res.json())
+                                    .then(userInfo => {
+                                        handleLoginSuccess(userInfo);
+                                    })
+                                    .catch(err => {
+                                        console.error("Lỗi lấy thông tin từ Google:", err);
+                                        alert("Lỗi kết nối API Google: " + err.message);
+                                    });
+                            } else {
+                                console.error("Invalid token response:", tokenResponse);
+                            }
+                        },
+                        error_callback: (err) => {
+                            console.error("Google Client Error:", err);
+                            alert("Lỗi từ hệ thống Google: " + err.message);
                         }
-                    },
-                });
+                    });
+                } else if (typeof google === 'undefined') {
+                    console.warn("Google Client Script not loaded yet.");
+                }
+            } catch (err) {
+                console.error("initGoogleClient Exception:", err);
             }
         }
 
@@ -1433,26 +1447,34 @@
         }
 
         loginBtn.onclick = function () {
+            console.log("Login button clicked - GOOGLE_CLIENT_ID used:", GOOGLE_CLIENT_ID);
+            
             if (GOOGLE_CLIENT_ID.includes("YOUR_GOOGLE_CLIENT_ID")) {
-                alert("💡 LƯU Ý DÀNH CHO BẠN:\n\nBạn cần tạo Google Client ID trên Google Cloud Console (miễn phí) và điền vào biến GOOGLE_CLIENT_ID trong file index.html để chức năng đăng nhập hoạt động thật nha!\n\nTạm thời hệ thống sẽ giả lập đăng nhập thành công để bạn xem trước giao diện.");
-                handleLoginSuccess({ name: "Thành viên", picture: "" });
+                alert("Bạn cần cấu hình thực tế Google Client ID trong file index.html.\nHiện đang dùng chế độ giả lập cho Admin bhuy2808@gmail.com");
+                handleLoginSuccess({ name: "Admin Test", picture: "", email: ADMIN_EMAIL });
                 return;
             }
 
-            initGoogleClient();
+            if (typeof google === 'undefined') {
+                alert("Hệ thống đăng nhập (GSI) chưa được tải. Vui lòng kiểm tra chặn quảng cáo hoặc thử trình duyệt gốc.");
+                return;
+            }
+
+            if (!googleTokenClient) {
+                console.log("Initiating googleTokenClient manually...");
+                initGoogleClient();
+            }
 
             if (googleTokenClient) {
                 try {
+                    console.log("Requesting Google access token...");
                     googleTokenClient.requestAccessToken();
                 } catch (e) {
-                    alert("Trình duyệt đang chặn cửa sổ đăng nhập. Vui lòng tắt chặn quảng cáo hoặc mở bằng Chrome/Safari gốc.");
+                    console.error("Popup request failed:", e);
+                    alert("Không thể mở cửa sổ đăng nhập: " + e.message);
                 }
-            } else if (window.googleFailed) {
-                alert("Hệ thống bị chặn bởi trình duyệt (thường gặp khi mở từ Zalo/Facebook). Vui lòng chọn MỞ BẰNG TRÌNH DUYỆT GỐC (Safari/Chrome) để sử dụng.");
-            } else if (typeof google === 'undefined') {
-                alert("Không thể tải hệ thống Google (có thể do mạng hoặc trình chặn). Mẹo: Hãy thử mở trang này bằng trình duyệt Safari hoặc Chrome gốc nhé!");
             } else {
-                alert("Google Login đang khởi tạo hoặc bị chặn ẩn, vui lòng thử lại...");
+                alert("Dịch vụ Google Login bị lỗi hoặc chưa khởi tạo xong. Vui lòng thử lại sau vài giây.");
             }
         };
 
