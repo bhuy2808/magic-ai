@@ -1062,8 +1062,9 @@
             }
         });
 
-        // Admin bypass: thêm ?admin=true vào URL để bỏ giới hạn lượt miễn phí
-        const isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+        // --- Admin Configuration ---
+        const ADMIN_EMAIL = "bhuy2808@gmail.com";
+        let isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
 
         function requireCredits(actionType) {
             if (actionType === 'sticker') {
@@ -1420,6 +1421,13 @@
             isLoggedIn = true;
             localStorage.setItem("isLoggedIn", "true");
             localStorage.setItem("userInfo", JSON.stringify(userInfo));
+            
+            // Set Admin privileges if email matches
+            if (userInfo.email === ADMIN_EMAIL) {
+                isAdmin = true;
+                console.log("Welcome Admin: " + ADMIN_EMAIL);
+            }
+
             updateUserUI(userInfo);
             updateCreditUI();
         }
@@ -1482,6 +1490,7 @@
                 previewImgCustomSticker.style.display = "block";
                 document.getElementById("upIconCustomSticker").style.opacity = 0;
                 document.getElementById("upTextCustomSticker").style.opacity = 0;
+                document.getElementById("upSubCustomSticker").style.opacity = 0;
             }
         };
 
@@ -1526,7 +1535,16 @@
                 const uploadedFile = uploadCustomSticker.files[0];
                 const resizedBase64 = await getResizedBase64(uploadedFile);
 
-                for (let i = 0; i < 9; i++) {
+                // Batch Size Logic: 9 for VIP, 3 for Free/Admin
+                let batchSize = 3;
+                if (isLoggedIn && (credits >= 1) && !isAdmin) {
+                    batchSize = 9;
+                    document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 9 Sticker (VIP)...";
+                } else {
+                    document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 3 Sticker...";
+                }
+
+                for (let i = 0; i < batchSize; i++) {
                     const emotion = emotions[i];
                     
                     // Create item container in grid
@@ -1615,7 +1633,7 @@ Output: Square format, white sticker border, transparent background.`;
                     }
                     
                     // Delay to avoid overwhelming the server
-                    if (i < 8) await new Promise(r => setTimeout(r, 1500));
+                    if (i < batchSize - 1) await new Promise(r => setTimeout(r, 1500));
                 }
 
                 customStickerLoadingText.style.display = "none";
@@ -1636,7 +1654,11 @@ Output: Square format, white sticker border, transparent background.`;
             } finally {
                 generateCustomStickerBtn.disabled = false;
                 document.getElementById("spinnerCustomSticker").style.display = "none";
-                document.getElementById("btnTextCustomSticker").innerText = "Tạo Lại 9 Sticker ✨";
+                if (isLoggedIn && (credits >= 1) && !isAdmin) {
+                    document.getElementById("btnTextCustomSticker").innerText = "Tạo Lại 9 Sticker ✨";
+                } else {
+                    document.getElementById("btnTextCustomSticker").innerText = "Tạo Lại 3 Sticker ✨";
+                }
             }
         };
 
