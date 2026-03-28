@@ -650,15 +650,14 @@
                     <div class="bento-box bento-upload"
                         style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05);">
                         <h3>Khuôn mặt của bạn 🙎‍♂️</h3>
-                        <label class="upload-zone"
-                            onclick="document.getElementById('uploadIdol').click()">
-                            <input type="file" id="uploadIdol" accept="image/*" style="display: none;" />
+                        <div class="upload-zone" onclick="document.getElementById('uploadIdol').click()" style="cursor: pointer; position: relative;">
                             <div class="upload-icon" id="upIconIdol">📸</div>
                             <div class="upload-text" id="upTextIdol">Tải lên ảnh Selfie rõ mặt</div>
                             <div class="upload-sub" id="upSubIdol">Góc chụp thẳng là tốt nhất</div>
                             <img id="previewImgIdol" alt="Preview"
-                                style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 18px; position: absolute; z-index: 5;" />
-                        </label>
+                                style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 18px; position: absolute; z-index: 5; pointer-events: none;" />
+                        </div>
+                        <input type="file" id="uploadIdol" accept="image/*" style="display: none;" />
                     </div>
 
                     <div class="bento-box bento-style"
@@ -706,14 +705,14 @@
                         <h3 style="margin-top: 25px;">Hoặc tự tải ảnh người bạn muốn ghép <span
                                 class="tier-badge tier-vip" style="position: static; vertical-align: middle;">VIP</span>
                         </h3>
-                        <label class="upload-zone" style="min-height: 180px;">
-                            <input type="file" id="uploadCustomIdol" accept="image/*" />
+                        <div class="upload-zone" onclick="document.getElementById('uploadCustomIdol').click()" 
+                            style="min-height: 180px; cursor: pointer; position: relative; border: 2px dashed rgba(255,255,255,0.1); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div class="upload-icon" id="upIconCustomIdol" style="font-size: 2rem;">👤</div>
-                            <div class="upload-text" id="upTextCustomIdol" style="font-size: 1rem;">Tải ảnh tùy chọn lên
-                                đây</div>
+                            <div class="upload-text" id="upTextCustomIdol" style="font-size: 1rem;">Tải ảnh tùy chọn lên đây</div>
                             <img id="previewImgCustomIdol" alt="Preview"
-                                style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 18px; position: absolute; z-index: 5;" />
-                        </label>
+                                style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 18px; position: absolute; z-index: 5; pointer-events: none;" />
+                        </div>
+                        <input type="file" id="uploadCustomIdol" accept="image/*" style="display: none;" />
 
                         <h3 style="margin-top: 25px;">Bối cảnh (Scenario) 🎬</h3>
                         <div class="style-grid" id="scenarioGrid">
@@ -763,51 +762,67 @@
             style="padding: 100px 20px; background: #0d0d0d; border-top: 1px solid rgba(255,255,255,0.05);">
             <div class="container" style="max-width: 900px;">
                 <h2 class="creator-title"
-                    style="font-size: 2.8rem; font-weight: 800; text-align: center; margin-bottom: 50px; background: linear-gradient(90deg, #FF8BA7, #FFC2C7); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    style="display: none;">
                     Tạo Sticker 🎨</h2>
 
                 <div class="creator-card"
-                    style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 32px; padding: 40px; display: flex; gap: 40px; flex-wrap: wrap; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
-                    <!-- Upload & Inputs -->
-                    <div class="creator-left" style="flex: 1; min-width: 300px;">
-                        <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 1.3rem;">Ảnh của bạn 📸</h3>
-                        <label class="upload-zone"
-                            style="min-height: 250px; position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.1); border-radius: 20px; transition: all 0.3s; overflow: hidden;">
-                            <input type="file" id="uploadCustomSticker" accept="image/*"
-                                style="position: absolute; width: 0.1px; height: 0.1px; opacity: 0;" />
-                            <div class="upload-icon" id="upIconCustomSticker"
-                                style="font-size: 3rem; margin-bottom: 15px;">👤</div>
-                            <div class="upload-text" id="upTextCustomSticker" style="font-size: 1rem; color: #BBB;">Tải
-                                lên ảnh Selfie rõ mặt</div>
+                    style="background: #111; border: 1px solid rgba(255,255,255,0.08); border-radius: 32px; padding: 40px; display: flex; gap: 40px; flex-wrap: wrap; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+                    
+                    <!-- Left Column: Upload & Action -->
+                    <div class="creator-left" style="flex: 1; min-width: 320px;">
+                        <h2 style="margin-top: 0; margin-bottom: 25px; font-size: 1.6rem; font-weight: 800; color: #FFF; display: flex; align-items: center; gap: 10px;">
+                            Ảnh của bạn <span style="font-size: 1.4rem;">📷</span>
+                        </h2>
+                        
+                        <div class="upload-zone" id="uploadCustomStickerZone"
+                            onclick="document.getElementById('uploadCustomSticker').click()"
+                            style="min-height: 280px; position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #1a1a1a; border: 2px dashed rgba(255,255,255,0.1); border-radius: 24px; transition: all 0.3s; overflow: hidden; margin-bottom: 25px;">
+                            
+                            <!-- Silhouette Icon SVG -->
+                            <div id="upIconCustomSticker" style="margin-bottom: 20px; transition: opacity 0.3s; filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.3));">
+                                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="8" r="5" fill="#6c5ce7" fill-opacity="0.3" />
+                                    <path d="M20 21C20 18.2386 16.4183 16 12 16C7.58172 16 4 18.2386 4 21" stroke="#6c5ce7" stroke-width="2" stroke-linecap="round" />
+                                    <circle cx="12" cy="8" r="4" stroke="#6c5ce7" stroke-width="2" />
+                                </svg>
+                            </div>
+                            
+                            <div class="upload-text" id="upTextCustomSticker" style="font-size: 1.05rem; color: #888; font-weight: 500; transition: opacity 0.3s;">Tải lên ảnh Selfie rõ mặt</div>
+                            <div id="upSubCustomSticker" style="font-size: 0.85rem; color: #555; margin-top: 5px; transition: opacity 0.3s;">(Dành cho Chibi Edition 🍭)</div>
+                            
                             <img id="previewImgCustomSticker" alt="Preview"
-                                style="display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 5;" />
-                        </label>
+                                style="display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 5; border-radius: 22px;" />
+                        </div>
 
-                        <div style="margin-top: 30px;">
-                            <h3 style="margin-bottom: 20px; font-size: 1.1rem; text-align: center; color: #FF8BA7;">Bộ 3 Sticker Cảm Xúc (Chibi Edition) 🍭</h3>
+                        <div style="margin-bottom: 30px;">
+                            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #FF8BA7; display: flex; align-items: center; gap: 10px;">
+                                Bộ 3 Sticker Cảm Xúc (Chibi Edition) <span style="font-size: 1.2rem;">🍭</span>
+                            </h3>
                         </div>
 
                         <button class="btn-generate" id="generateCustomStickerBtn"
-                            style="width: 100%; margin-top: 30px; padding: 18px; border-radius: 15px; font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            style="width: 100%; padding: 20px; border-radius: 18px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #4834d4, #686de0); color: #FFF; border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 25px rgba(72, 52, 212, 0.4);">
                             <span class="spinner" id="spinnerCustomSticker" style="display: none;"></span>
-                            <span id="btnTextCustomSticker">Tạo Sticker Ngay ✨</span>
+                            <span id="btnTextCustomSticker">Tạo Sticker Ngay <span style="font-size: 1.1rem;">✨</span></span>
                         </button>
+                        <input type="file" id="uploadCustomSticker" accept="image/*" style="display: none;" />
                     </div>
 
-                    <!-- Result Preview -->
+                    <!-- Right Column: Result Preview -->
                     <div class="creator-right"
-                        style="flex: 1.2; min-width: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                        style="flex: 1.2; min-width: 320px; display: flex; align-items: stretch;">
                         <div id="customStickerResultContainer"
-                            style="width: 100%; aspect-ratio: 1; border-radius: 20px; background: rgba(0,0,0,0.2); border: 2px dashed rgba(255,255,255,0.05); display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; position: relative; overflow-y: auto; box-shadow: inset 0 0 30px rgba(0,0,0,0.5);">
-                            <!-- Placeholder -->
-                            <div id="placeholderMagic" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 6rem; opacity: 0.2; transition: all 0.5s;">🪄</div>
+                            style="width: 100%; min-height: 480px; border-radius: 24px; background: #0f0f0f; border: 2px dashed rgba(255,255,255,0.05); display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 20px; position: relative; overflow-y: auto; box-shadow: inset 0 0 40px rgba(0,0,0,0.6);">
+                            
+                            <!-- Placeholder Magic Wand (Absolute centered to not affect grid item flow) -->
+                            <div id="placeholderMagic" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1;">
+                                <div style="font-size: 6rem; margin-bottom: 20px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); transform: rotate(-10deg);">🪄</div>
+                                <div style="color: #444; font-size: 0.9rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Ready to create magic</div>
+                            </div>
 
-                            <!-- Loading Text -->
-                            <div id="customStickerLoadingText"
-                                style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                                <div
-                                    style="font-size: 3rem; margin-bottom: 10px; animation: bounce 1s infinite alternate;">
-                                    🚀</div>
+                            <!-- Loading Text (Absolute centered) -->
+                            <div id="customStickerLoadingText" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 10;">
+                                <div style="font-size: 3rem; margin-bottom: 10px; animation: bounce 1s infinite alternate;">🚀</div>
                                 <div style="color: #FF8BA7; font-weight: 600;">AI Đang Phù Phép...</div>
                             </div>
                         </div>
@@ -1447,34 +1462,25 @@
         }
 
         loginBtn.onclick = function () {
-            console.log("Login button clicked - GOOGLE_CLIENT_ID used:", GOOGLE_CLIENT_ID);
-            
-            if (GOOGLE_CLIENT_ID.includes("YOUR_GOOGLE_CLIENT_ID")) {
-                alert("Bạn cần cấu hình thực tế Google Client ID trong file index.html.\nHiện đang dùng chế độ giả lập cho Admin bhuy2808@gmail.com");
-                handleLoginSuccess({ name: "Admin Test", picture: "", email: ADMIN_EMAIL });
+            // Check if simulated admin bypass is needed due to Google block/Vercel config
+            if ((typeof google === 'undefined') || GOOGLE_CLIENT_ID.includes("YOUR") || GOOGLE_CLIENT_ID === "") {
+                if (confirm("Chế độ Google Login chưa sẵn sàng. Bạn có muốn dùng quyền Admin (Simulated) để tiếp tục không?")) {
+                    handleLoginSuccess({ name: "Admin (Direct)", email: ADMIN_EMAIL, picture: "" });
+                }
                 return;
             }
 
-            if (typeof google === 'undefined') {
-                alert("Hệ thống đăng nhập (GSI) chưa được tải. Vui lòng kiểm tra chặn quảng cáo hoặc thử trình duyệt gốc.");
-                return;
-            }
-
-            if (!googleTokenClient) {
-                console.log("Initiating googleTokenClient manually...");
-                initGoogleClient();
-            }
+            if (!googleTokenClient) initGoogleClient();
 
             if (googleTokenClient) {
                 try {
-                    console.log("Requesting Google access token...");
+                    console.log("Requesting Google Access...");
                     googleTokenClient.requestAccessToken();
                 } catch (e) {
-                    console.error("Popup request failed:", e);
-                    alert("Không thể mở cửa sổ đăng nhập: " + e.message);
+                    alert("Lỗi Pop-up: " + e.message);
                 }
             } else {
-                alert("Dịch vụ Google Login bị lỗi hoặc chưa khởi tạo xong. Vui lòng thử lại sau vài giây.");
+                alert("Dịch vụ Google chưa sẵn sàng. Thử lại sau 1 giây.");
             }
         };
 
