@@ -631,83 +631,22 @@
 
 
 
-        <!-- Product Interaction Area -->
-        <section class="photoai-app-area">
+        <!-- Product Interaction Area (Hidden for redesign) -->
+        <section class="photoai-app-area" style="display: none;">
             <h2 style="text-align: center; font-size: 2.2rem; margin-top: 0; margin-bottom: 30px;">Studio AI của bạn 🎨
             </h2>
             <div class="app-container">
-                <!-- Header Tabs -->
-                <div class="bento-box bento-header photoai-tabs">
+                <!-- Header -->
+                <div class="bento-box bento-header photoai-tabs" style="display: none;">
                     <div class="tab-nav photoai-tab-nav">
-                        <button class="tab-btn" id="tabSticker">✨ Tạo Sticker Magic</button>
-                        <button class="tab-btn" id="tabIdol">📸 Cùng Idol</button>
+                        <button class="tab-btn active" id="tabIdol">📸 Cùng Idol</button>
                     </div>
                 </div>
 
-                <!-- View: Tạo Sticker Magic -->
-                <div id="viewSticker" style="display: none;">
-                    <div class="bento-box bento-upload"
-                        style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05);">
-                        <h3>Chọn Ảnh Gốc Mẫu 🖼️</h3>
-                        <label class="upload-zone">
-                            <input type="file" id="upload" accept="image/*" />
-                            <div class="upload-icon" id="upIcon">📸</div>
-                            <div class="upload-text" id="upText">Kéo thả hoặc Nhấn để tải ảnh</div>
-                            <div class="upload-sub" id="upSub">Hỗ trợ JPG, PNG (Max 5MB)</div>
-                            <img id="previewImg" alt="Preview" />
-                        </label>
-                    </div>
-
-                    <div class="bento-box bento-style"
-                        style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05); margin-top: 20px;">
-                        <h3>Chọn Phép Thuật Biến Hình ✨</h3>
-                        <div class="style-grid">
-                            <div class="style-card active" data-style="anime">
-                                <div class="style-icon">🌸</div>
-                                <div class="style-name">Anime</div>
-                                <div class="style-desc">3D Anime cao cấp</div>
-                            </div>
-                            <div class="style-card" data-style="chibi">
-                                <div class="style-icon">🍡</div>
-                                <div class="style-name">Chibi</div>
-                                <div class="style-desc">Dễ thương, đầu to</div>
-                            </div>
-                            <div class="style-card" data-style="cyberpunk">
-                                <div class="style-icon">⚡</div>
-                                <div class="style-name">Cyberpunk</div>
-                                <div class="style-desc">Neon tương lai</div>
-                            </div>
-                            <div class="style-card" data-style="kawaii">
-                                <div class="style-icon">🍬</div>
-                                <div class="style-name">Kawaii</div>
-                                <div class="style-desc">Ngọt ngào, bồng bềnh</div>
-                            </div>
-                            <div class="style-card" data-style="monster">
-                                <div class="style-icon">👾</div>
-                                <div class="style-name">Monster</div>
-                                <div class="style-desc">Quái vật tí hon</div>
-                            </div>
-                        </div>
-
-
-                    </div>
-
-                    <div class="action-row">
-                        <button class="btn-generate" id="processBtn">
-                            <span class="spinner" id="spinner"></span>
-                            <span id="btnText">Bắt đầu hóa phép 🪄</span>
-                        </button>
-                    </div>
-
-                    <div class="bento-box bento-result" id="resultBento"
-                        style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05); margin-top: 20px;">
-                        <h3>Tadaaa! Của bạn đây 💖</h3>
-                        <div class="result-wrapper" id="resultGrid"></div>
-                    </div>
-                </div>
+                <!-- View: Tạo Sticker Magic (Deleted for Redesign) -->
 
                 <!-- View: Sống cùng Người Nổi Tiếng -->
-                <div id="viewIdol" style="display: none;">
+                <div id="viewIdol" style="display: block;">
                     <div class="bento-box bento-upload"
                         style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05);">
                         <h3>Khuôn mặt của bạn 🙎‍♂️</h3>
@@ -818,6 +757,88 @@
             </div>
         </section>
 
+        <!-- Sticker Creator Box Section -->
+        <section class="photoai-sticker-creator" id="stickerCreatorSection"
+            style="padding: 100px 20px; background: #0d0d0d; border-top: 1px solid rgba(255,255,255,0.05);">
+            <div class="container" style="max-width: 900px;">
+                <h2 class="creator-title"
+                    style="font-size: 2.8rem; font-weight: 800; text-align: center; margin-bottom: 50px; background: linear-gradient(90deg, #FF8BA7, #FFC2C7); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    Tạo Sticker 🎨</h2>
+
+                <div class="creator-card"
+                    style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 32px; padding: 40px; display: flex; gap: 40px; flex-wrap: wrap; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+                    <!-- Upload & Inputs -->
+                    <div class="creator-left" style="flex: 1; min-width: 300px;">
+                        <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 1.3rem;">Ảnh của bạn 📸</h3>
+                        <label class="upload-zone"
+                            style="min-height: 250px; position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.1); border-radius: 20px; transition: all 0.3s; overflow: hidden;">
+                            <input type="file" id="uploadCustomSticker" accept="image/*"
+                                style="position: absolute; width: 0.1px; height: 0.1px; opacity: 0;" />
+                            <div class="upload-icon" id="upIconCustomSticker"
+                                style="font-size: 3rem; margin-bottom: 15px;">👤</div>
+                            <div class="upload-text" id="upTextCustomSticker" style="font-size: 1rem; color: #BBB;">Tải
+                                lên ảnh Selfie rõ mặt</div>
+                            <img id="previewImgCustomSticker" alt="Preview"
+                                style="display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 5;" />
+                        </label>
+
+                        <div style="margin-top: 30px;">
+                            <h3 style="margin-bottom: 20px; font-size: 1.1rem; text-align: center; color: #FF8BA7;">Bộ 9 Sticker Cảm Xúc (Chibi Edition) 🍭</h3>
+                            <p style="color: #888; text-align: center; font-size: 0.9rem; margin-bottom: 30px;">AI sẽ tự động tạo đủ bộ 9 biểu cảm khác nhau chỉ với 1 ảnh chân dung của bạn.</p>
+                        </div>
+
+                        <button class="btn-generate" id="generateCustomStickerBtn"
+                            style="width: 100%; margin-top: 30px; padding: 18px; border-radius: 15px; font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <span class="spinner" id="spinnerCustomSticker" style="display: none;"></span>
+                            <span id="btnTextCustomSticker">Tạo Sticker Ngay ✨</span>
+                        </button>
+                    </div>
+
+                    <!-- Result Preview -->
+                    <div class="creator-right"
+                        style="flex: 1.2; min-width: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                        <div id="customStickerResultContainer"
+                            style="width: 100%; aspect-ratio: 1; border-radius: 20px; background: rgba(0,0,0,0.2); border: 2px dashed rgba(255,255,255,0.05); display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; position: relative; overflow-y: auto; box-shadow: inset 0 0 30px rgba(0,0,0,0.5);">
+                            <!-- Placeholder -->
+                            <div id="placeholderMagic" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 6rem; opacity: 0.2; transition: all 0.5s;">🪄</div>
+
+                            <!-- Loading Text -->
+                            <div id="customStickerLoadingText"
+                                style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                                <div
+                                    style="font-size: 3rem; margin-bottom: 10px; animation: bounce 1s infinite alternate;">
+                                    🚀</div>
+                                <div style="color: #FF8BA7; font-weight: 600;">AI Đang Phù Phép...</div>
+                            </div>
+                        </div>
+
+                        <div id="customStickerActions" style="display: none; margin-top: 25px; width: 100%; gap: 15px;">
+                            <button class="btn-magic" id="downloadCustomStickerBtn"
+                                style="flex: 1; padding: 12px; border-radius: 12px; font-size: 0.95rem; font-weight: 700; background: transparent; border: 2px solid #FF8BA7; color: #FF8BA7;">Tải
+                                Sticker 📥</button>
+                            <button class="btn-magic" id="shareCustomStickerBtn"
+                                style="flex: 1; padding: 12px; border-radius: 12px; font-size: 0.95rem; font-weight: 700; background: transparent; border: 2px solid #A3D9A5; color: #A3D9A5;">Chia
+                                sẻ ↗️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <style>
+            @keyframes bounce {
+                from {
+                    transform: translate(-50%, -40%);
+                    opacity: 0.8;
+                }
+
+                to {
+                    transform: translate(-50%, -60%);
+                    opacity: 1;
+                }
+            }
+        </style>
+
         <!-- Testimonials Section -->
         <section class="photoai-testimonials">
             <h2>Báo chí nói gì về Sticker AI™</h2>
@@ -853,35 +874,12 @@
 
     <!-- SCRIPT (Reusing the EXACT SAME logic as original index.html) -->
     <script>
-        // TABS LOGIC
-        const tabSticker = document.getElementById("tabSticker");
+        // Simplified Logic as Sticker is removed
         const tabIdol = document.getElementById("tabIdol");
-        const viewSticker = document.getElementById("viewSticker");
         const viewIdol = document.getElementById("viewIdol");
 
-        tabSticker.addEventListener("click", () => {
-            if (tabSticker.classList.contains("active")) {
-                tabSticker.classList.remove("active");
-                viewSticker.style.display = "none";
-                return;
-            }
-            tabSticker.classList.add("active");
-            tabIdol.classList.remove("active");
-            viewSticker.style.display = "contents";
-            viewIdol.style.display = "none";
-        });
-
-        tabIdol.addEventListener("click", () => {
-            if (tabIdol.classList.contains("active")) {
-                tabIdol.classList.remove("active");
-                viewIdol.style.display = "none";
-                return;
-            }
-            tabIdol.classList.add("active");
-            tabSticker.classList.remove("active");
-            viewSticker.style.display = "none";
-            viewIdol.style.display = "contents";
-        });
+        if (tabIdol) tabIdol.classList.add("active");
+        if (viewIdol) viewIdol.style.display = "block";
 
         const upload = document.getElementById("upload");
         const previewImg = document.getElementById("previewImg");
@@ -1179,7 +1177,7 @@
 
                 // Style prompt - ĐẠI TU TOÀN DIỆN 5 phong cách chuẩn SHOWCASE 3D/CGI cao cấp nhất
                 let stickerStylePrompt = "premium 3D anime AI character, high-quality CGI, octane render, beautiful studio lighting, soft shadows, expressive features, matching hairstyle and face from input, die-cut sticker, thick white border, 8k resolution, professional 3D art, transparent background";
-                
+
                 if (styleName === "cyberpunk") stickerStylePrompt = "high-end 3D cyberpunk character, futuristic sci-fi aesthetic, Unreal Engine 5 cinematic render, neon glow effects, premium metallic textures, synthwave lighting, matching facial features, die-cut sticker, white border, sharp professional 3D render, transparent background";
                 if (styleName === "kawaii") stickerStylePrompt = "adorable premium 3D kawaii character, soft Pixar-inspired aesthetic, cute big glossy eyes, pastel 3D materials, Disney animation style, matching face and features, die-cut sticker, white border, ultra-smooth 3D render, transparent background";
                 if (styleName === "monster") stickerStylePrompt = "expressive premium 3D monster character, Illumination animation style, vibrant colorful textures, playful creature design, cinematic lighting, 3D character art, matching input face, die-cut sticker, white border, high-quality CGI render, transparent background";
@@ -1196,9 +1194,9 @@
                 // Resize ảnh xuống max 512px + JPEG 60% → < 500KB (tránh 422 Replicate)
                 function getResizedBase64(file, maxSize) {
                     maxSize = maxSize || 512;
-                    return new Promise(function(resolve, reject) {
+                    return new Promise(function (resolve, reject) {
                         var img = new Image();
-                        img.onload = function() {
+                        img.onload = function () {
                             var w = img.width, h = img.height;
                             if (w > maxSize || h > maxSize) {
                                 if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
@@ -1222,7 +1220,7 @@
 
                 async function generateStickerFromAI(emotionIdx) {
                     var fullPrompt = stickerStylePrompt + ", " + emotionStickerPrompts[emotionIdx];
-                    
+
                     if (!cachedBase64) {
                         cachedBase64 = await getResizedBase64(uploadedFile);
                         console.log('Resized image base64 length:', cachedBase64.length);
@@ -1245,7 +1243,7 @@
                         try {
                             var errJson = JSON.parse(errText);
                             errMsg = errJson.message || errJson.name || errMsg;
-                        } catch(e) { errMsg = "Error " + response.status + ": " + errText.substring(0, 50); }
+                        } catch (e) { errMsg = "Error " + response.status + ": " + errText.substring(0, 50); }
                         throw new Error(errMsg);
                     }
 
@@ -1465,6 +1463,181 @@
             resultBento.style.display = "none";
             resultGrid.innerHTML = "";
             resultBentoIdol.style.display = "none";
+        };
+
+        // --- Custom Sticker Creator Logic ---
+        const uploadCustomSticker = document.getElementById("uploadCustomSticker");
+        const previewImgCustomSticker = document.getElementById("previewImgCustomSticker");
+        const generateCustomStickerBtn = document.getElementById("generateCustomStickerBtn");
+        const customStickerResultContainer = document.getElementById("customStickerResultContainer");
+        const customStickerLoadingText = document.getElementById("customStickerLoadingText");
+        const placeholderMagic = document.getElementById("placeholderMagic");
+        const customStickerActions = document.getElementById("customStickerActions");
+        const downloadCustomStickerBtn = document.getElementById("downloadCustomStickerBtn");
+
+        uploadCustomSticker.onchange = function () {
+            const file = this.files[0];
+            if (file) {
+                previewImgCustomSticker.src = URL.createObjectURL(file);
+                previewImgCustomSticker.style.display = "block";
+                document.getElementById("upIconCustomSticker").style.opacity = 0;
+                document.getElementById("upTextCustomSticker").style.opacity = 0;
+            }
+        };
+
+        generateCustomStickerBtn.onclick = async function () {
+            if (!uploadCustomSticker.files[0]) {
+                alert("Vui lòng tải lên ảnh của bạn trước nhé! 📸");
+                return;
+            }
+
+            const access = requireCredits('sticker');
+            if (!access.allowed) return;
+
+            // Loading state
+            generateCustomStickerBtn.disabled = true;
+            document.getElementById("spinnerCustomSticker").style.display = "inline-block";
+            document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 9 Sticker...";
+
+            placeholderMagic.style.opacity = "0";
+            customStickerLoadingText.style.display = "block";
+            customStickerActions.style.display = "none";
+            
+            // Clear previous results but keep placeholder if needed (hidden)
+            // We'll remove all and then add them back
+            const previousImages = customStickerResultContainer.querySelectorAll('.sticker-result-item');
+            previousImages.forEach(img => img.remove());
+
+            try {
+                const emotions = [
+                    { label: "Vui Vẻ", prompt: "happy, sparkling eyes, big smile, peace signs, 'YAY!!' text overlay" },
+                    { label: "Giận Dữ", prompt: "angry, flames behind, clenched fists, shouting, 'ANGRY!' text" },
+                    { label: "Buồn Bã", prompt: "sad, teary eyes, rain cloud above" },
+                    { label: "Ngạc Nhiên", prompt: "surprised, wide eyes, mouth open, exclamation marks" },
+                    { label: "Lo Lắng", prompt: "anxious, sweating, hands close to chest, shaking" },
+                    { label: "Xấu Hổ", prompt: "shy, blushing heavily, heart eyes or covering face" },
+                    { label: "Đang Yêu", prompt: "in love, eyes shaped like hearts, dreamy expression" },
+                    { label: "Bối Rối", prompt: "confused, sweat drops, question marks above head" },
+                    { label: "Chán Nản", prompt: "depressed, slouched posture, dark swirl above head" }
+                ];
+
+                const styleRequirements = "cute anime chibi, pastel color palette, glossy shading, consistent character identity, 4K resolution, big shiny eyes, rounded face, soft shading, glossy colors, clean outlines, thick white sticker border";
+
+                const uploadedFile = uploadCustomSticker.files[0];
+                const resizedBase64 = await getResizedBase64(uploadedFile);
+
+                for (let i = 0; i < 9; i++) {
+                    const emotion = emotions[i];
+                    
+                    // Create item container in grid
+                    const itemDiv = document.createElement("div");
+                    itemDiv.className = "sticker-result-item";
+                    itemDiv.style.position = "relative";
+                    itemDiv.style.width = "100%";
+                    itemDiv.style.aspectRatio = "1";
+                    itemDiv.style.background = "rgba(255,255,255,0.05)";
+                    itemDiv.style.borderRadius = "12px";
+                    itemDiv.style.overflow = "hidden";
+                    itemDiv.style.display = "flex";
+                    itemDiv.style.alignItems = "center";
+                    itemDiv.style.justifyContent = "center";
+                    
+                    const itemLoading = document.createElement("div");
+                    itemLoading.innerHTML = "⏳";
+                    itemLoading.style.fontSize = "1.5rem";
+                    itemDiv.appendChild(itemLoading);
+                    
+                    customStickerResultContainer.appendChild(itemDiv);
+                    
+                    // Scroll to see progress
+                    customStickerResultContainer.scrollTop = customStickerResultContainer.scrollHeight;
+
+                    try {
+                        const fullPrompt = `Create a premium high-quality anime chibi sticker of the person provided.
+Emotion: ${emotion.label} - ${emotion.prompt}.
+Requirements: The name '${emotion.label}' MUST be clearly written in a cute stylized banner or bubble at the bottom of the sticker.
+Keep the identity: face, hairstyle, skin tone.
+Style: ${styleRequirements}.
+Each sticker has a unique pose and background icon.
+Output: Square format, white sticker border, transparent background.`;
+
+                        const response = await fetch("/api/generate", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                imageBase64: resizedBase64,
+                                prompt: fullPrompt,
+                                negative_prompt: "photo, realistic, 3d render, grainy, messy outlines, shadow on background, blurry, low resolution, ugly, deformed features, extra limbs, watermark, text apart from label, out of frame",
+                                style: "chibi"
+                            })
+                        });
+
+                        if (!response.ok) throw new Error("API Error");
+
+                        const blob = await response.blob();
+                        const imgUrl = URL.createObjectURL(blob);
+
+                        itemLoading.remove();
+                        const img = document.createElement("img");
+                        img.src = imgUrl;
+                        img.style.width = "100%";
+                        img.style.height = "100%";
+                        img.style.objectFit = "contain";
+                        img.style.padding = "5px";
+                        img.title = emotion.label;
+                        
+                        // Download button on hover overlay
+                        const dlOverlay = document.createElement("div");
+                        dlOverlay.style.position = "absolute";
+                        dlOverlay.style.inset = "0";
+                        dlOverlay.style.background = "rgba(0,0,0,0.5)";
+                        dlOverlay.style.display = "none";
+                        dlOverlay.style.alignItems = "center";
+                        dlOverlay.style.justifyContent = "center";
+                        dlOverlay.innerHTML = "📥";
+                        dlOverlay.style.fontSize = "1.5rem";
+                        dlOverlay.style.cursor = "pointer";
+                        
+                        itemDiv.onmouseenter = () => dlOverlay.style.display = "flex";
+                        itemDiv.onmouseleave = () => dlOverlay.style.display = "none";
+                        dlOverlay.onclick = () => {
+                            const link = document.createElement('a');
+                            link.href = imgUrl;
+                            link.download = `sticker_${emotion.label}.png`;
+                            link.click();
+                        };
+
+                        itemDiv.appendChild(img);
+                        itemDiv.appendChild(dlOverlay);
+                    } catch (err) {
+                        itemLoading.innerHTML = "❌";
+                        console.error(err);
+                    }
+                    
+                    // Delay to avoid overwhelming the server
+                    if (i < 8) await new Promise(r => setTimeout(r, 1500));
+                }
+
+                customStickerLoadingText.style.display = "none";
+                customStickerActions.style.display = "flex";
+                
+                // Final download all logic? For now just manual
+                downloadCustomStickerBtn.onclick = () => {
+                    alert("Bạn có thể nhấn vào từng sticker trong lưới để tải về nhé! ✨");
+                };
+
+                if (access.useCredit) deductCredit();
+
+            } catch (err) {
+                console.error(err);
+                alert("Có lỗi xảy ra: " + err.message);
+                placeholderMagic.style.opacity = "0.2";
+                customStickerLoadingText.style.display = "none";
+            } finally {
+                generateCustomStickerBtn.disabled = false;
+                document.getElementById("spinnerCustomSticker").style.display = "none";
+                document.getElementById("btnTextCustomSticker").innerText = "Tạo Lại 9 Sticker ✨";
+            }
         };
 
     </script>
