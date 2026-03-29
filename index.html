@@ -1017,20 +1017,22 @@
             });
         });
 
-        upload.onchange = function () {
-            const file = this.files[0];
-            if (file) {
-                const url = URL.createObjectURL(file);
-                previewImg.src = url;
-                previewImg.style.opacity = "1";
-                upIcon.style.opacity = "0";
-                upText.style.opacity = "0";
-                upSub.style.opacity = "0";
-                processBtn.classList.add("ready");
-                resultBento.style.display = "none";
-                resultGrid.innerHTML = "";
-            }
-        };
+        if (upload) {
+            upload.onchange = function () {
+                const file = this.files[0];
+                if (file) {
+                    const url = URL.createObjectURL(file);
+                    previewImg.src = url;
+                    previewImg.style.opacity = "1";
+                    upIcon.style.opacity = "0";
+                    upText.style.opacity = "0";
+                    upSub.style.opacity = "0";
+                    processBtn.classList.add("ready");
+                    resultBento.style.display = "none";
+                    resultGrid.innerHTML = "";
+                }
+            };
+        }
 
         uploadIdol.onchange = function () {
             const file = this.files[0];
@@ -1165,10 +1167,11 @@
             });
         }
 
-        processBtn.onclick = async function () {
-            if (!upload.files[0]) return;
-            const access = requireCredits('sticker');
-            if (!access.allowed) return;
+        if (processBtn) {
+            processBtn.onclick = async function () {
+                if (!upload.files[0]) return;
+                const access = requireCredits('sticker');
+                if (!access.allowed) return;
 
             if (!access.useCredit && !isAdmin) {
                 let currentIp = localStorage.getItem("userIpHash") || "unknown_ip";
@@ -1371,6 +1374,7 @@
                 generateStickers();
             }, 1000); // 1s delay for transition effect
         };
+        }
 
         processBtnIdol.onclick = function () {
             if (!uploadIdol.files[0]) return;
