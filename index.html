@@ -810,7 +810,7 @@
 
                     <!-- Right Column: Result Preview -->
                     <div class="creator-right"
-                        style="flex: 1.2; min-width: 320px; display: flex; align-items: stretch;">
+                        style="flex: 1.2; min-width: 320px; display: flex; flex-direction: column; align-items: stretch;">
                         <div id="customStickerResultContainer"
                             style="width: 100%; min-height: 480px; border-radius: 24px; background: #0f0f0f; border: 2px dashed rgba(255,255,255,0.05); display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 20px; position: relative; overflow-y: auto; box-shadow: inset 0 0 40px rgba(0,0,0,0.6);">
                             
@@ -1565,18 +1565,18 @@
 
             try {
                 const emotions = [
-                    { label: "Vui Vẻ", prompt: "happy, sparkling eyes, big smile, peace signs, 'YAY!!' text overlay" },
-                    { label: "Giận Dữ", prompt: "angry, flames behind, clenched fists, shouting, 'ANGRY!' text" },
-                    { label: "Buồn Bã", prompt: "sad, teary eyes, rain cloud above" },
-                    { label: "Ngạc Nhiên", prompt: "surprised, wide eyes, mouth open, exclamation marks" },
-                    { label: "Lo Lắng", prompt: "anxious, sweating, hands close to chest, shaking" },
-                    { label: "Xấu Hổ", prompt: "shy, blushing heavily, heart eyes or covering face" },
-                    { label: "Đang Yêu", prompt: "in love, eyes shaped like hearts, dreamy expression" },
-                    { label: "Bối Rối", prompt: "confused, sweat drops, question marks above head" },
-                    { label: "Chán Nản", prompt: "depressed, slouched posture, dark swirl above head" }
+                    { label: "Vui Vẻ", prompt: "happy, excited, 'YAY!!', sparkling effects, hands doing peace sign" },
+                    { label: "Giận Dữ", prompt: "angry, fire behind head, clenched fists, intense eyes" },
+                    { label: "Buồn Bã", prompt: "sad, teary eyes, rain cloud above head" },
+                    { label: "Ngạc Nhiên", prompt: "surprised, wide eyes, '!?', hands near face" },
+                    { label: "Lo Lắng", prompt: "nervous, sweating, trembling hands" },
+                    { label: "Xấu Hổ", prompt: "blushing, hearts around, shy hands on cheeks" },
+                    { label: "Đang Yêu", prompt: "heart eyes, full of love, pink hearts exploding around" },
+                    { label: "Bối Rối", prompt: "confused, '??', sweat drops, hesitant expression" },
+                    { label: "Chán Nản", prompt: "disappointed, dark scribble cloud, tired sad eyes" }
                 ];
 
-                const styleRequirements = "cute anime chibi, pastel color palette, glossy shading, consistent character identity, 4K resolution, big shiny eyes, rounded face, soft shading, glossy colors, clean outlines, thick white sticker border";
+                const styleRequirements = "smooth anime, shiny big eyes, glossy shading, cute chibi proportions, clean white outline stroke, vibrant colors, emotion effects (hearts, flames, clouds...)";
 
                 const uploadedFile = uploadCustomSticker.files[0];
                 const resizedBase64 = await getResizedBase64(uploadedFile);
@@ -1617,13 +1617,13 @@
                     customStickerResultContainer.scrollTop = customStickerResultContainer.scrollHeight;
 
                     try {
-                        const fullPrompt = `Create a premium high-quality anime chibi sticker of the person provided.
-Emotion: ${emotion.label} - ${emotion.prompt}.
-Requirements: The name '${emotion.label}' MUST be clearly written in a cute stylized banner or bubble at the bottom of the sticker.
-Keep the identity: face, hairstyle, skin tone.
-Style: ${styleRequirements}.
-Each sticker has a unique pose and background icon.
-Output: Square format, white sticker border, transparent background.`;
+                        const fullPrompt = `Generate a single anime chibi sticker of the SAME person in the uploaded photo.
+Keep the facial structure, haircut, glasses, and key identifying features accurate.
+Style must match: ${styleRequirements}.
+Current Emotion: ${emotion.label} - ${emotion.prompt}.
+Requirement: The sticker must show this emotion and include a colored label saying '${emotion.label}' under the character.
+Make the image consistent in style, color tone, outline thickness, and proportions.
+Output: White background, high quality, cute chibi aesthetic.`;
 
                         const response = await fetch("/api/generate", {
                             method: "POST",
