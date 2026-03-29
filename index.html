@@ -1584,15 +1584,15 @@
 
             try {
                 const emotions = [
-                    { label: "Vui Vẻ", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Keep their real face, hairstyle, skin tone, glasses, and unique facial features so the likeness stays accurate. Convert them into a smooth, polished kawaii chibi with big glossy eyes, soft shading, and a clean white sticker border.\n\nEmotion: HAPPY — big smile, cheerful energy, both hands making peace signs, sparkles around the character. Bright, lively, cute expression." },
-                    { label: "Bối Rối", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Keep facial identity, hairstyle, and proportions consistent. Convert to glossy-eyed, smooth-shaded kawaii chibi style with a sticker outline.\n\nEmotion: CONFUSED — tilted head, worried eyebrows, small question marks around the head, one hand touching chin, slightly unsure expression." },
-                    { label: "Xấu Hổ", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Keep accurate facial features, hairstyle, and identity. Render in cute anime chibi style with glossy eyes and soft shadows.\n\nEmotion: SHY — blushing red cheeks, hands covering part of the face, hearts floating around, shy smile, embarrassed body language." },
-                    { label: "Giận Dữ", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Keep their real face, hairstyle, skin tone, glasses, and unique facial features. Transform them into a cute polished chibi with smooth outlines, soft shading, and a white sticker border.\n\nEmotion: ANGRY — clenched fists, eyebrows lowered, mouth open shouting, flames behind the character. Powerful and dramatic expression." },
-                    { label: "Khóc", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Preserve their real facial identity and hairstyle. Render in smooth kawaii chibi style with big glossy eyes and clean sticker outline.\n\nEmotion: SAD — teary eyes, slightly trembling hands held near chest, small rain cloud above, watery highlights under eyes. Soft, emotional mood." },
-                    { label: "Ngạc Nhiên", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Keep accurate face and hairstyle details. Draw in soft-shaded, glossy-eyed, cute chibi anime style with a clear white sticker border.\n\nEmotion: SURPRISED — wide-open eyes, mouth open in shock, hands raised near face, colorful exclamation marks floating around." },
-                    { label: "Lo Lắng", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Maintain real facial likeness and hairstyle. Create a smooth polished kawaii chibi look with soft shading and clean outlines.\n\nEmotion: WORRIED — anxious expression, eyebrows bent upward, hands close to chest, sweat drops around the head, small shaky lines near face." },
-                    { label: "Tình Cảm", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Preserve their recognizable face and hairstyle. Draw in polished chibi anime style with big sparkly eyes and smooth outlines.\n\nEmotion: IN LOVE — heart-shaped sparkling eyes, hands under chin, hearts surrounding the head, excited loving expression." },
-                    { label: "Chán Nản", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Keep their real face, hairstyle, and defining features. Render in clean polished chibi anime style.\n\nEmotion: DISAPPOINTED — tired eyes, slightly slouched posture, one hand supporting face, scribble cloud above the head, sad and drained expression." }
+                    { label: "Vui Vẻ", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Happy." },
+                    { label: "Cười To", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Laughing." },
+                    { label: "Xấu Hổ", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Embarrassed." },
+                    { label: "Giận Dữ", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Angry." },
+                    { label: "Khóc", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Crying." },
+                    { label: "Ngạc Nhiên", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Surprised." },
+                    { label: "Sốc", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Shock." },
+                    { label: "Dễ Thương", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Neutral Cute." },
+                    { label: "Buồn Ngủ", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Sleepy." }
                 ];
 
                 const uploadedFile = uploadCustomSticker.files[0];
@@ -1624,8 +1624,8 @@
                     itemDiv.style.justifyContent = "center";
 
                     const itemLoading = document.createElement("div");
-                    itemLoading.innerHTML = "⏳";
-                    itemLoading.style.fontSize = "1.5rem";
+                    itemLoading.innerHTML = "<span class='processing-text' style='color: #888; font-weight: 600;'>Loading...</span>";
+                    itemLoading.style.fontSize = "1rem";
                     itemDiv.appendChild(itemLoading);
 
                     customStickerResultContainer.appendChild(itemDiv);
