@@ -1565,18 +1565,16 @@
 
             try {
                 const emotions = [
-                    { label: "Vui Vẻ", prompt: "happy, excited, 'YAY!!', sparkling effects, hands doing peace sign" },
-                    { label: "Giận Dữ", prompt: "angry, fire behind head, clenched fists, intense eyes" },
-                    { label: "Buồn Bã", prompt: "sad, teary eyes, rain cloud above head" },
-                    { label: "Ngạc Nhiên", prompt: "surprised, wide eyes, '!?', hands near face" },
-                    { label: "Lo Lắng", prompt: "nervous, sweating, trembling hands" },
-                    { label: "Xấu Hổ", prompt: "blushing, hearts around, shy hands on cheeks" },
-                    { label: "Đang Yêu", prompt: "heart eyes, full of love, pink hearts exploding around" },
-                    { label: "Bối Rối", prompt: "confused, '??', sweat drops, hesitant expression" },
-                    { label: "Chán Nản", prompt: "disappointed, dark scribble cloud, tired sad eyes" }
+                    { label: "Vui Vẻ", prompt: "A chibi-style sticker of the boy from the uploaded photo. Keep his real face, glasses, hairstyle. Cute glowing outline. Expression: big smile, cheerful energy. Add small sparkles around him." },
+                    { label: "Cười To", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: laughing with eyes curved, mouth open happily. Add comic-style 'HAHA' effect or joy bubbles." },
+                    { label: "Xấu Hổ", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: shy, cheeks blushing red, eyes looking slightly down. Add small pink blush marks and soft outline." },
+                    { label: "Giận Dữ", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: angry, eyebrows slanted, mouth shouting. Add red flame or angry steam effect above head." },
+                    { label: "Khóc", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: crying with big teardrops, sad mouth. Add blue watery effect around him." },
+                    { label: "Ngạc Nhiên", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: wide-open eyes, open mouth. Add yellow shock lines around the head." },
+                    { label: "Ngầu", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: confident smirk. Add sunglasses effect sliding down or blue flame aura." },
+                    { label: "Tình Cảm", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: smiling softly. Add heart shapes floating around his head." },
+                    { label: "Buồn Ngủ", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: sleepy eyes half closed. Add 'Zzz' symbols and soft blue shading." }
                 ];
-
-                const styleRequirements = "smooth anime, shiny big eyes, glossy shading, cute chibi proportions, clean white outline stroke, vibrant colors, emotion effects (hearts, flames, clouds...)";
 
                 const uploadedFile = uploadCustomSticker.files[0];
                 const resizedBase64 = await getResizedBase64(uploadedFile);
@@ -1617,13 +1615,7 @@
                     customStickerResultContainer.scrollTop = customStickerResultContainer.scrollHeight;
 
                     try {
-                        const fullPrompt = `Generate a single anime chibi sticker of the SAME person in the uploaded photo.
-Keep the facial structure, haircut, glasses, and key identifying features accurate.
-Style must match: ${styleRequirements}.
-Current Emotion: ${emotion.label} - ${emotion.prompt}.
-Requirement: The sticker must show this emotion and include a colored label saying '${emotion.label}' under the character.
-Make the image consistent in style, color tone, outline thickness, and proportions.
-Output: White background, high quality, cute chibi aesthetic.`;
+                        const fullPrompt = `${emotion.prompt}\nOutput: White background, high quality.`;
 
                         const response = await fetch("/api/generate", {
                             method: "POST",
