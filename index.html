@@ -1616,7 +1616,7 @@
                     itemDiv.style.position = "relative";
                     itemDiv.style.width = "100%";
                     itemDiv.style.aspectRatio = "1";
-                    itemDiv.style.background = "rgba(255,255,255,0.05)";
+                    itemDiv.style.background = "#FFFFFF";
                     itemDiv.style.borderRadius = "12px";
                     itemDiv.style.overflow = "hidden";
                     itemDiv.style.display = "flex";
@@ -1634,7 +1634,7 @@
                     customStickerResultContainer.scrollTop = customStickerResultContainer.scrollHeight;
 
                     try {
-                        const fullPrompt = `${emotion.prompt}`;
+                        const fullPrompt = `${emotion.prompt}\n(IMPORTANT: Solid pure WHITE background. No dark backgrounds).`;
 
                         const response = await fetch("/api/generate", {
                             method: "POST",
@@ -1642,7 +1642,7 @@
                             body: JSON.stringify({
                                 imageBase64: resizedBase64,
                                 prompt: fullPrompt,
-                                negative_prompt: "photo, realistic, 3d render, grainy, messy outlines, shadow on background, blurry, low resolution, ugly, deformed features, extra limbs, watermark, text apart from label, out of frame",
+                                negative_prompt: "black background, dark background, photo, realistic, 3d render, grainy, messy outlines, shadow on background, blurry, low resolution, ugly, deformed features, extra limbs, watermark, text apart from label, out of frame",
                                 style: "chibi"
                             })
                         });
@@ -1658,7 +1658,9 @@
                         img.style.width = "100%";
                         img.style.height = "100%";
                         img.style.objectFit = "contain";
-                        img.style.padding = "5px";
+                        img.style.padding = "10px";
+                        img.style.filter = "drop-shadow(0 10px 20px rgba(0,0,0,0.3))";
+                        img.className = "sticker-img";
                         img.title = emotion.label;
 
                         // Download button on hover overlay
