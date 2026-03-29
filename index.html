@@ -650,7 +650,8 @@
                     <div class="bento-box bento-upload"
                         style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05);">
                         <h3>Khuôn mặt của bạn 🙎‍♂️</h3>
-                        <div class="upload-zone" onclick="document.getElementById('uploadIdol').click()" style="cursor: pointer; position: relative;">
+                        <div class="upload-zone" onclick="document.getElementById('uploadIdol').click()"
+                            style="cursor: pointer; position: relative;">
                             <div class="upload-icon" id="upIconIdol">📸</div>
                             <div class="upload-text" id="upTextIdol">Tải lên ảnh Selfie rõ mặt</div>
                             <div class="upload-sub" id="upSubIdol">Góc chụp thẳng là tốt nhất</div>
@@ -705,10 +706,11 @@
                         <h3 style="margin-top: 25px;">Hoặc tự tải ảnh người bạn muốn ghép <span
                                 class="tier-badge tier-vip" style="position: static; vertical-align: middle;">VIP</span>
                         </h3>
-                        <div class="upload-zone" onclick="document.getElementById('uploadCustomIdol').click()" 
+                        <div class="upload-zone" onclick="document.getElementById('uploadCustomIdol').click()"
                             style="min-height: 180px; cursor: pointer; position: relative; border: 2px dashed rgba(255,255,255,0.1); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div class="upload-icon" id="upIconCustomIdol" style="font-size: 2rem;">👤</div>
-                            <div class="upload-text" id="upTextCustomIdol" style="font-size: 1rem;">Tải ảnh tùy chọn lên đây</div>
+                            <div class="upload-text" id="upTextCustomIdol" style="font-size: 1rem;">Tải ảnh tùy chọn lên
+                                đây</div>
                             <img id="previewImgCustomIdol" alt="Preview"
                                 style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 18px; position: absolute; z-index: 5; pointer-events: none;" />
                         </div>
@@ -761,41 +763,49 @@
         <section class="photoai-sticker-creator" id="stickerCreatorSection"
             style="padding: 100px 20px; background: #0d0d0d; border-top: 1px solid rgba(255,255,255,0.05);">
             <div class="container" style="max-width: 900px;">
-                <h2 class="creator-title"
-                    style="display: none;">
+                <h2 class="creator-title" style="display: none;">
                     Tạo Sticker 🎨</h2>
 
                 <div class="creator-card"
                     style="background: #111; border: 1px solid rgba(255,255,255,0.08); border-radius: 32px; padding: 40px; display: flex; gap: 40px; flex-wrap: wrap; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-                    
+
                     <!-- Left Column: Upload & Action -->
                     <div class="creator-left" style="flex: 1; min-width: 320px;">
-                        <h2 style="margin-top: 0; margin-bottom: 25px; font-size: 1.6rem; font-weight: 800; color: #FFF; display: flex; align-items: center; gap: 10px;">
+                        <h2
+                            style="margin-top: 0; margin-bottom: 25px; font-size: 1.6rem; font-weight: 800; color: #FFF; display: flex; align-items: center; gap: 10px;">
                             Ảnh của bạn <span style="font-size: 1.4rem;">📷</span>
                         </h2>
-                        
+
                         <div class="upload-zone" id="uploadCustomStickerZone"
                             onclick="document.getElementById('uploadCustomSticker').click()"
                             style="min-height: 280px; position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #1a1a1a; border: 2px dashed rgba(255,255,255,0.1); border-radius: 24px; transition: all 0.3s; overflow: hidden; margin-bottom: 25px;">
-                            
+
                             <!-- Silhouette Icon SVG -->
-                            <div id="upIconCustomSticker" style="margin-bottom: 20px; transition: opacity 0.3s; filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.3));">
-                                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <div id="upIconCustomSticker"
+                                style="margin-bottom: 20px; transition: opacity 0.3s; filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.3));">
+                                <svg width="80" height="80" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="12" cy="8" r="5" fill="#6c5ce7" fill-opacity="0.3" />
-                                    <path d="M20 21C20 18.2386 16.4183 16 12 16C7.58172 16 4 18.2386 4 21" stroke="#6c5ce7" stroke-width="2" stroke-linecap="round" />
+                                    <path d="M20 21C20 18.2386 16.4183 16 12 16C7.58172 16 4 18.2386 4 21"
+                                        stroke="#6c5ce7" stroke-width="2" stroke-linecap="round" />
                                     <circle cx="12" cy="8" r="4" stroke="#6c5ce7" stroke-width="2" />
                                 </svg>
                             </div>
-                            
-                            <div class="upload-text" id="upTextCustomSticker" style="font-size: 1.05rem; color: #888; font-weight: 500; transition: opacity 0.3s;">Tải lên ảnh Selfie rõ mặt</div>
-                            <div id="upSubCustomSticker" style="font-size: 0.85rem; color: #555; margin-top: 5px; transition: opacity 0.3s;">(Dành cho Chibi Edition 🍭)</div>
-                            
+
+                            <div class="upload-text" id="upTextCustomSticker"
+                                style="font-size: 1.05rem; color: #888; font-weight: 500; transition: opacity 0.3s;">Tải
+                                lên ảnh Selfie rõ mặt</div>
+                            <div id="upSubCustomSticker"
+                                style="font-size: 0.85rem; color: #555; margin-top: 5px; transition: opacity 0.3s;">
+                                (Dành cho Chibi Edition 🍭)</div>
+
                             <img id="previewImgCustomSticker" alt="Preview"
                                 style="display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 5; border-radius: 22px;" />
                         </div>
 
                         <div style="margin-bottom: 30px;">
-                            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #FF8BA7; display: flex; align-items: center; gap: 10px;">
+                            <h3
+                                style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #FF8BA7; display: flex; align-items: center; gap: 10px;">
                                 Bộ 3 Sticker Cảm Xúc (Chibi Edition) <span style="font-size: 1.2rem;">🍭</span>
                             </h3>
                         </div>
@@ -803,7 +813,8 @@
                         <button class="btn-generate" id="generateCustomStickerBtn"
                             style="width: 100%; padding: 20px; border-radius: 18px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #4834d4, #686de0); color: #FFF; border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 25px rgba(72, 52, 212, 0.4);">
                             <span class="spinner" id="spinnerCustomSticker" style="display: none;"></span>
-                            <span id="btnTextCustomSticker">Tạo Sticker Ngay <span style="font-size: 1.1rem;">✨</span></span>
+                            <span id="btnTextCustomSticker">Tạo Sticker Ngay <span
+                                    style="font-size: 1.1rem;">✨</span></span>
                         </button>
                         <input type="file" id="uploadCustomSticker" accept="image/*" style="display: none;" />
                     </div>
@@ -813,16 +824,24 @@
                         style="flex: 1.2; min-width: 320px; display: flex; flex-direction: column; align-items: stretch;">
                         <div id="customStickerResultContainer"
                             style="width: 100%; min-height: 480px; border-radius: 24px; background: #0f0f0f; border: 2px dashed rgba(255,255,255,0.05); display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 20px; position: relative; overflow-y: auto; box-shadow: inset 0 0 40px rgba(0,0,0,0.6);">
-                            
+
                             <!-- Placeholder Magic Wand (Absolute centered to not affect grid item flow) -->
-                            <div id="placeholderMagic" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1;">
-                                <div style="font-size: 6rem; margin-bottom: 20px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); transform: rotate(-10deg);">🪄</div>
-                                <div style="color: #444; font-size: 0.9rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Ready to create magic</div>
+                            <div id="placeholderMagic"
+                                style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1;">
+                                <div
+                                    style="font-size: 6rem; margin-bottom: 20px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); transform: rotate(-10deg);">
+                                    🪄</div>
+                                <div
+                                    style="color: #444; font-size: 0.9rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">
+                                    Ready to create magic</div>
                             </div>
 
                             <!-- Loading Text (Absolute centered) -->
-                            <div id="customStickerLoadingText" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 10;">
-                                <div style="font-size: 3rem; margin-bottom: 10px; animation: bounce 1s infinite alternate;">🚀</div>
+                            <div id="customStickerLoadingText"
+                                style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 10;">
+                                <div
+                                    style="font-size: 3rem; margin-bottom: 10px; animation: bounce 1s infinite alternate;">
+                                    🚀</div>
                                 <div style="color: #FF8BA7; font-weight: 600;">AI Đang Phù Phép...</div>
                             </div>
                         </div>
@@ -1173,207 +1192,207 @@
                 const access = requireCredits('sticker');
                 if (!access.allowed) return;
 
-            if (!access.useCredit && !isAdmin) {
-                let currentIp = localStorage.getItem("userIpHash") || "unknown_ip";
-                let ipUsageCount = parseInt(localStorage.getItem("free_usage_" + currentIp)) || 0;
-                localStorage.setItem("free_usage_" + currentIp, ipUsageCount + 1);
-            }
+                if (!access.useCredit && !isAdmin) {
+                    let currentIp = localStorage.getItem("userIpHash") || "unknown_ip";
+                    let ipUsageCount = parseInt(localStorage.getItem("free_usage_" + currentIp)) || 0;
+                    localStorage.setItem("free_usage_" + currentIp, ipUsageCount + 1);
+                }
 
-            processBtn.style.pointerEvents = "none";
-            spinner.style.display = "inline-block";
-            btnText.innerHTML = '<span class="processing-text">✨ Loading...</span>';
+                processBtn.style.pointerEvents = "none";
+                spinner.style.display = "inline-block";
+                btnText.innerHTML = '<span class="processing-text">✨ Loading...</span>';
 
-            resultBento.style.display = "flex";
-            resultGrid.innerHTML = `
+                resultBento.style.display = "flex";
+                resultGrid.innerHTML = `
                 <div style="width: 100%; text-align: center; padding: 20px;">
                     <div class="processing-text" style="font-size: 2.5rem; letter-spacing: 15px;">🚀🪄🎨</div>
                 </div>
             `;
-            resultBento.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                resultBento.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-            setTimeout(() => {
-                processBtn.style.pointerEvents = "auto";
-                spinner.style.display = "none";
-                btnText.innerText = "Tạo Lại Cảm Xúc (Re-roll) 🎲";
-                resultGrid.innerHTML = "";
+                setTimeout(() => {
+                    processBtn.style.pointerEvents = "auto";
+                    spinner.style.display = "none";
+                    btnText.innerText = "Tạo Lại Cảm Xúc (Re-roll) 🎲";
+                    resultGrid.innerHTML = "";
 
-                if (access.useCredit) deductCredit();
+                    if (access.useCredit) deductCredit();
 
-                const emotionsList = ["Vui vẻ", "Mừng rỡ", "Giận dữ", "Buồn bã", "Ngạc nhiên", "Cười lớn", "Showcase (3D Chibi)", "Showcase (Smooth Anime)"];
-                const activeCard = document.querySelector("#viewSticker .style-card.active");
-                const styleName = activeCard ? activeCard.getAttribute("data-style") : "anime";
+                    const emotionsList = ["Vui vẻ", "Mừng rỡ", "Giận dữ", "Buồn bã", "Ngạc nhiên", "Cười lớn", "Showcase (3D Chibi)", "Showcase (Smooth Anime)"];
+                    const activeCard = document.querySelector("#viewSticker .style-card.active");
+                    const styleName = activeCard ? activeCard.getAttribute("data-style") : "anime";
 
-                // === REPLICATE face-to-sticker (InstantID + IP Adapter) ===
-                const uploadedFile = upload.files[0];
+                    // === REPLICATE face-to-sticker (InstantID + IP Adapter) ===
+                    const uploadedFile = upload.files[0];
 
-                // 8 prompt cảm xúc + Mix phong cách Showcase (Đặc biệt để giống mẫu bạn gửi)
-                const emotionStickerPrompts = [
-                    "happy smiling person, joyful expression, sparkling eyes, premium 3D art",
-                    "excited celebrating person, party mood, cheerful, premium 3D art",
-                    "angry furious person, intense fierce expression, premium 3D art",
-                    "sad melancholy person, teary eyes, sorrowful, premium 3D art",
-                    "surprised shocked person, wide open mouth, amazed, premium 3D art",
-                    "laughing person, tears of joy, very happy, premium 3D art",
-                    "premium 3D chibi AI character, high-quality digital art, adorable big glossy eyes, soft 3D shading, toy-like aesthetic, cute proportions, smooth surfaces, matching hairstyle and features from input", // Slot 7: Chibi AI Showcase
-                    "smooth 3D anime style, polished skin, big expressive eyes, high-end toy aesthetic, professional CGI render, premium character design" // Slot 8: Smooth Anime Showcase
-                ];
+                    // 8 prompt cảm xúc + Mix phong cách Showcase (Đặc biệt để giống mẫu bạn gửi)
+                    const emotionStickerPrompts = [
+                        "happy smiling person, joyful expression, sparkling eyes, premium 3D art",
+                        "excited celebrating person, party mood, cheerful, premium 3D art",
+                        "angry furious person, intense fierce expression, premium 3D art",
+                        "sad melancholy person, teary eyes, sorrowful, premium 3D art",
+                        "surprised shocked person, wide open mouth, amazed, premium 3D art",
+                        "laughing person, tears of joy, very happy, premium 3D art",
+                        "premium 3D chibi AI character, high-quality digital art, adorable big glossy eyes, soft 3D shading, toy-like aesthetic, cute proportions, smooth surfaces, matching hairstyle and features from input", // Slot 7: Chibi AI Showcase
+                        "smooth 3D anime style, polished skin, big expressive eyes, high-end toy aesthetic, professional CGI render, premium character design" // Slot 8: Smooth Anime Showcase
+                    ];
 
-                // Style prompt - ĐẠI TU TOÀN DIỆN 5 phong cách chuẩn SHOWCASE 3D/CGI cao cấp nhất
-                let stickerStylePrompt = "premium 3D anime AI character, high-quality CGI, octane render, beautiful studio lighting, soft shadows, expressive features, matching hairstyle and face from input, die-cut sticker, thick white border, 8k resolution, professional 3D art, transparent background";
+                    // Style prompt - ĐẠI TU TOÀN DIỆN 5 phong cách chuẩn SHOWCASE 3D/CGI cao cấp nhất
+                    let stickerStylePrompt = "premium 3D anime AI character, high-quality CGI, octane render, beautiful studio lighting, soft shadows, expressive features, matching hairstyle and face from input, die-cut sticker, thick white border, 8k resolution, professional 3D art, transparent background";
 
-                if (styleName === "cyberpunk") stickerStylePrompt = "high-end 3D cyberpunk character, futuristic sci-fi aesthetic, Unreal Engine 5 cinematic render, neon glow effects, premium metallic textures, synthwave lighting, matching facial features, die-cut sticker, white border, sharp professional 3D render, transparent background";
-                if (styleName === "kawaii") stickerStylePrompt = "adorable premium 3D kawaii character, soft Pixar-inspired aesthetic, cute big glossy eyes, pastel 3D materials, Disney animation style, matching face and features, die-cut sticker, white border, ultra-smooth 3D render, transparent background";
-                if (styleName === "monster") stickerStylePrompt = "expressive premium 3D monster character, Illumination animation style, vibrant colorful textures, playful creature design, cinematic lighting, 3D character art, matching input face, die-cut sticker, white border, high-quality CGI render, transparent background";
-                if (styleName === "chibi") stickerStylePrompt = "extra-premium 3D chibi AI style, high-quality digital art, adorable big glossy eyes, soft 3D shading, toy-like aesthetic, cute proportions, smooth surfaces, matching hairstyle and facial features from input, die-cut sticker, thick white border, 4k CGI render, transparent background";
-
-
+                    if (styleName === "cyberpunk") stickerStylePrompt = "high-end 3D cyberpunk character, futuristic sci-fi aesthetic, Unreal Engine 5 cinematic render, neon glow effects, premium metallic textures, synthwave lighting, matching facial features, die-cut sticker, white border, sharp professional 3D render, transparent background";
+                    if (styleName === "kawaii") stickerStylePrompt = "adorable premium 3D kawaii character, soft Pixar-inspired aesthetic, cute big glossy eyes, pastel 3D materials, Disney animation style, matching face and features, die-cut sticker, white border, ultra-smooth 3D render, transparent background";
+                    if (styleName === "monster") stickerStylePrompt = "expressive premium 3D monster character, Illumination animation style, vibrant colorful textures, playful creature design, cinematic lighting, 3D character art, matching input face, die-cut sticker, white border, high-quality CGI render, transparent background";
+                    if (styleName === "chibi") stickerStylePrompt = "extra-premium 3D chibi AI style, high-quality digital art, adorable big glossy eyes, soft 3D shading, toy-like aesthetic, cute proportions, smooth surfaces, matching hairstyle and facial features from input, die-cut sticker, thick white border, 4k CGI render, transparent background";
 
 
 
 
-                const negativePrompt = "photo, realistic, 3d render, grainy, messy outlines, shadow on background, blurry, low resolution, ugly, deformed features, extra limbs, watermark, text, out of frame";
 
 
-                // (Global getResizedBase64 is used instead)
+                    const negativePrompt = "photo, realistic, 3d render, grainy, messy outlines, shadow on background, blurry, low resolution, ugly, deformed features, extra limbs, watermark, text, out of frame";
 
-                // Cache base64 (resize 1 lần, dùng cho cả 8 sticker)
-                var cachedBase64 = null;
 
-                async function generateStickerFromAI(emotionIdx) {
-                    var fullPrompt = stickerStylePrompt + ", " + emotionStickerPrompts[emotionIdx];
+                    // (Global getResizedBase64 is used instead)
 
-                    if (!cachedBase64) {
-                        cachedBase64 = await getResizedBase64(uploadedFile);
-                        console.log('Resized image base64 length:', cachedBase64.length);
+                    // Cache base64 (resize 1 lần, dùng cho cả 8 sticker)
+                    var cachedBase64 = null;
+
+                    async function generateStickerFromAI(emotionIdx) {
+                        var fullPrompt = stickerStylePrompt + ", " + emotionStickerPrompts[emotionIdx];
+
+                        if (!cachedBase64) {
+                            cachedBase64 = await getResizedBase64(uploadedFile);
+                            console.log('Resized image base64 length:', cachedBase64.length);
+                        }
+
+                        var response = await fetch("/api/generate", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                imageBase64: cachedBase64,
+                                prompt: fullPrompt,
+                                negative_prompt: negativePrompt,
+                                style: styleName
+                            })
+                        });
+
+                        if (!response.ok) {
+                            var errText = await response.text();
+                            var errMsg = "Lỗi API";
+                            try {
+                                var errJson = JSON.parse(errText);
+                                errMsg = errJson.message || errJson.name || errMsg;
+                            } catch (e) { errMsg = "Error " + response.status + ": " + errText.substring(0, 50); }
+                            throw new Error(errMsg);
+                        }
+
+                        var blob = await response.blob();
+                        return URL.createObjectURL(blob);
                     }
 
-                    var response = await fetch("/api/generate", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            imageBase64: cachedBase64,
-                            prompt: fullPrompt,
-                            negative_prompt: negativePrompt,
-                            style: styleName
-                        })
-                    });
 
-                    if (!response.ok) {
-                        var errText = await response.text();
-                        var errMsg = "Lỗi API";
-                        try {
-                            var errJson = JSON.parse(errText);
-                            errMsg = errJson.message || errJson.name || errMsg;
-                        } catch (e) { errMsg = "Error " + response.status + ": " + errText.substring(0, 50); }
-                        throw new Error(errMsg);
-                    }
+                    const generateStickers = async () => {
+                        for (let i = 0; i < 8; i++) {
+                            const isLocked = !access.useCredit && i >= 3;
+                            const itemDiv = document.createElement("div");
+                            itemDiv.className = `result-item ${isLocked ? 'locked-item' : ''}`;
+                            itemDiv.style.position = "relative";
+                            itemDiv.style.display = "flex";
+                            itemDiv.style.alignItems = "center";
+                            itemDiv.style.justifyContent = "center";
+                            itemDiv.style.minHeight = "150px";
 
-                    var blob = await response.blob();
-                    return URL.createObjectURL(blob);
-                }
+                            // Loading state
+                            const loadingText = document.createElement("div");
+                            loadingText.innerHTML = `⏳<br><span style='font-size:0.8rem;'>Loading...</span>`;
 
+                            loadingText.style.textAlign = "center";
+                            loadingText.style.color = "#FF8BA7";
+                            itemDiv.appendChild(loadingText);
+                            resultGrid.appendChild(itemDiv);
 
-                const generateStickers = async () => {
-                    for (let i = 0; i < 8; i++) {
-                        const isLocked = !access.useCredit && i >= 3;
-                        const itemDiv = document.createElement("div");
-                        itemDiv.className = `result-item ${isLocked ? 'locked-item' : ''}`;
-                        itemDiv.style.position = "relative";
-                        itemDiv.style.display = "flex";
-                        itemDiv.style.alignItems = "center";
-                        itemDiv.style.justifyContent = "center";
-                        itemDiv.style.minHeight = "150px";
+                            if (isLocked) {
+                                loadingText.style.display = "none";
+                                const img = document.createElement("img");
+                                img.src = URL.createObjectURL(uploadedFile);
+                                img.className = "sticker-img";
+                                img.style.filter = "blur(12px) grayscale(1)";
+                                img.style.borderRadius = "20px";
+                                itemDiv.appendChild(img);
 
-                        // Loading state
-                        const loadingText = document.createElement("div");
-                        loadingText.innerHTML = `⏳<br><span style='font-size:0.8rem;'>Loading...</span>`;
+                                const lockOverlay = document.createElement("div");
+                                lockOverlay.className = "lock-overlay";
+                                lockOverlay.innerHTML = "🔒";
+                                lockOverlay.onclick = () => {
+                                    if (!isLoggedIn) {
+                                        alert("Bạn cần Đăng Nhập để nâng cấp (VIP) và mở khóa tất cả cảm xúc nhé!");
+                                        document.getElementById('loginBtn').click();
+                                    } else {
+                                        openPaymentTab();
+                                    }
+                                };
+                                lockOverlay.style.cursor = "pointer";
+                                itemDiv.appendChild(lockOverlay);
+                                continue;
+                            }
 
-                        loadingText.style.textAlign = "center";
-                        loadingText.style.color = "#FF8BA7";
-                        itemDiv.appendChild(loadingText);
-                        resultGrid.appendChild(itemDiv);
+                            // Gọi API trung gian để bảo mật key
+                            try {
+                                const imgUrl = await generateStickerFromAI(i);
+                                loadingText.style.display = "none";
 
-                        if (isLocked) {
-                            loadingText.style.display = "none";
-                            const img = document.createElement("img");
-                            img.src = URL.createObjectURL(uploadedFile);
-                            img.className = "sticker-img";
-                            img.style.filter = "blur(12px) grayscale(1)";
-                            img.style.borderRadius = "20px";
-                            itemDiv.appendChild(img);
+                                const img = document.createElement("img");
+                                img.src = imgUrl;
+                                img.className = "sticker-img";
+                                img.title = emotionsList[i];
+                                img.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
+                                img.style.borderRadius = "20px";
+                                img.style.transform = `rotate(${(Math.random() * 6 - 3).toFixed(1)}deg)`;
 
-                            const lockOverlay = document.createElement("div");
-                            lockOverlay.className = "lock-overlay";
-                            lockOverlay.innerHTML = "🔒";
-                            lockOverlay.onclick = () => {
+                                const dlBtn = document.createElement("button");
+                                dlBtn.className = "download-btn";
+                                dlBtn.innerHTML = "⬇️";
+                                dlBtn.onclick = (e) => {
+                                    e.stopPropagation();
+                                    const link = document.createElement('a');
+                                    link.href = imgUrl;
+                                    link.download = `sticker_${emotionsList[i]}.png`;
+                                    link.click();
+                                };
+
+                                itemDiv.appendChild(img);
+                                itemDiv.appendChild(dlBtn);
+                            } catch (err) {
+                                console.error("Sticker error:", err);
+                                loadingText.innerHTML = `❌<br><span style='font-size:0.7rem; color:#ff4444;'>${err.message.substring(0, 40)}</span>`;
+                            }
+
+                            // Delay 2s giữa mỗi request để tránh 429 rate limit
+                            if (i < 7) await new Promise(r => setTimeout(r, 2000));
+
+                        }
+
+                        if (!access.useCredit) {
+                            const upgradeBanner = document.createElement("div");
+                            upgradeBanner.className = "upgrade-banner";
+                            upgradeBanner.innerHTML = "🌟 Mua lượt (VIP) để nhận trọn bộ";
+                            upgradeBanner.onclick = () => {
                                 if (!isLoggedIn) {
-                                    alert("Bạn cần Đăng Nhập để nâng cấp (VIP) và mở khóa tất cả cảm xúc nhé!");
+                                    alert("Bạn cần Đăng Nhập để nâng cấp (VIP) nhé!");
                                     document.getElementById('loginBtn').click();
                                 } else {
                                     openPaymentTab();
                                 }
                             };
-                            lockOverlay.style.cursor = "pointer";
-                            itemDiv.appendChild(lockOverlay);
-                            continue;
+                            resultGrid.appendChild(upgradeBanner);
                         }
+                        resultBento.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    };
 
-                        // Gọi API trung gian để bảo mật key
-                        try {
-                            const imgUrl = await generateStickerFromAI(i);
-                            loadingText.style.display = "none";
-
-                            const img = document.createElement("img");
-                            img.src = imgUrl;
-                            img.className = "sticker-img";
-                            img.title = emotionsList[i];
-                            img.style.boxShadow = "0 8px 25px rgba(0,0,0,0.3)";
-                            img.style.borderRadius = "20px";
-                            img.style.transform = `rotate(${(Math.random() * 6 - 3).toFixed(1)}deg)`;
-
-                            const dlBtn = document.createElement("button");
-                            dlBtn.className = "download-btn";
-                            dlBtn.innerHTML = "⬇️";
-                            dlBtn.onclick = (e) => {
-                                e.stopPropagation();
-                                const link = document.createElement('a');
-                                link.href = imgUrl;
-                                link.download = `sticker_${emotionsList[i]}.png`;
-                                link.click();
-                            };
-
-                            itemDiv.appendChild(img);
-                            itemDiv.appendChild(dlBtn);
-                        } catch (err) {
-                            console.error("Sticker error:", err);
-                            loadingText.innerHTML = `❌<br><span style='font-size:0.7rem; color:#ff4444;'>${err.message.substring(0, 40)}</span>`;
-                        }
-
-                        // Delay 2s giữa mỗi request để tránh 429 rate limit
-                        if (i < 7) await new Promise(r => setTimeout(r, 2000));
-
-                    }
-
-                    if (!access.useCredit) {
-                        const upgradeBanner = document.createElement("div");
-                        upgradeBanner.className = "upgrade-banner";
-                        upgradeBanner.innerHTML = "🌟 Mua lượt (VIP) để nhận trọn bộ";
-                        upgradeBanner.onclick = () => {
-                            if (!isLoggedIn) {
-                                alert("Bạn cần Đăng Nhập để nâng cấp (VIP) nhé!");
-                                document.getElementById('loginBtn').click();
-                            } else {
-                                openPaymentTab();
-                            }
-                        };
-                        resultGrid.appendChild(upgradeBanner);
-                    }
-                    resultBento.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                };
-
-                generateStickers();
-            }, 1000); // 1s delay for transition effect
-        };
+                    generateStickers();
+                }, 1000); // 1s delay for transition effect
+            };
         }
 
         processBtnIdol.onclick = function () {
@@ -1456,7 +1475,7 @@
             isLoggedIn = true;
             localStorage.setItem("isLoggedIn", "true");
             localStorage.setItem("userInfo", JSON.stringify(userInfo));
-            
+
             // Set Admin privileges if email matches
             if (userInfo.email === ADMIN_EMAIL) {
                 isAdmin = true;
@@ -1557,7 +1576,7 @@
             placeholderMagic.style.opacity = "0";
             customStickerLoadingText.style.display = "block";
             customStickerActions.style.display = "none";
-            
+
             // Clear previous results but keep placeholder if needed (hidden)
             // We'll remove all and then add them back
             const previousImages = customStickerResultContainer.querySelectorAll('.sticker-result-item');
@@ -1565,15 +1584,15 @@
 
             try {
                 const emotions = [
-                    { label: "Vui Vẻ", prompt: "A chibi-style sticker of the boy from the uploaded photo. Keep his real face, glasses, hairstyle. Cute glowing outline. Expression: big smile, cheerful energy. Add small sparkles around him." },
-                    { label: "Cười To", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: laughing with eyes curved, mouth open happily. Add comic-style 'HAHA' effect or joy bubbles." },
-                    { label: "Xấu Hổ", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: shy, cheeks blushing red, eyes looking slightly down. Add small pink blush marks and soft outline." },
-                    { label: "Giận Dữ", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: angry, eyebrows slanted, mouth shouting. Add red flame or angry steam effect above head." },
-                    { label: "Khóc", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: crying with big teardrops, sad mouth. Add blue watery effect around him." },
-                    { label: "Ngạc Nhiên", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: wide-open eyes, open mouth. Add yellow shock lines around the head." },
-                    { label: "Ngầu", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: confident smirk. Add sunglasses effect sliding down or blue flame aura." },
-                    { label: "Tình Cảm", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: smiling softly. Add heart shapes floating around his head." },
-                    { label: "Buồn Ngủ", prompt: "A chibi-style sticker of the same boy. Keep face + glasses. Expression: sleepy eyes half closed. Add 'Zzz' symbols and soft blue shading." }
+                    { label: "Vui Vẻ", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Keep their real face, hairstyle, skin tone, glasses, and unique facial features so the likeness stays accurate. Convert them into a smooth, polished kawaii chibi with big glossy eyes, soft shading, and a clean white sticker border.\n\nEmotion: HAPPY — big smile, cheerful energy, both hands making peace signs, sparkles around the character. Bright, lively, cute expression." },
+                    { label: "Bối Rối", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Keep facial identity, hairstyle, and proportions consistent. Convert to glossy-eyed, smooth-shaded kawaii chibi style with a sticker outline.\n\nEmotion: CONFUSED — tilted head, worried eyebrows, small question marks around the head, one hand touching chin, slightly unsure expression." },
+                    { label: "Xấu Hổ", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Keep accurate facial features, hairstyle, and identity. Render in cute anime chibi style with glossy eyes and soft shadows.\n\nEmotion: SHY — blushing red cheeks, hands covering part of the face, hearts floating around, shy smile, embarrassed body language." },
+                    { label: "Giận Dữ", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Keep their real face, hairstyle, skin tone, glasses, and unique facial features. Transform them into a cute polished chibi with smooth outlines, soft shading, and a white sticker border.\n\nEmotion: ANGRY — clenched fists, eyebrows lowered, mouth open shouting, flames behind the character. Powerful and dramatic expression." },
+                    { label: "Khóc", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Preserve their real facial identity and hairstyle. Render in smooth kawaii chibi style with big glossy eyes and clean sticker outline.\n\nEmotion: SAD — teary eyes, slightly trembling hands held near chest, small rain cloud above, watery highlights under eyes. Soft, emotional mood." },
+                    { label: "Ngạc Nhiên", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Keep accurate face and hairstyle details. Draw in soft-shaded, glossy-eyed, cute chibi anime style with a clear white sticker border.\n\nEmotion: SURPRISED — wide-open eyes, mouth open in shock, hands raised near face, colorful exclamation marks floating around." },
+                    { label: "Lo Lắng", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Maintain real facial likeness and hairstyle. Create a smooth polished kawaii chibi look with soft shading and clean outlines.\n\nEmotion: WORRIED — anxious expression, eyebrows bent upward, hands close to chest, sweat drops around the head, small shaky lines near face." },
+                    { label: "Tình Cảm", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Preserve their recognizable face and hairstyle. Draw in polished chibi anime style with big sparkly eyes and smooth outlines.\n\nEmotion: IN LOVE — heart-shaped sparkling eyes, hands under chin, hearts surrounding the head, excited loving expression." },
+                    { label: "Chán Nản", prompt: "A chibi-style anime sticker of the person from the uploaded photo. Keep their real face, hairstyle, and defining features. Render in clean polished chibi anime style.\n\nEmotion: DISAPPOINTED — tired eyes, slightly slouched posture, one hand supporting face, scribble cloud above the head, sad and drained expression." }
                 ];
 
                 const uploadedFile = uploadCustomSticker.files[0];
@@ -1590,7 +1609,7 @@
 
                 for (let i = 0; i < batchSize; i++) {
                     const emotion = emotions[i];
-                    
+
                     // Create item container in grid
                     const itemDiv = document.createElement("div");
                     itemDiv.className = "sticker-result-item";
@@ -1603,19 +1622,19 @@
                     itemDiv.style.display = "flex";
                     itemDiv.style.alignItems = "center";
                     itemDiv.style.justifyContent = "center";
-                    
+
                     const itemLoading = document.createElement("div");
                     itemLoading.innerHTML = "⏳";
                     itemLoading.style.fontSize = "1.5rem";
                     itemDiv.appendChild(itemLoading);
-                    
+
                     customStickerResultContainer.appendChild(itemDiv);
-                    
+
                     // Scroll to see progress
                     customStickerResultContainer.scrollTop = customStickerResultContainer.scrollHeight;
 
                     try {
-                        const fullPrompt = `${emotion.prompt}\nOutput: White background, high quality.`;
+                        const fullPrompt = `${emotion.prompt}`;
 
                         const response = await fetch("/api/generate", {
                             method: "POST",
@@ -1641,7 +1660,7 @@
                         img.style.objectFit = "contain";
                         img.style.padding = "5px";
                         img.title = emotion.label;
-                        
+
                         // Download button on hover overlay
                         const dlOverlay = document.createElement("div");
                         dlOverlay.style.position = "absolute";
@@ -1653,7 +1672,7 @@
                         dlOverlay.innerHTML = "📥";
                         dlOverlay.style.fontSize = "1.5rem";
                         dlOverlay.style.cursor = "pointer";
-                        
+
                         itemDiv.onmouseenter = () => dlOverlay.style.display = "flex";
                         itemDiv.onmouseleave = () => dlOverlay.style.display = "none";
                         dlOverlay.onclick = () => {
@@ -1669,14 +1688,14 @@
                         itemLoading.innerHTML = "❌";
                         console.error(err);
                     }
-                    
+
                     // Delay to avoid overwhelming the server
                     if (i < batchSize - 1) await new Promise(r => setTimeout(r, 1500));
                 }
 
                 customStickerLoadingText.style.display = "none";
                 customStickerActions.style.display = "flex";
-                
+
                 // Final download all logic? For now just manual
                 downloadCustomStickerBtn.onclick = () => {
                     alert("Bạn có thể nhấn vào từng sticker trong lưới để tải về nhé! ✨");
