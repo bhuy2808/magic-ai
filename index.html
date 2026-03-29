@@ -1141,6 +1141,30 @@
             }
         }
 
+        // Global utility to resize image to base64
+        function getResizedBase64(file, maxSize) {
+            maxSize = maxSize || 512;
+            return new Promise(function (resolve, reject) {
+                var img = new Image();
+                img.onload = function () {
+                    var w = img.width, h = img.height;
+                    if (w > maxSize || h > maxSize) {
+                        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+                        else { w = Math.round(w * maxSize / h); h = maxSize; }
+                    }
+                    var canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                    resolve(dataUrl.split(',')[1]);
+                };
+                img.onerror = reject;
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
         processBtn.onclick = async function () {
             if (!upload.files[0]) return;
             const access = requireCredits('sticker');
@@ -1207,29 +1231,7 @@
                 const negativePrompt = "photo, realistic, 3d render, grainy, messy outlines, shadow on background, blurry, low resolution, ugly, deformed features, extra limbs, watermark, text, out of frame";
 
 
-                // Resize ảnh xuống max 512px + JPEG 60% → < 500KB (tránh 422 Replicate)
-                function getResizedBase64(file, maxSize) {
-                    maxSize = maxSize || 512;
-                    return new Promise(function (resolve, reject) {
-                        var img = new Image();
-                        img.onload = function () {
-                            var w = img.width, h = img.height;
-                            if (w > maxSize || h > maxSize) {
-                                if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
-                                else { w = Math.round(w * maxSize / h); h = maxSize; }
-                            }
-                            var canvas = document.createElement('canvas');
-                            canvas.width = w;
-                            canvas.height = h;
-                            var ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0, w, h);
-                            var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-                            resolve(dataUrl.split(',')[1]);
-                        };
-                        img.onerror = reject;
-                        img.src = URL.createObjectURL(file);
-                    });
-                }
+                // (Global getResizedBase64 is used instead)
 
                 // Cache base64 (resize 1 lần, dùng cho cả 8 sticker)
                 var cachedBase64 = null;
@@ -1461,9 +1463,16 @@
             updateCreditUI();
         }
 
-        loginBtn.onclick = function () {
+        function triggerGoogleLogin() {
+            // Check for App Browsers (Zalo, Facebook)
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            if (ua.indexOf("FBAN") > -1 || ua.indexOf("FBAV") > -1 || ua.indexOf("Zalo") > -1) {
+                alert("Trình duyệt nội bộ Facebook/Zalo có thể chặn Đăng Nhập Google. Vui lòng bấm vào dấu 3 chấm góc phải và chọn 'Mở bằng trình duyệt (Chrome/Safari)' để tiếp tục.");
+                return;
+            }
+
             // Check if simulated admin bypass is needed due to Google block/Vercel config
-            if ((typeof google === 'undefined') || GOOGLE_CLIENT_ID.includes("YOUR") || GOOGLE_CLIENT_ID === "") {
+            if ((typeof google === 'undefined') || !google.accounts || GOOGLE_CLIENT_ID.includes("YOUR") || GOOGLE_CLIENT_ID === "") {
                 if (confirm("Chế độ Google Login chưa sẵn sàng. Bạn có muốn dùng quyền Admin (Simulated) để tiếp tục không?")) {
                     handleLoginSuccess({ name: "Admin (Direct)", email: ADMIN_EMAIL, picture: "" });
                 }
@@ -1482,7 +1491,11 @@
             } else {
                 alert("Dịch vụ Google chưa sẵn sàng. Thử lại sau 1 giây.");
             }
-        };
+        }
+
+        if (loginBtn) {
+            loginBtn.onclick = triggerGoogleLogin;
+        }
 
         logoutBtn.onclick = function () {
             loginStateGuest.style.display = "block";
