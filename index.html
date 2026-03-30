@@ -1568,10 +1568,16 @@
             const access = requireCredits('sticker');
             if (!access.allowed) return;
 
+            if (!access.useCredit && !isAdmin) {
+                let currentIp = localStorage.getItem("userIpHash") || "unknown_ip";
+                let ipUsageCount = parseInt(localStorage.getItem("free_usage_" + currentIp)) || 0;
+                localStorage.setItem("free_usage_" + currentIp, ipUsageCount + 1);
+            }
+
             // Loading state
             generateCustomStickerBtn.disabled = true;
             document.getElementById("spinnerCustomSticker").style.display = "inline-block";
-            document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 9 Sticker...";
+            document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 6 Sticker...";
 
             placeholderMagic.style.opacity = "0";
             customStickerLoadingText.style.display = "block";
@@ -1583,28 +1589,33 @@
             previousImages.forEach(img => img.remove());
 
             try {
+                const baseAnimeStyle = "A highly detailed cute anime chibi character, smooth and clean line art, Studio Ghibli inspired, soft pastel color palette, soft glowing lighting, highly aesthetic, clean uncropped solid white background, masterpiece illustration. Keep the person's subject identity, inherent gender, and specific hairstyle intact.";
+
                 const emotions = [
-                    { label: "Vui Vẻ", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Happy." },
-                    { label: "Cười To", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Laughing." },
-                    { label: "Xấu Hổ", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Embarrassed." },
-                    { label: "Giận Dữ", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Angry." },
-                    { label: "Khóc", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Crying." },
-                    { label: "Ngạc Nhiên", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Surprised." },
-                    { label: "Sốc", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Shock." },
-                    { label: "Dễ Thương", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Neutral Cute." },
-                    { label: "Buồn Ngủ", prompt: "Use the same rendering style as the built-in Chibi AI preset: smooth anime shading, big glossy eyes, baby proportions, clean sticker outline, pastel colors. Keep the real face 95% accurate. Apply expression: Sleepy." }
+                    { label: "Vui Vẻ", prompt: `${baseAnimeStyle} Apply expression: Very happy with a bright smile.` },
+                    { label: "Buồn Bã", prompt: `${baseAnimeStyle} Apply expression: Sad and melancholy.` },
+                    { label: "Tức Giận", prompt: `${baseAnimeStyle} Apply expression: Angry and furious.` },
+                    { label: "Khóc", prompt: `${baseAnimeStyle} Apply expression: Crying with visible tears.` },
+                    { label: "Ngạc Nhiên", prompt: `${baseAnimeStyle} Apply expression: Surprised and shocked.` },
+                    { label: "Cười Lớn", prompt: `${baseAnimeStyle} Apply expression: Laughing out loud.` }
                 ];
 
                 const uploadedFile = uploadCustomSticker.files[0];
                 const resizedBase64 = await getResizedBase64(uploadedFile);
 
-                // Batch Size Logic: 9 for VIP, 3 for Free/Admin
-                let batchSize = 3;
-                if (isLoggedIn && (credits >= 1) && !isAdmin) {
-                    batchSize = 9;
-                    document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 9 Sticker (VIP)...";
+                // Batch Size Logic: 6 for VIP/Admin, 2 for Free, 3 for Admin Test
+                let batchSize = 2;
+                if (isAdmin && isLoggedIn) {
+                    batchSize = 6;
+                    document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 6 Sticker (Admin)...";
+                } else if (isAdmin && !isLoggedIn) {
+                    batchSize = 3;
+                    document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 3 Sticker (Admin Test)...";
+                } else if (isLoggedIn && (credits >= 1)) {
+                    batchSize = 6;
+                    document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 6 Sticker (VIP)...";
                 } else {
-                    document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 3 Sticker...";
+                    document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 2 Sticker (Free)...";
                 }
 
                 for (let i = 0; i < batchSize; i++) {
