@@ -1589,15 +1589,16 @@
             previousImages.forEach(img => img.remove());
 
             try {
-                const baseAnimeStyle = "A highly detailed cute anime chibi character, 2D vector flat art, smooth and clean line art, Studio Ghibli inspired, pastel color palette, highly aesthetic anime face, clean uncropped solid white background, masterpiece illustration. Completely transform the face into a stylized 2D anime character. Preserve only the core traits like hair style, hair color, and glasses if present.";
+                // PhotoMaker style prompt - must include 'img'
+                const baseAnimeStyle = "A masterpiece Ghibli style 2D anime character img, solo, detailed line art, flat colors, white background, high quality. Completely transform the face into a stylized 2D anime version while keeping the hairstyle and glasses.";
 
                 const emotions = [
-                    { label: "Vui Vẻ", prompt: `${baseAnimeStyle} Apply expression: Very happy with a bright smile.` },
-                    { label: "Buồn Bã", prompt: `${baseAnimeStyle} Apply expression: Sad and melancholy.` },
-                    { label: "Tức Giận", prompt: `${baseAnimeStyle} Apply expression: Angry and furious.` },
-                    { label: "Khóc", prompt: `${baseAnimeStyle} Apply expression: Crying with visible tears.` },
-                    { label: "Ngạc Nhiên", prompt: `${baseAnimeStyle} Apply expression: Surprised and shocked.` },
-                    { label: "Cười Lớn", prompt: `${baseAnimeStyle} Apply expression: Laughing out loud.` }
+                    { label: "Vui Vẻ", prompt: `${baseAnimeStyle} Very happy expression, bright smile.` },
+                    { label: "Buồn Bã", prompt: `${baseAnimeStyle} Sad expression, melancholy look.` },
+                    { label: "Tức Giận", prompt: `${baseAnimeStyle} Angry and furious expression.` },
+                    { label: "Khóc", prompt: `${baseAnimeStyle} Crying with visible tears.` },
+                    { label: "Ngạc Nhiên", prompt: `${baseAnimeStyle} Surprised and shocked expression.` },
+                    { label: "Cười Lớn", prompt: `${baseAnimeStyle} Laughing out loud.` }
                 ];
 
                 const uploadedFile = uploadCustomSticker.files[0];

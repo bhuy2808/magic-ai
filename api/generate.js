@@ -51,33 +51,26 @@ module.exports = async (req, res) => {
 };
 
 // ====================================
-// REPLICATE face-to-sticker
-// Dùng data URI trực tiếp (ảnh đã resize < 1MB trên frontend)
+// REPLICATE PhotoMaker (Advanced Identity + Style)
 // ====================================
 async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiToken) {
-    // Ảnh đã được frontend resize xuống 512px + JPEG 60% → < 500KB
     const dataUri = 'data:image/jpeg;base64,' + imageBase64;
-    console.log('Data URI length:', dataUri.length, 'chars');
 
-    // Dùng endpoint chuẩn /v1/predictions
     const body = {
-        version: "a07f252abbbd832009640b27f063ea52d87d7a23a185ca165bec23b5adc8deaf",
+        version: "ddfc2b6a23414e300305ab23157f43399b66236317b621e7807218ef86ca61e6",
         input: {
-            image: dataUri,
-            style: "Video game",
-            prompt: prompt || "a person",
-            prompt_strength: 4.5,
-            denoising_strength: 1.0,
-            instant_id_strength: 0.8,
-            control_depth_strength: 0.4
+            input_image: dataUri,
+            prompt: prompt, // Sẽ có chữ "img" từ frontend gửi qua
+            num_steps: 50,
+            style_name: "(No style)",
+            num_outputs: 1,
+            guidance_scale: 5,
+            negative_prompt: negative_prompt || "photorealistic, 3d, realistic, cinematic, bad quality, blurry, messy, extra limbs, deformed, text, watermark",
+            style_strength_ratio: 45
         }
     };
 
-    if (negative_prompt) {
-        body.input.negative_prompt = negative_prompt;
-    }
-
-    console.log('Calling Replicate with prompt:', prompt);
+    console.log('Calling PhotoMaker with prompt:', prompt);
 
     const createRes = await fetch("https://api.replicate.com/v1/predictions", {
         method: "POST",
@@ -98,10 +91,10 @@ async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiTo
     let prediction = await createRes.json();
     console.log('Prediction status:', prediction.status, 'id:', prediction.id);
 
-    // Polling nếu chưa xong
+    // Polling if still processing
     if (prediction.status !== "succeeded") {
         for (let i = 0; i < 90; i++) {
-            await new Promise(function(r) { setTimeout(r, 2000); });
+            await new Promise(r => setTimeout(r, 2000));
             const pollRes = await fetch(prediction.urls.get, {
                 headers: { "Authorization": "Bearer " + apiToken }
             });
@@ -113,12 +106,10 @@ async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiTo
                 throw new Error(prediction.error || 'Generation failed');
             }
         }
-        if (prediction.status !== "succeeded") throw new Error('Timed out');
     }
 
-    // Lấy ảnh kết quả
     const outputUrl = Array.isArray(prediction.output)
-        ? prediction.output[prediction.output.length - 1]
+        ? prediction.output[0]
         : prediction.output;
 
     if (!outputUrl) throw new Error('No output image');
