@@ -61,18 +61,15 @@ async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiTo
 
     // Dùng endpoint chuẩn /v1/predictions
     const body = {
-        version: "764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
+        version: "a07f252abbbd832009640b27f063ea52d87d7a23a185ca165bec23b5adc8deaf",
         input: {
             image: dataUri,
+            style: "Anime",
             prompt: prompt || "a person",
-            steps: 25,
-            width: 1024,
-            height: 1024,
-            prompt_strength: 8.5,
-            instant_id_strength: 0.35,
-            ip_adapter_weight: 0.15,
-            ip_adapter_noise: 0.6,
-            upscale: true
+            prompt_strength: 4.5,
+            denoising_strength: 0.65,
+            instant_id_strength: 0.8,
+            control_depth_strength: 0.8
         }
     };
 
