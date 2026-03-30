@@ -1618,7 +1618,7 @@
                     document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 2 Sticker (Free)...";
                 }
 
-                for (let i = 0; i < batchSize; i++) {
+                for (let i = 0; i < 6; i++) {
                     const emotion = emotions[i];
 
                     // Create item container in grid
@@ -1627,13 +1627,26 @@
                     itemDiv.style.position = "relative";
                     itemDiv.style.width = "100%";
                     itemDiv.style.aspectRatio = "1";
-                    itemDiv.style.background = "#FFFFFF";
                     itemDiv.style.borderRadius = "12px";
                     itemDiv.style.overflow = "hidden";
                     itemDiv.style.display = "flex";
                     itemDiv.style.alignItems = "center";
                     itemDiv.style.justifyContent = "center";
 
+                    if (i >= batchSize) {
+                        itemDiv.style.background = "#141414";
+                        itemDiv.style.border = "1px dashed rgba(255,255,255,0.15)";
+                        itemDiv.innerHTML = `
+                            <div style="display:flex; flex-direction:column; align-items:center; color:#666; gap: 8px;">
+                                <span style="font-size:2rem; filter: grayscale(1);">🔒</span>
+                                <span style="font-size:0.75rem; font-weight:700; letter-spacing:1px; text-transform:uppercase;">Mở Khóa VIP</span>
+                            </div>
+                        `;
+                        customStickerResultContainer.appendChild(itemDiv);
+                        continue; // Skip API call for locked items
+                    }
+
+                    itemDiv.style.background = "#FFFFFF";
                     const itemLoading = document.createElement("div");
                     itemLoading.innerHTML = "<span class='processing-text' style='color: #888; font-weight: 600;'>Loading...</span>";
                     itemLoading.style.fontSize = "1rem";
