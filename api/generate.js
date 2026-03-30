@@ -64,7 +64,7 @@ async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiTo
         version: "a07f252abbbd832009640b27f063ea52d87d7a23a185ca165bec23b5adc8deaf",
         input: {
             image: dataUri,
-            style: "Anime",
+            style: "Video game",
             prompt: prompt || "a person",
             prompt_strength: 4.5,
             denoising_strength: 0.65,
