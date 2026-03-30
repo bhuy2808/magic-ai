@@ -68,10 +68,10 @@ async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiTo
             steps: 25,
             width: 1024,
             height: 1024,
-            prompt_strength: 7.5,
-            instant_id_strength: 0.7,
-            ip_adapter_weight: 0.35,
-            ip_adapter_noise: 0.5,
+            prompt_strength: 8.5,
+            instant_id_strength: 0.35,
+            ip_adapter_weight: 0.15,
+            ip_adapter_noise: 0.6,
             upscale: true
         }
     };
