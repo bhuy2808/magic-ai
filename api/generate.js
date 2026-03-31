@@ -51,11 +51,14 @@ module.exports = async (req, res) => {
             }
         }
 
-        const targetPrompt = Array.isArray(prompts) ? prompts[0] : prompt;
+        const targetPrompt = prompt || (Array.isArray(prompts) ? prompts[0] : null);
         
-        console.log(`--- CHẾ ĐỘ ULTRA-SINGLE: Chỉ tạo 1 sticker duy nhất ---`);
-        console.log(`Sticker bat dau...`);
-        console.log(`Prompt: ${targetPrompt}`);
+        if (!targetPrompt) {
+            return res.status(400).json({ message: 'Thiếu câu lệnh mô tả sticker (prompt).' });
+        }
+
+        console.log(`--- CHẾ ĐỘ SINGLE-PREDICTION: Tạo 1 sticker duy nhất ---`);
+        console.log(`Prompt mục tiêu: ${targetPrompt}`);
 
         let stickerBuffer = null;
 
@@ -78,15 +81,14 @@ module.exports = async (req, res) => {
                 }
             }
 
-            const results = [];
             if (stickerBuffer) {
-                results.push(stickerBuffer.toString('base64'));
-                console.log(`Sticker thanh cong!`);
+                console.log(`✅ Tạo sticker thành công!`);
+                return res.status(200).json({ 
+                    images: [stickerBuffer.toString('base64')] 
+                });
             } else {
-                results.push({ error: 'Không thể tạo ảnh bằng cả 2 cách.' });
+                throw new Error('Cả Replicate và Stability AI đều thất bại.');
             }
-
-            return res.status(200).json({ images: results });
 
         } catch (innerError) {
             console.error(`Lỗi xử lý sticker:`, innerError.message);
@@ -139,7 +141,7 @@ async function generateWithReplicate(replicateClient, imageUrl, prompt) {
     };
 
     // 2. Log chi tiết dữ liệu gửi đi để kiểm tra trong Vercel Logs
-    console.log("Input gui di:", JSON.stringify(inputData));
+    console.log("Input gửi cho Replicate:", JSON.stringify(inputData));
 
     const output = await replicateClient.run(
         "fofr/face-to-sticker:764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
