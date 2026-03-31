@@ -1,4 +1,5 @@
 // Dual API: Replicate face-to-sticker (ưu tiên) + Stability AI (fallback)
+// Update Token
 // Ảnh đã được resize trên frontend (512px, JPEG 60%) → data URI < 500KB → OK
 
 module.exports = async (req, res) => {
