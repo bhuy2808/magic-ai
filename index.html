@@ -1646,31 +1646,44 @@
 
                 try {
                     // --- WEB POLLING ARCHITECTURE ---
-                    // 1. Hàm Polling: Cứ 5s lại kiểm tra xem AI vẽ xong chưa
+                    // 1. Hàm Polling: Đợi 10s đầu, sau đó cứ 5s hỏi một lần
                     async function pollStickerStatus(predictionId, itemDiv, emotionLabel) {
-                        const pollInterval = setInterval(async () => {
-                            try {
-                                if (!predictionId) {
-                                    clearInterval(pollInterval);
-                                    return;
-                                }
-                                const res = await fetch(`/api/check?id=${predictionId}`);
-                                const data = await res.json();
+                        if (!predictionId || predictionId === "null") {
+                            console.error("Không có ID để Polling.");
+                            return;
+                        }
 
-                                if (data.status === "succeeded") {
+                        console.log(`Đã có ID: ${predictionId}. Đợi 10 giây trước khi hỏi kết quả...`);
+
+                        // Đợi 10 giây đầu tiên (theo yêu cầu của bạn)
+                        setTimeout(() => {
+                            const pollInterval = setInterval(async () => {
+                                try {
+                                    // Kiểm tra ID một lần nữa trước khi fetch
+                                    if (!predictionId) {
+                                        clearInterval(pollInterval);
+                                        return;
+                                    }
+
+                                    const res = await fetch(`/api/check?id=${predictionId}`);
+                                    const data = await res.json();
+
+                                    console.log(`Status của ${predictionId}: ${data.status}`);
+
+                                    if (data.status === "succeeded") {
+                                        clearInterval(pollInterval);
+                                        updateStickerUI(itemDiv, data.imageUrl, emotionLabel);
+                                    } else if (data.status === "failed" || data.status === "canceled") {
+                                        clearInterval(pollInterval);
+                                        itemDiv.innerHTML = "<span style='font-size:1.5rem;'>❌</span>";
+                                        console.error("Polling failed:", data.error);
+                                    }
+                                } catch (err) {
+                                    console.error("Poll error:", err);
                                     clearInterval(pollInterval);
-                                    updateStickerUI(itemDiv, data.imageUrl, emotionLabel);
-                                } else if (data.status === "failed" || data.status === "canceled") {
-                                    clearInterval(pollInterval);
-                                    itemDiv.innerHTML = "<span style='font-size:1.5rem;'>❌</span>";
-                                    console.error("Polling failed:", data.error);
                                 }
-                            } catch (err) {
-                                console.error("Poll error:", err);
-                                clearInterval(pollInterval);
-                                itemDiv.innerHTML = "<span style='font-size:1.5rem;'>❌</span>";
-                            }
-                        }, 5000); // 5 giây một lần để tránh 429
+                            }, 5000); // 5 giây một lần cho các lượt sau
+                        }, 10000); // 10 giây cho lượt đầu tiên
                     }
 
                     // 2. Hàm cập nhật UI khi có ảnh... (giữ nguyên logic cũ)

@@ -4,10 +4,10 @@ module.exports = async (req, res) => {
     try {
         const { id } = req.query;
 
-        // BẮT LỖI PARSE ID (Trình duyệt có thể gửi chuỗi rỗng hoặc undefined)
-        if (!id || id === "null" || id === "undefined" || id === "") {
-            console.error("Lỗi: Không tìm thấy Prediction ID hợp lệ.");
-            return res.status(400).json({ error: "Missing or invalid prediction ID" });
+        // BẮT LỖI ID TRỐNG HOẶC NULL (Yêu cầu của bạn)
+        if (!id || id === 'null' || id === 'undefined' || id === '') {
+            console.error("Lỗi: ID bị thiếu hoặc không hợp lệ.");
+            return res.status(400).json({ error: 'ID bi thieu' });
         }
 
         if (!process.env.REPLICATE_API_TOKEN) throw new Error('REPLICATE_API_TOKEN is not defined.');
