@@ -1,6 +1,6 @@
-import Replicate from "replicate";
+const Replicate = require("replicate");
 
-export default async (req, res) => {
+module.exports = async (req, res) => {
     // 1. Toàn bộ nội dung bọc trong Try...Catch để bắt lỗi 500 chi tiết
     try {
         if (req.method !== 'POST') {

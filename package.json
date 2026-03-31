@@ -1,11 +1,12 @@
 {
-  "name": "sticker-app",
+  "name": "magic-ai",
   "version": "1.0.0",
-  "description": "AI Sticker Generator App",
-  "type": "module",
-  "main": "index.html",
+  "main": "index.js",
   "dependencies": {
-    "replicate": "^0.32.0"
+    "replicate": "^0.32.1"
+  },
+  "scripts": {
+    "start": "node index.js"
   },
   "engines": {
     "node": "18.x"
