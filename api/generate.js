@@ -1,107 +1,55 @@
 const Replicate = require("replicate");
 
 module.exports = async (req, res) => {
-    // LOG KIỂM TRA QUYỀN TRUY CẬP (Dùng cho Vercel Logs)
-    console.log("Kiem tra Token:", process.env.REPLICATE_API_TOKEN ? "Da tim thay" : "Van bi trong");
+    // LOG KIỂM TRA TOKEN (Chỉ hiện 4 số cuối để bảo mật)
+    if (process.env.REPLICATE_API_TOKEN) {
+        console.log("Token 4 so cuoi:", process.env.REPLICATE_API_TOKEN.slice(-4));
+    } else {
+        console.log("Token: Van bi trong");
+    }
 
-    // 1. Toàn bộ nội dung bọc trong Try...Catch để bắt lỗi 500 chi tiết
     try {
         if (req.method !== 'POST') {
             return res.status(405).json({ message: 'Method Not Allowed' });
         }
 
-        const { prompts, prompt, imageBase64, negative_prompt } = req.body;
+        const { prompt, imageBase64 } = req.body;
         
-        // KIỂM TRA TOKEN TRƯỚC KHI KHỞI TẠO
         if (!process.env.REPLICATE_API_TOKEN) {
-            console.error('TOKEN IS MISSING IN ENV!');
-            throw new Error('REPLICATE_API_TOKEN is not defined in environment variables.');
+            throw new Error('REPLICATE_API_TOKEN is not defined.');
         }
 
-        // 2. Khởi tạo Replicate chính xác 100% như yêu cầu
         const replicate = new Replicate({ 
             auth: process.env.REPLICATE_API_TOKEN 
         });
-
-        const STABILITY_API_KEY = process.env.STABILITY_API_KEY;
-
-        console.log('--- API Token Check ---');
-        console.log('REPLICATE_API_TOKEN:', process.env.REPLICATE_API_TOKEN ? 'DETECTED (OK)' : 'MISSING');
-        console.log('STABILITY_API_KEY:', STABILITY_API_KEY ? 'DETECTED (OK)' : 'MISSING');
-
-        if (!process.env.REPLICATE_API_TOKEN && !STABILITY_API_KEY) {
-            throw new Error('Chưa cấu hình API Key (REPLICATE_API_TOKEN hoặc STABILITY_API_KEY) trên Vercel.');
-        }
 
         if (!imageBase64) {
             return res.status(400).json({ message: 'Thiếu dữ liệu ảnh (imageBase64).' });
         }
 
-        // 3. Bắt buộc upload lên host trung gian, KHÔNG gửi Base64 trực tiếp vào Replicate
-        let publicImageUrl = null;
-        try {
-            console.log('Đang upload ảnh lên tmpfiles.org...');
-            publicImageUrl = await uploadToTmpFiles(imageBase64);
-            console.log('Link ảnh công khai:', publicImageUrl);
-        } catch (uploadErr) {
-            console.error('Lỗi khi upload ảnh:', uploadErr.message);
-            // Nếu dùng Replicate mà upload lỗi thì phải báo lỗi ngay vì Base64 sẽ gây crash
-            if (process.env.REPLICATE_API_TOKEN && !STABILITY_API_KEY) {
-                throw new Error('Không thể upload ảnh lên host trung gian để gửi cho Replicate: ' + uploadErr.message);
-            }
-        }
+        // 1. Upload ảnh lên host trung gian (Bắt buộc cho Replicate)
+        let publicImageUrl = await uploadToTmpFiles(imageBase64);
+        console.log('Link ảnh công khai từ TmpFiles:', publicImageUrl);
 
-        const targetPrompt = prompt || (Array.isArray(prompts) ? prompts[0] : null);
-        
-        if (!targetPrompt) {
-            return res.status(400).json({ message: 'Thiếu câu lệnh mô tả sticker (prompt).' });
-        }
+        const targetPrompt = prompt || "A high-quality sticker";
+        console.log(`--- REPLICATE ONLY MODE ---`);
+        console.log(`Prompt: ${targetPrompt}`);
 
-        console.log(`--- CHẾ ĐỘ SINGLE-PREDICTION: Tạo 1 sticker duy nhất ---`);
-        console.log(`Prompt mục tiêu: ${targetPrompt}`);
+        // 2. Chạy Replicate (Đã bao gồm cơ chế đợi Succeeded của SDK)
+        const stickerBuffer = await generateWithReplicate(replicate, publicImageUrl, targetPrompt);
 
-        let stickerBuffer = null;
-
-        try {
-            // ƯU TIÊN 1: REPLICATE (Bắt buộc dùng publicImageUrl)
-            if (process.env.REPLICATE_API_TOKEN && publicImageUrl) {
-                try {
-                    stickerBuffer = await generateWithReplicate(replicate, publicImageUrl, targetPrompt);
-                } catch (repError) {
-                    console.error(`Replicate lỗi:`, repError.message);
-                }
-            }
-
-            // FALLBACK: STABILITY AI
-            if (!stickerBuffer && STABILITY_API_KEY) {
-                try {
-                    stickerBuffer = await generateWithStability(imageBase64, targetPrompt, negative_prompt, STABILITY_API_KEY);
-                } catch (stabError) {
-                    console.error(`Stability AI lỗi:`, stabError.message);
-                }
-            }
-
-            if (stickerBuffer) {
-                console.log(`✅ Tạo sticker thành công!`);
-                return res.status(200).json({ 
-                    images: [stickerBuffer.toString('base64')] 
-                });
-            } else {
-                throw new Error('Cả Replicate và Stability AI đều thất bại.');
-            }
-
-        } catch (innerError) {
-            console.error(`Lỗi xử lý sticker:`, innerError.message);
-            return res.status(500).json({ error: innerError.message });
+        if (stickerBuffer) {
+            console.log(`✅ Sticker thành công!`);
+            return res.status(200).json({ 
+                images: [stickerBuffer.toString('base64')] 
+            });
+        } else {
+            throw new Error('Không thể tạo được sticker từ Replicate.');
         }
 
     } catch (error) {
-        // Trả về lỗi chi tiết thay vì 500 chung chung
         console.error('CRITICAL BACKEND ERROR:', error);
-        return res.status(500).json({ 
-            error: error.message, 
-            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
-        });
+        return res.status(500).json({ error: error.message });
     }
 };
 
@@ -131,69 +79,38 @@ async function uploadToTmpFiles(imageBase64) {
 }
 
 // ====================================
-// REPLICATE: fofr/face-to-sticker
+// REPLICATE
 // ====================================
 async function generateWithReplicate(replicateClient, imageUrl, prompt) {
-    // 1. Tối giản Input dữ liệu gửi đi để fix lỗi 400
     const inputData = {
         image: imageUrl,
         prompt: prompt
     };
 
-    // 2. Log chi tiết dữ liệu gửi đi để kiểm tra trong Vercel Logs
-    console.log("Input gửi cho Replicate:", JSON.stringify(inputData));
+    console.log("Gửi Input cho Replicate:", JSON.stringify(inputData));
 
+    // SDK của Replicate sẽ tự động polling cho đến khi trạng thái là Succeeded
     const output = await replicateClient.run(
         "fofr/face-to-sticker:764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
-        {
-            input: inputData
-        }
+        { input: inputData }
     );
 
-    // 2. Log chi tiết kết quả thực tế để kiểm tra cấu trúc (ruột) của Replicate
-    console.log("Ket qua thuc te tu Replicate:", JSON.stringify(output));
+    // LOG 'RUỘT' KẾT QUẢ ĐỂ KIỂM TRA CẤU TRÚC THỰC TẾ
+    console.log("DU LIEU THO TU REPLICATE:", JSON.stringify(output));
 
-    const outputUrl = Array.isArray(output) ? output[0] : output;
-    console.log("Replicate Output URL sau khi xử lý:", outputUrl);
-    
-    if (!outputUrl) {
-        throw new Error('Replicate không trả về URL ảnh. Kiểm tra Logs để xem kết quả thực tế!');
+    // Trích xuất link ảnh theo cách thô sơ và bao quát nhất
+    const imageUrlResult = Array.isArray(output) 
+        ? output[0] 
+        : (typeof output === 'string' ? output : (output.url || output[0] || null));
+
+    console.log("Link ảnh sau khi trích xuất:", imageUrlResult);
+
+    if (!imageUrlResult) {
+        throw new Error('Replicate không trả về URL ảnh hợp lệ trong output.');
     }
 
-    const imgRes = await fetch(outputUrl);
-    if (!imgRes.ok) throw new Error('Không thể tải ảnh từ Replicate.');
+    const imgRes = await fetch(imageUrlResult);
+    if (!imgRes.ok) throw new Error(`Không thể tải ảnh từ URL: ${imageUrlResult}`);
 
     return Buffer.from(await imgRes.arrayBuffer());
-}
-
-// ====================================
-// STABILITY AI
-// ====================================
-async function generateWithStability(imageBase64, prompt, negative_prompt, apiKey) {
-    const imageBuffer = Buffer.from(imageBase64, 'base64');
-    const formData = new FormData();
-    const blob = new Blob([imageBuffer], { type: 'image/png' });
-
-    formData.append("image", blob, 'image.png');
-    formData.append("prompt", prompt);
-    formData.append("strength", "0.32");
-    formData.append("mode", "image-to-image");
-    formData.append("output_format", "png");
-    if (negative_prompt) formData.append("negative_prompt", negative_prompt);
-
-    const response = await fetch("https://api.stability.ai/v2beta/stable-image/generate/core", {
-        method: "POST",
-        headers: {
-            "Authorization": "Bearer " + apiKey,
-            "Accept": "image/*"
-        },
-        body: formData
-    });
-
-    if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Stability API Error (${response.status}): ${errText.substring(0, 200)}`);
-    }
-
-    return Buffer.from(await response.arrayBuffer());
 }
