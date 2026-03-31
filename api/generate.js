@@ -148,10 +148,15 @@ async function generateWithReplicate(replicateClient, imageUrl, prompt) {
         }
     );
 
+    // 2. Log chi tiết kết quả thực tế để kiểm tra cấu trúc (ruột) của Replicate
+    console.log("Ket qua thuc te tu Replicate:", JSON.stringify(output));
+
     const outputUrl = Array.isArray(output) ? output[0] : output;
-    console.log("Replicate Output URL:", outputUrl);
+    console.log("Replicate Output URL sau khi xử lý:", outputUrl);
     
-    if (!outputUrl) throw new Error('Replicate không trả về URL ảnh.');
+    if (!outputUrl) {
+        throw new Error('Replicate không trả về URL ảnh. Kiểm tra Logs để xem kết quả thực tế!');
+    }
 
     const imgRes = await fetch(outputUrl);
     if (!imgRes.ok) throw new Error('Không thể tải ảnh từ Replicate.');
