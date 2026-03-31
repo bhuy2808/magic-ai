@@ -1,116 +1,108 @@
 const Replicate = require('replicate');
 
-// Initializing Replicate with environment variable only
-const replicate = new Replicate({
-    auth: process.env.REPLICATE_API_TOKEN,
-});
-
 module.exports = async (req, res) => {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Method Not Allowed' });
-    }
-
+    // 1. Toàn bộ nội dung bọc trong Try...Catch để bắt lỗi 500 chi tiết
     try {
+        if (req.method !== 'POST') {
+            return res.status(405).json({ message: 'Method Not Allowed' });
+        }
+
         const { prompts, prompt, imageBase64, negative_prompt } = req.body;
+        
+        // 2. Khởi tạo Replicate bên trong hàm POST để lấy biến môi trường mới nhất
+        const replicate = new Replicate({
+            auth: process.env.REPLICATE_API_TOKEN,
+        });
+
         const STABILITY_API_KEY = process.env.STABILITY_API_KEY;
 
-        // Log token presence (safe check)
         console.log('--- API Token Check ---');
         console.log('REPLICATE_API_TOKEN:', process.env.REPLICATE_API_TOKEN ? 'DETECTED (OK)' : 'MISSING');
         console.log('STABILITY_API_KEY:', STABILITY_API_KEY ? 'DETECTED (OK)' : 'MISSING');
 
         if (!process.env.REPLICATE_API_TOKEN && !STABILITY_API_KEY) {
-            return res.status(500).json({ message: 'No API key configured.' });
+            throw new Error('Chưa cấu hình API Key (REPLICATE_API_TOKEN hoặc STABILITY_API_KEY) trên Vercel.');
         }
 
         if (!imageBase64) {
-            return res.status(400).json({ message: 'Missing imageBase64' });
+            return res.status(400).json({ message: 'Thiếu dữ liệu ảnh (imageBase64).' });
         }
 
-        // 1. Upload to public host for Replicate
+        // 3. Bắt buộc upload lên host trung gian, KHÔNG gửi Base64 trực tiếp vào Replicate
         let publicImageUrl = null;
         try {
-            console.log('Uploading input image to tmpfiles.org...');
+            console.log('Đang upload ảnh lên tmpfiles.org...');
             publicImageUrl = await uploadToTmpFiles(imageBase64);
-            console.log('Public image URL:', publicImageUrl);
+            console.log('Link ảnh công khai:', publicImageUrl);
         } catch (uploadErr) {
-            console.error('Failed to upload to public host:', uploadErr.message);
+            console.error('Lỗi khi upload ảnh:', uploadErr.message);
+            // Nếu dùng Replicate mà upload lỗi thì phải báo lỗi ngay vì Base64 sẽ gây crash
+            if (process.env.REPLICATE_API_TOKEN && !STABILITY_API_KEY) {
+                throw new Error('Không thể upload ảnh lên host trung gian để gửi cho Replicate: ' + uploadErr.message);
+            }
         }
 
         const inputPrompts = Array.isArray(prompts) ? prompts : [prompt];
         const results = [];
 
-        console.log(`--- Resilient Loop: Starting generation for ${inputPrompts.length} stickers ---`);
+        console.log(`--- Đang xử lý bộ ${inputPrompts.length} sticker ---`);
 
         for (const [index, currentPrompt] of inputPrompts.entries()) {
-            console.log(`--- Đang tạo sticker thứ: ${index + 1} / ${inputPrompts.length} ---`);
-            console.log(`Prompt: ${currentPrompt}`);
+            console.log(`--- Đang tạo sticker #${index + 1} ---`);
             
-            // 2s delay to avoid 429 Throttling
             if (index > 0) {
-                console.log('Waiting 2 seconds before next request...');
+                console.log('Nghỉ 2 giây...');
                 await new Promise(r => setTimeout(r, 2000));
             }
 
             let stickerBuffer = null;
 
             try {
-                // ƯU TIÊN 1: REPLICATE (using official library)
-                if (process.env.REPLICATE_API_TOKEN) {
+                // ƯU TIÊN 1: REPLICATE (Bắt buộc dùng publicImageUrl)
+                if (process.env.REPLICATE_API_TOKEN && publicImageUrl) {
                     try {
-                        const inputSource = publicImageUrl || ('data:image/jpeg;base64,' + imageBase64);
-                        stickerBuffer = await generateWithReplicate(inputSource, currentPrompt, negative_prompt);
+                        stickerBuffer = await generateWithReplicate(replicate, publicImageUrl, currentPrompt, negative_prompt);
                     } catch (repError) {
-                        console.error(`Replicate failed for sticker #${index + 1}:`, repError.message);
+                        console.error(`Replicate lỗi (sticker #${index + 1}):`, repError.message);
                     }
                 }
 
-                // FALLBACK: STABILITY AI
+                // FALLBACK: STABILITY AI (Vẫn dùng buffer trực tiếp vì Stability hỗ trợ tốt hơn)
                 if (!stickerBuffer && STABILITY_API_KEY) {
                     try {
                         stickerBuffer = await generateWithStability(imageBase64, currentPrompt, negative_prompt, STABILITY_API_KEY);
                     } catch (stabError) {
-                        console.error(`Stability AI fallback failed for sticker #${index + 1}:`, stabError.message);
+                        console.error(`Stability AI lỗi (sticker #${index + 1}):`, stabError.message);
                     }
                 }
 
                 if (stickerBuffer) {
                     results.push(stickerBuffer.toString('base64'));
-                    console.log(`✅ Sticker #${index + 1} completed.`);
+                    console.log(`✅ Sticker #${index + 1} xong.`);
                 } else {
-                    console.warn(`❌ Sticker #${index + 1} failed all methods.`);
-                    results.push({ error: 'Generation failed' });
+                    results.push({ error: 'Không thể tạo ảnh bằng cả 2 cách.' });
                 }
 
             } catch (innerError) {
-                console.error(`Critical error in loop for sticker #${index + 1}:`, innerError.message);
+                console.error(`Lỗi trong vòng lặp (#${index + 1}):`, innerError.message);
                 results.push({ error: innerError.message });
             }
         }
 
-        console.log('--- Batch Generation Finished ---');
-
-        // Return batch results
-        if (Array.isArray(prompts)) {
-            return res.status(200).json({ images: results });
-        } else {
-            // Backward compatibility for single prompt
-            if (typeof results[0] === 'string') {
-                res.setHeader('Content-Type', 'image/png');
-                return res.send(Buffer.from(results[0], 'base64'));
-            } else {
-                return res.status(500).json({ message: results[0]?.error || 'Generation failed' });
-            }
-        }
+        return res.status(200).json({ images: results });
 
     } catch (error) {
-        console.error('API Error:', error);
-        res.status(500).json({ message: error.message });
+        // Trả về lỗi chi tiết thay vì 500 chung chung
+        console.error('CRITICAL BACKEND ERROR:', error);
+        return res.status(500).json({ 
+            error: error.message, 
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+        });
     }
 };
 
 // ====================================
-// UTILS: Public Image Hosting (tmpfiles.org)
+// UTILS: Public Image Hosting
 // ====================================
 async function uploadToTmpFiles(imageBase64) {
     const buffer = Buffer.from(imageBase64, 'base64');
@@ -125,22 +117,20 @@ async function uploadToTmpFiles(imageBase64) {
 
     if (!res.ok) {
         const text = await res.text();
-        throw new Error(`Upload failed (${res.status}): ${text}`);
+        throw new Error(`TmpFiles Upload failed (${res.status}): ${text}`);
     }
 
     const json = await res.json();
-    const rawUrl = json.data.url.replace('https://tmpfiles.org/', 'https://tmpfiles.org/dl/');
-    return rawUrl;
+    if (!json.data || !json.data.url) throw new Error('Cấu trúc phản hồi từ TmpFiles không đúng.');
+    
+    return json.data.url.replace('https://tmpfiles.org/', 'https://tmpfiles.org/dl/');
 }
 
 // ====================================
-// REPLICATE fofr/face-to-sticker
+// REPLICATE
 // ====================================
-async function generateWithReplicate(imageUrl, prompt, negative_prompt) {
-    console.log('Running fofr/face-to-sticker via official client...');
-    
-    // Using the official library's run method which handles polling automatically
-    const output = await replicate.run(
+async function generateWithReplicate(replicateClient, imageUrl, prompt, negative_prompt) {
+    const output = await replicateClient.run(
         "fofr/face-to-sticker:764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
         {
             input: {
@@ -154,16 +144,16 @@ async function generateWithReplicate(imageUrl, prompt, negative_prompt) {
     );
 
     const outputUrl = Array.isArray(output) ? output[0] : output;
-    if (!outputUrl) throw new Error('No output image URL from Replicate');
+    if (!outputUrl) throw new Error('Replicate không trả về URL ảnh.');
 
     const imgRes = await fetch(outputUrl);
-    if (!imgRes.ok) throw new Error('Download from Replicate failed');
+    if (!imgRes.ok) throw new Error('Không thể tải ảnh từ Replicate.');
 
     return Buffer.from(await imgRes.arrayBuffer());
 }
 
 // ====================================
-// STABILITY AI (fallback)
+// STABILITY AI
 // ====================================
 async function generateWithStability(imageBase64, prompt, negative_prompt, apiKey) {
     const imageBuffer = Buffer.from(imageBase64, 'base64');
@@ -188,7 +178,7 @@ async function generateWithStability(imageBase64, prompt, negative_prompt, apiKe
 
     if (!response.ok) {
         const errText = await response.text();
-        throw new Error(`Stability API ${response.status}: ${errText.substring(0, 200)}`);
+        throw new Error(`Stability API Error (${response.status}): ${errText.substring(0, 200)}`);
     }
 
     return Buffer.from(await response.arrayBuffer());
