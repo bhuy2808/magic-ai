@@ -51,54 +51,47 @@ module.exports = async (req, res) => {
             }
         }
 
-        const inputPrompts = Array.isArray(prompts) ? prompts : [prompt];
-        const results = [];
+        const targetPrompt = Array.isArray(prompts) ? prompts[0] : prompt;
+        
+        console.log(`--- CHẾ ĐỘ ULTRA-SINGLE: Chỉ tạo 1 sticker duy nhất ---`);
+        console.log(`Sticker bat dau...`);
+        console.log(`Prompt: ${targetPrompt}`);
 
-        console.log(`--- Đang xử lý bộ ${inputPrompts.length} sticker ---`);
+        let stickerBuffer = null;
 
-        for (const [index, currentPrompt] of inputPrompts.entries()) {
-            console.log(`--- Đang tạo sticker #${index + 1} ---`);
-            
-            if (index > 0) {
-                console.log('Nghỉ 2 giây...');
-                await new Promise(r => setTimeout(r, 2000));
+        try {
+            // ƯU TIÊN 1: REPLICATE (Bắt buộc dùng publicImageUrl)
+            if (process.env.REPLICATE_API_TOKEN && publicImageUrl) {
+                try {
+                    stickerBuffer = await generateWithReplicate(replicate, publicImageUrl, targetPrompt);
+                } catch (repError) {
+                    console.error(`Replicate lỗi:`, repError.message);
+                }
             }
 
-            let stickerBuffer = null;
-
-            try {
-                // ƯU TIÊN 1: REPLICATE (Bắt buộc dùng publicImageUrl và biến replicate đã khởi tạo)
-                if (process.env.REPLICATE_API_TOKEN && publicImageUrl) {
-                    try {
-                        stickerBuffer = await generateWithReplicate(replicate, publicImageUrl, currentPrompt, negative_prompt);
-                    } catch (repError) {
-                        console.error(`Replicate lỗi (sticker #${index + 1}):`, repError.message);
-                    }
+            // FALLBACK: STABILITY AI
+            if (!stickerBuffer && STABILITY_API_KEY) {
+                try {
+                    stickerBuffer = await generateWithStability(imageBase64, targetPrompt, negative_prompt, STABILITY_API_KEY);
+                } catch (stabError) {
+                    console.error(`Stability AI lỗi:`, stabError.message);
                 }
-
-                // FALLBACK: STABILITY AI (Vẫn dùng buffer trực tiếp vì Stability hỗ trợ tốt hơn)
-                if (!stickerBuffer && STABILITY_API_KEY) {
-                    try {
-                        stickerBuffer = await generateWithStability(imageBase64, currentPrompt, negative_prompt, STABILITY_API_KEY);
-                    } catch (stabError) {
-                        console.error(`Stability AI lỗi (sticker #${index + 1}):`, stabError.message);
-                    }
-                }
-
-                if (stickerBuffer) {
-                    results.push(stickerBuffer.toString('base64'));
-                    console.log(`✅ Sticker #${index + 1} xong.`);
-                } else {
-                    results.push({ error: 'Không thể tạo ảnh bằng cả 2 cách.' });
-                }
-
-            } catch (innerError) {
-                console.error(`Lỗi trong vòng lặp (#${index + 1}):`, innerError.message);
-                results.push({ error: innerError.message });
             }
+
+            const results = [];
+            if (stickerBuffer) {
+                results.push(stickerBuffer.toString('base64'));
+                console.log(`Sticker thanh cong!`);
+            } else {
+                results.push({ error: 'Không thể tạo ảnh bằng cả 2 cách.' });
+            }
+
+            return res.status(200).json({ images: results });
+
+        } catch (innerError) {
+            console.error(`Lỗi xử lý sticker:`, innerError.message);
+            return res.status(500).json({ error: innerError.message });
         }
-
-        return res.status(200).json({ images: results });
 
     } catch (error) {
         // Trả về lỗi chi tiết thay vì 500 chung chung
@@ -136,23 +129,28 @@ async function uploadToTmpFiles(imageBase64) {
 }
 
 // ====================================
-// REPLICATE
+// REPLICATE: fofr/face-to-sticker
 // ====================================
-async function generateWithReplicate(replicateClient, imageUrl, prompt, negative_prompt) {
+async function generateWithReplicate(replicateClient, imageUrl, prompt) {
+    // 1. Tối giản Input dữ liệu gửi đi để fix lỗi 400
+    const inputData = {
+        image: imageUrl,
+        prompt: prompt
+    };
+
+    // 2. Log chi tiết dữ liệu gửi đi để kiểm tra trong Vercel Logs
+    console.log("Input gui di:", JSON.stringify(inputData));
+
     const output = await replicateClient.run(
         "fofr/face-to-sticker:764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
         {
-            input: {
-                image: imageUrl,
-                prompt: prompt,
-                negative_prompt: negative_prompt || "photorealistic, 3d, realistic, cinematic, bad quality, blurry, messy, extra limbs, deformed, text, watermark",
-                upscale: true,
-                upscale_steps: 20
-            }
+            input: inputData
         }
     );
 
     const outputUrl = Array.isArray(output) ? output[0] : output;
+    console.log("Replicate Output URL:", outputUrl);
+    
     if (!outputUrl) throw new Error('Replicate không trả về URL ảnh.');
 
     const imgRes = await fetch(outputUrl);
