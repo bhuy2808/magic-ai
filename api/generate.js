@@ -9,9 +9,15 @@ module.exports = async (req, res) => {
 
         const { prompts, prompt, imageBase64, negative_prompt } = req.body;
         
-        // 2. Khởi tạo Replicate bên trong hàm POST để lấy biến môi trường mới nhất
-        const replicate = new Replicate({
-            auth: process.env.REPLICATE_API_TOKEN,
+        // KIỂM TRA TOKEN TRƯỚC KHI KHỞI TẠO
+        if (!process.env.REPLICATE_API_TOKEN) {
+            console.error('TOKEN IS MISSING IN ENV!');
+            throw new Error('REPLICATE_API_TOKEN is not defined in environment variables.');
+        }
+
+        // 2. Khởi tạo Replicate chính xác 100% như yêu cầu
+        const replicate = new Replicate({ 
+            auth: process.env.REPLICATE_API_TOKEN 
         });
 
         const STABILITY_API_KEY = process.env.STABILITY_API_KEY;
@@ -58,7 +64,7 @@ module.exports = async (req, res) => {
             let stickerBuffer = null;
 
             try {
-                // ƯU TIÊN 1: REPLICATE (Bắt buộc dùng publicImageUrl)
+                // ƯU TIÊN 1: REPLICATE (Bắt buộc dùng publicImageUrl và biến replicate đã khởi tạo)
                 if (process.env.REPLICATE_API_TOKEN && publicImageUrl) {
                     try {
                         stickerBuffer = await generateWithReplicate(replicate, publicImageUrl, currentPrompt, negative_prompt);
