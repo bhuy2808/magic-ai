@@ -51,28 +51,26 @@ module.exports = async (req, res) => {
 };
 
 // ====================================
-// REPLICATE face-to-sticker (GOLDEN PARAMETERS)
+// REPLICATE PhotoMaker (Digital Art Stylization)
 // ====================================
 async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiToken) {
     const dataUri = 'data:image/jpeg;base64,' + imageBase64;
 
     const body = {
-        version: "764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
+        version: "ddfc2b6a23414e300305ab23157f43399b66236317b621e7807218ef86ca61e6",
         input: {
-            image: dataUri,
-            prompt: prompt || "a person",
-            steps: 35,
-            width: 1024,
-            height: 1024,
-            prompt_strength: 14.0,
-            instant_id_strength: 0.45,
-            ip_adapter_weight: 0.1,
-            ip_adapter_noise: 0.5,
-            upscale: true
+            input_image: dataUri,
+            prompt: prompt, // Sẽ có chữ "img" từ frontend gửi qua
+            num_steps: 40,
+            style_name: "Digital Art",
+            num_outputs: 1,
+            guidance_scale: 5,
+            negative_prompt: negative_prompt || "photorealistic, 3d, realistic, cinematic, bad quality, blurry, messy, extra limbs, deformed, text, watermark",
+            style_strength_ratio: 35
         }
     };
 
-    console.log('Calling High-Stylized Sticker with prompt:', prompt);
+    console.log('Calling PhotoMaker (Digital Art) with prompt:', prompt);
 
     const createRes = await fetch("https://api.replicate.com/v1/predictions", {
         method: "POST",
@@ -111,7 +109,7 @@ async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiTo
     }
 
     const outputUrl = Array.isArray(prediction.output)
-        ? prediction.output[prediction.output.length - 1]
+        ? prediction.output[0]
         : prediction.output;
 
     if (!outputUrl) throw new Error('No output image');
@@ -132,7 +130,7 @@ async function generateWithStability(imageBase64, prompt, negative_prompt, apiKe
 
     formData.append("image", blob, 'image.png');
     formData.append("prompt", prompt);
-    formData.append("strength", "0.15");
+    formData.append("strength", "0.32");
     formData.append("mode", "image-to-image");
     formData.append("output_format", "png");
     if (negative_prompt) formData.append("negative_prompt", negative_prompt);

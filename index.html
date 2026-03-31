@@ -823,7 +823,7 @@
                     <div class="creator-right"
                         style="flex: 1.2; min-width: 320px; display: flex; flex-direction: column; align-items: stretch;">
                         <div id="customStickerResultContainer"
-                            style="width: 100%; min-height: 480px; border-radius: 24px; background: #0f0f0f; border: 2px dashed rgba(255,255,255,0.05); display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 20px; position: relative; overflow-y: auto; box-shadow: inset 0 0 40px rgba(0,0,0,0.6);">
+                            style="width: 100%; min-height: 480px; border-radius: 24px; background: #0f0f0f; border: 2px dashed rgba(255,255,255,0.05); display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 20px; position: relative; overflow-y: auto; box-shadow: inset 0 0 40px rgba(0,0,0,0.6);">
 
                             <!-- Placeholder Magic Wand (Absolute centered to not affect grid item flow) -->
                             <div id="placeholderMagic"
@@ -1227,30 +1227,20 @@
 
                     // 8 prompt cảm xúc + Mix phong cách Showcase (Đặc biệt để giống mẫu bạn gửi)
                     const emotionStickerPrompts = [
-                        "happy smiling person, joyful expression, sparkling eyes, premium 3D art",
-                        "excited celebrating person, party mood, cheerful, premium 3D art",
-                        "angry furious person, intense fierce expression, premium 3D art",
-                        "sad melancholy person, teary eyes, sorrowful, premium 3D art",
-                        "surprised shocked person, wide open mouth, amazed, premium 3D art",
-                        "laughing person, tears of joy, very happy, premium 3D art",
-                        "premium 3D chibi AI character, high-quality digital art, adorable big glossy eyes, soft 3D shading, toy-like aesthetic, cute proportions, smooth surfaces, matching hairstyle and features from input", // Slot 7: Chibi AI Showcase
-                        "smooth 3D anime style, polished skin, big expressive eyes, high-end toy aesthetic, professional CGI render, premium character design" // Slot 8: Smooth Anime Showcase
+                        "very happy expression, bright smile",
+                        "excited celebrating person, party mood, cheerful",
+                        "angry furious expression",
+                        "sad melancholy person, teary eyes",
+                        "surprised shocked expression, wide open mouth",
+                        "laughing out loud, tears of joy",
+                        "smiling gently, warm expression", // Slot 7
+                        "cool confident look" // Slot 8
                     ];
 
-                    // Style prompt - ĐẠI TU TOÀN DIỆN 5 phong cách chuẩn SHOWCASE 3D/CGI cao cấp nhất
-                    let stickerStylePrompt = "premium 3D anime AI character, high-quality CGI, octane render, beautiful studio lighting, soft shadows, expressive features, matching hairstyle and face from input, die-cut sticker, thick white border, 8k resolution, professional 3D art, transparent background";
-
-                    if (styleName === "cyberpunk") stickerStylePrompt = "high-end 3D cyberpunk character, futuristic sci-fi aesthetic, Unreal Engine 5 cinematic render, neon glow effects, premium metallic textures, synthwave lighting, matching facial features, die-cut sticker, white border, sharp professional 3D render, transparent background";
-                    if (styleName === "kawaii") stickerStylePrompt = "adorable premium 3D kawaii character, soft Pixar-inspired aesthetic, cute big glossy eyes, pastel 3D materials, Disney animation style, matching face and features, die-cut sticker, white border, ultra-smooth 3D render, transparent background";
-                    if (styleName === "monster") stickerStylePrompt = "expressive premium 3D monster character, Illumination animation style, vibrant colorful textures, playful creature design, cinematic lighting, 3D character art, matching input face, die-cut sticker, white border, high-quality CGI render, transparent background";
-                    if (styleName === "chibi") stickerStylePrompt = "extra-premium 3D chibi AI style, high-quality digital art, adorable big glossy eyes, soft 3D shading, toy-like aesthetic, cute proportions, smooth surfaces, matching hairstyle and facial features from input, die-cut sticker, thick white border, 4k CGI render, transparent background";
-
-
-
-
-
-
-                    const negativePrompt = "photo, realistic, 3d render, grainy, messy outlines, shadow on background, blurry, low resolution, ugly, deformed features, extra limbs, watermark, text, out of frame";
+                    // --- FIXED PROMPT FRAME ---
+                    const basePromptFrame = "A high-quality chibi sticker of the person in the photo, KEEP the exact face features, glasses, and neat short hairstyle. Die-cut sticker, bold white border, isolated on solid white background.";
+                    
+                    const negativePrompt = "(big messy hair:1.5), afro hair, cloud hair, distorted face, blurry, text, messy background";
 
 
                     // (Global getResizedBase64 is used instead)
@@ -1259,7 +1249,7 @@
                     var cachedBase64 = null;
 
                     async function generateStickerFromAI(emotionIdx) {
-                        var fullPrompt = stickerStylePrompt + ", " + emotionStickerPrompts[emotionIdx];
+                        var fullPrompt = basePromptFrame + " " + emotionStickerPrompts[emotionIdx];
 
                         if (!cachedBase64) {
                             cachedBase64 = await getResizedBase64(uploadedFile);
@@ -1589,16 +1579,17 @@
             previousImages.forEach(img => img.remove());
 
             try {
-                // Tuned Ghibli prompt for face-to-sticker
-                const baseAnimeStyle = "Masterpiece, Ghibli style 2D anime illustration, solo, detailed line art, flat colors, heavy stylization, high quality, pure solid white background. Completely transform the face into a 2D anime version while keeping the hairstyle and appearance.";
+                // --- FIXED PROMPT FRAME ---
+                const basePromptFrame = "A high-quality chibi sticker of the person in the photo, KEEP the exact face features, glasses, and neat short hairstyle. Die-cut sticker, bold white border, isolated on solid white background.";
+                const customNegativePrompt = "(big messy hair:1.5), afro hair, cloud hair, distorted face, blurry, text, messy background";
 
                 const emotions = [
-                    { label: "Vui Vẻ", prompt: `${baseAnimeStyle} Very happy expression, bright smile.` },
-                    { label: "Buồn Bã", prompt: `${baseAnimeStyle} Sad expression, melancholy look.` },
-                    { label: "Tức Giận", prompt: `${baseAnimeStyle} Angry and furious expression.` },
-                    { label: "Khóc", prompt: `${baseAnimeStyle} Crying with visible tears.` },
-                    { label: "Ngạc Nhiên", prompt: `${baseAnimeStyle} Surprised and shocked expression.` },
-                    { label: "Cười Lớn", prompt: `${baseAnimeStyle} Laughing out loud.` }
+                    { label: "Vui vẻ", prompt: `${basePromptFrame} laughing out loud, wide joyful smile, sparkles` },
+                    { label: "Yêu thương", prompt: `${basePromptFrame} blowing a kiss, heart eyes, blushing cheeks` },
+                    { label: "Giận dữ", prompt: `${basePromptFrame} playful angry expression, red face, tiny steam clouds` },
+                    { label: "Ngạc nhiên", prompt: `${basePromptFrame} surprised face, wide eyes, open mouth` },
+                    { label: "Khóc nhè", prompt: `${basePromptFrame} teary eyes, crying, cute anime tears` },
+                    { label: "Ngầu", prompt: `${basePromptFrame} wearing cool sunglasses, confident smirk, stylish pose` }
                 ];
 
                 const uploadedFile = uploadCustomSticker.files[0];
@@ -1619,10 +1610,8 @@
                     document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 2 Sticker (Free)...";
                 }
 
-                for (let i = 0; i < 6; i++) {
-                    const emotion = emotions[i];
-
-                    // Create item container in grid
+                // Create all item containers first
+                const itemDivs = emotions.map((emotion, i) => {
                     const itemDiv = document.createElement("div");
                     itemDiv.className = "sticker-result-item";
                     itemDiv.style.position = "relative";
@@ -1633,6 +1622,7 @@
                     itemDiv.style.display = "flex";
                     itemDiv.style.alignItems = "center";
                     itemDiv.style.justifyContent = "center";
+                    itemDiv.style.background = "#FFFFFF";
 
                     if (i >= batchSize) {
                         itemDiv.style.background = "#141414";
@@ -1643,20 +1633,23 @@
                                 <span style="font-size:0.75rem; font-weight:700; letter-spacing:1px; text-transform:uppercase;">Mở Khóa VIP</span>
                             </div>
                         `;
-                        customStickerResultContainer.appendChild(itemDiv);
-                        continue; // Skip API call for locked items
+                    } else {
+                        const itemLoading = document.createElement("div");
+                        itemLoading.className = "item-loading-spinner";
+                        itemLoading.innerHTML = "<span class='processing-text' style='color: #888; font-weight: 600;'>Loading...</span>";
+                        itemLoading.style.fontSize = "1rem";
+                        itemDiv.appendChild(itemLoading);
                     }
-
-                    itemDiv.style.background = "#FFFFFF";
-                    const itemLoading = document.createElement("div");
-                    itemLoading.innerHTML = "<span class='processing-text' style='color: #888; font-weight: 600;'>Loading...</span>";
-                    itemLoading.style.fontSize = "1rem";
-                    itemDiv.appendChild(itemLoading);
-
                     customStickerResultContainer.appendChild(itemDiv);
+                    return itemDiv;
+                });
 
-                    // Scroll to see progress
-                    customStickerResultContainer.scrollTop = customStickerResultContainer.scrollHeight;
+                // Parallel API Requests
+                const stickerPromises = emotions.map(async (emotion, i) => {
+                    if (i >= batchSize) return null;
+
+                    const itemDiv = itemDivs[i];
+                    const itemLoading = itemDiv.querySelector(".item-loading-spinner");
 
                     try {
                         const fullPrompt = `${emotion.prompt}\n(IMPORTANT: Solid pure WHITE background. No dark backgrounds).`;
@@ -1667,7 +1660,7 @@
                             body: JSON.stringify({
                                 imageBase64: resizedBase64,
                                 prompt: fullPrompt,
-                                negative_prompt: "black background, dark background, photo, realistic, 3d render, grainy, messy outlines, shadow on background, blurry, low resolution, ugly, deformed features, extra limbs, watermark, text apart from label, out of frame",
+                                negative_prompt: customNegativePrompt,
                                 style: "chibi"
                             })
                         });
@@ -1677,7 +1670,7 @@
                         const blob = await response.blob();
                         const imgUrl = URL.createObjectURL(blob);
 
-                        itemLoading.remove();
+                        if (itemLoading) itemLoading.remove();
                         const img = document.createElement("img");
                         img.src = imgUrl;
                         img.style.width = "100%";
@@ -1711,14 +1704,18 @@
 
                         itemDiv.appendChild(img);
                         itemDiv.appendChild(dlOverlay);
+                        
+                        return imgUrl;
                     } catch (err) {
-                        itemLoading.innerHTML = "❌";
-                        console.error(err);
+                        if (itemLoading) itemLoading.innerHTML = "❌";
+                        console.error("Parallel fetch failed for slot " + i, err);
+                        return null;
                     }
+                });
 
-                    // Delay to avoid overwhelming the server
-                    if (i < batchSize - 1) await new Promise(r => setTimeout(r, 1500));
-                }
+                // Wait for all allowed to finish
+                const results = await Promise.all(stickerPromises);
+                console.log("6 Stickers generation batch finished.");
 
                 customStickerLoadingText.style.display = "none";
                 customStickerActions.style.display = "flex";
