@@ -1,6 +1,9 @@
-// Dual API: Replicate face-to-sticker (ưu tiên) + Stability AI (fallback)
-// Update Token
-// Ảnh đã được resize trên frontend (512px, JPEG 60%) → data URI < 500KB → OK
+const Replicate = require('replicate');
+
+// Initializing Replicate with environment variable only
+const replicate = new Replicate({
+    auth: process.env.REPLICATE_API_TOKEN,
+});
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -9,15 +12,14 @@ module.exports = async (req, res) => {
 
     try {
         const { prompts, prompt, imageBase64, negative_prompt } = req.body;
-        const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN;
         const STABILITY_API_KEY = process.env.STABILITY_API_KEY;
 
         // Log token presence (safe check)
         console.log('--- API Token Check ---');
-        console.log('REPLICATE_API_TOKEN:', REPLICATE_API_TOKEN ? 'DETECTED (OK)' : 'MISSING');
+        console.log('REPLICATE_API_TOKEN:', process.env.REPLICATE_API_TOKEN ? 'DETECTED (OK)' : 'MISSING');
         console.log('STABILITY_API_KEY:', STABILITY_API_KEY ? 'DETECTED (OK)' : 'MISSING');
 
-        if (!REPLICATE_API_TOKEN && !STABILITY_API_KEY) {
+        if (!process.env.REPLICATE_API_TOKEN && !STABILITY_API_KEY) {
             return res.status(500).json({ message: 'No API key configured.' });
         }
 
@@ -33,7 +35,6 @@ module.exports = async (req, res) => {
             console.log('Public image URL:', publicImageUrl);
         } catch (uploadErr) {
             console.error('Failed to upload to public host:', uploadErr.message);
-            // Fallback to data URI for Replicate later or just rely on Stability
         }
 
         const inputPrompts = Array.isArray(prompts) ? prompts : [prompt];
@@ -54,11 +55,11 @@ module.exports = async (req, res) => {
             let stickerBuffer = null;
 
             try {
-                // ƯU TIÊN 1: REPLICATE (with public URL)
-                if (REPLICATE_API_TOKEN) {
+                // ƯU TIÊN 1: REPLICATE (using official library)
+                if (process.env.REPLICATE_API_TOKEN) {
                     try {
                         const inputSource = publicImageUrl || ('data:image/jpeg;base64,' + imageBase64);
-                        stickerBuffer = await generateWithReplicate(inputSource, currentPrompt, negative_prompt, REPLICATE_API_TOKEN);
+                        stickerBuffer = await generateWithReplicate(inputSource, currentPrompt, negative_prompt);
                     } catch (repError) {
                         console.error(`Replicate failed for sticker #${index + 1}:`, repError.message);
                     }
@@ -135,53 +136,24 @@ async function uploadToTmpFiles(imageBase64) {
 // ====================================
 // REPLICATE fofr/face-to-sticker
 // ====================================
-async function generateWithReplicate(imageUrl, prompt, negative_prompt, apiToken) {
-    const body = {
-        // Latest version for fofr/face-to-sticker
-        version: "764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
-        input: {
-            image: imageUrl,
-            prompt: prompt,
-            negative_prompt: negative_prompt || "photorealistic, 3d, realistic, cinematic, bad quality, blurry, messy, extra limbs, deformed, text, watermark",
-            upscale: true,
-            upscale_steps: 20
-        }
-    };
-
-    const createRes = await fetch("https://api.replicate.com/v1/predictions", {
-        method: "POST",
-        headers: {
-            "Authorization": "Bearer " + apiToken,
-            "Content-Type": "application/json",
-            "Prefer": "wait"
-        },
-        body: JSON.stringify(body)
-    });
-
-    if (!createRes.ok) {
-        const errBody = await createRes.text();
-        throw new Error('Replicate API ' + createRes.status + ': ' + errBody.substring(0, 200));
-    }
-
-    let prediction = await createRes.json();
-
-    // Polling if still processing
-    if (prediction.status !== "succeeded") {
-        for (let i = 0; i < 90; i++) {
-            await new Promise(r => setTimeout(r, 2000));
-            const pollRes = await fetch(prediction.urls.get, {
-                headers: { "Authorization": "Bearer " + apiToken }
-            });
-            if (!pollRes.ok) throw new Error('Poll failed');
-            prediction = await pollRes.json();
-            if (prediction.status === "succeeded") break;
-            if (prediction.status === "failed" || prediction.status === "canceled") {
-                throw new Error(prediction.error || 'Generation failed');
+async function generateWithReplicate(imageUrl, prompt, negative_prompt) {
+    console.log('Running fofr/face-to-sticker via official client...');
+    
+    // Using the official library's run method which handles polling automatically
+    const output = await replicate.run(
+        "fofr/face-to-sticker:764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
+        {
+            input: {
+                image: imageUrl,
+                prompt: prompt,
+                negative_prompt: negative_prompt || "photorealistic, 3d, realistic, cinematic, bad quality, blurry, messy, extra limbs, deformed, text, watermark",
+                upscale: true,
+                upscale_steps: 20
             }
         }
-    }
+    );
 
-    const outputUrl = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
+    const outputUrl = Array.isArray(output) ? output[0] : output;
     if (!outputUrl) throw new Error('No output image URL from Replicate');
 
     const imgRes = await fetch(outputUrl);
