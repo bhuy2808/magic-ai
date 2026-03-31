@@ -51,23 +51,25 @@ module.exports = async (req, res) => {
             }
         }
 
-        const inputPrompts = Array.isArray(prompts) ? prompts : [prompt];
+        const inputPrompts = Array.isArray(prompts) ? prompts.slice(0, 1) : [prompt];
         const results = [];
 
-        console.log(`--- Đang xử lý bộ ${inputPrompts.length} sticker ---`);
+        console.log(`--- CHẾ ĐỘ SINGLE-MODE: Chỉ tạo sticker đầu tiên để tránh lỗi 429 ---`);
 
         for (const [index, currentPrompt] of inputPrompts.entries()) {
-            console.log(`--- Đang tạo sticker #${index + 1} ---`);
+            console.log(`Sticker ${index + 1} bat dau...`);
+            console.log(`Prompt: ${currentPrompt}`);
             
+            // Tăng mạnh thời gian nghỉ lên 10 giây (nếu có vòng lặp sau này)
             if (index > 0) {
-                console.log('Nghỉ 2 giây...');
-                await new Promise(r => setTimeout(r, 2000));
+                console.log('Nghỉ 10 giây để tránh 429...');
+                await new Promise(r => setTimeout(r, 10000));
             }
 
             let stickerBuffer = null;
 
             try {
-                // ƯU TIÊN 1: REPLICATE (Bắt buộc dùng publicImageUrl và biến replicate đã khởi tạo)
+                // ƯU TIÊN 1: REPLICATE (Bắt buộc dùng publicImageUrl)
                 if (process.env.REPLICATE_API_TOKEN && publicImageUrl) {
                     try {
                         stickerBuffer = await generateWithReplicate(replicate, publicImageUrl, currentPrompt);
@@ -76,7 +78,7 @@ module.exports = async (req, res) => {
                     }
                 }
 
-                // FALLBACK: STABILITY AI (Vẫn dùng buffer trực tiếp vì Stability hỗ trợ tốt hơn)
+                // FALLBACK: STABILITY AI
                 if (!stickerBuffer && STABILITY_API_KEY) {
                     try {
                         stickerBuffer = await generateWithStability(imageBase64, currentPrompt, negative_prompt, STABILITY_API_KEY);
@@ -87,7 +89,7 @@ module.exports = async (req, res) => {
 
                 if (stickerBuffer) {
                     results.push(stickerBuffer.toString('base64'));
-                    console.log(`✅ Sticker #${index + 1} xong.`);
+                    console.log(`Sticker ${index + 1} thanh cong!`);
                 } else {
                     results.push({ error: 'Không thể tạo ảnh bằng cả 2 cách.' });
                 }
