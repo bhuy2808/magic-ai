@@ -1744,11 +1744,15 @@
                             if (!response.ok) throw new Error("Initiator API Error");
 
                             const data = await response.json();
-                            if (data.predictionId) {
-                                // Bắt đầu Polling cho sticker này
-                                pollStickerStatus(data.predictionId, itemDiv, current.label);
+                            const pId = data.predictionId; // Lấy ID ra một biến riêng biệt
+
+                            if (pId && pId !== "null" && pId !== "undefined") {
+                                console.log("Khởi tạo thành công ID:", pId);
+                                // Bắt đầu Polling cho sticker này với biến pId đảm bảo có giá trị
+                                pollStickerStatus(pId, itemDiv, current.label);
                             } else {
-                                throw new Error("No predictionId returned");
+                                console.error("Phản hồi từ Server không có ID hợp lệ:", data);
+                                throw new Error("No valid predictionId returned");
                             }
 
                         } catch (initErr) {

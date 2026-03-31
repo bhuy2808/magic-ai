@@ -4,27 +4,33 @@ module.exports = async (req, res) => {
     try {
         const { id } = req.query;
 
-        // BẮT LỖI ID TRỐNG HOẶC NULL (Yêu cầu của bạn)
+        // BẮT LỖI ID CHUẨN XÁC THEO YÊU CẦU CỦA BẠN
         if (!id || id === 'null' || id === 'undefined' || id === '') {
             console.error("Lỗi: ID bị thiếu hoặc không hợp lệ.");
-            return res.status(400).json({ error: 'ID bi thieu' });
+            return res.status(400).json({ error: 'ID khong hop le' });
         }
 
-        if (!process.env.REPLICATE_API_TOKEN) throw new Error('REPLICATE_API_TOKEN is not defined.');
+        if (!process.env.REPLICATE_API_TOKEN) throw new Error('Token API is missing.');
 
         const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
 
-        // Lấy trạng thái mới nhất từ Replicate
-        console.log(`Đang kiểm tra trạng thái cho ID: ${id}...`);
+        // Truy vấn trực tiếp trạng thái từ Replicate
+        console.log(`Kiểm tra trạng thái ID: ${id}`);
         const prediction = await replicate.predictions.get(id);
 
         if (prediction.status === "succeeded") {
+            // Trích xuất URL ảnh cẩn thận
             const output = prediction.output;
-            const finalUrl = Array.isArray(output) ? output[0] : output;
+            const finalUrl = Array.isArray(output) ? output[0] : (typeof output === 'string' ? output : null);
             
-            console.log(`ID ${id} THÀNH CÔNG! Đang xử lý ảnh...`);
+            if (!finalUrl) {
+                console.error("Lỗi: Replicate báo Succeeded nhưng không có URL ảnh.");
+                throw new Error("Result URL is null");
+            }
 
-            // Fetch ảnh và chuyển sang Base64
+            console.log(`ID ${id} DONE! Đang tải ảnh từ: ${finalUrl}`);
+
+            // Fetch ảnh (Đảm bảo finalUrl không phải null)
             const imgRes = await fetch(finalUrl);
             const buffer = await imgRes.arrayBuffer();
             const base64 = Buffer.from(buffer).toString('base64');
