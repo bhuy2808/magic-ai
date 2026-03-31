@@ -89,28 +89,29 @@ async function generateWithReplicate(replicateClient, imageUrl, prompt) {
 
     console.log("Gửi Input cho Replicate:", JSON.stringify(inputData));
 
-    // SDK của Replicate sẽ tự động polling cho đến khi trạng thái là Succeeded
+    // Dùng replicateClient.run sẽ tự động đợi (polling) đến khi có trạng thái Succeeded
     const output = await replicateClient.run(
         "fofr/face-to-sticker:764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
         { input: inputData }
     );
 
-    // LOG 'RUỘT' KẾT QUẢ ĐỂ KIỂM TRA CẤU TRÚC THỰC TẾ
-    console.log("DU LIEU THO TU REPLICATE:", JSON.stringify(output));
-
-    // Trích xuất link ảnh theo cách thô sơ và bao quát nhất
-    const imageUrlResult = Array.isArray(output) 
-        ? output[0] 
-        : (typeof output === 'string' ? output : (output.url || output[0] || null));
-
-    console.log("Link ảnh sau khi trích xuất:", imageUrlResult);
-
-    if (!imageUrlResult) {
-        throw new Error('Replicate không trả về URL ảnh hợp lệ trong output.');
+    // KIỂM TRA LẠI KẾT QUẢ ĐỂ TRÁNH LỖI NULL
+    if (!output) {
+        throw new Error("AI chua kip tra ve ket qua (Output is null)");
     }
 
-    const imgRes = await fetch(imageUrlResult);
-    if (!imgRes.ok) throw new Error(`Không thể tải ảnh từ URL: ${imageUrlResult}`);
+    console.log("DU LIEU THO TU REPLICATE:", JSON.stringify(output));
+
+    // Trích xuất link ảnh cuối cùng
+    const finalUrl = Array.isArray(output) ? output[0] : output;
+    console.log("LINK ANH CUOI CUNG:", finalUrl);
+
+    if (!finalUrl || typeof finalUrl !== 'string') {
+        throw new Error('Replicate khong tra ve URL anh hop le.');
+    }
+
+    const imgRes = await fetch(finalUrl);
+    if (!imgRes.ok) throw new Error(`Khong the tai anh tu URL: ${finalUrl}`);
 
     return Buffer.from(await imgRes.arrayBuffer());
 }
