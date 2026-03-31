@@ -1645,79 +1645,110 @@
                 });
 
                 try {
-                    // Gửi toàn bộ danh sách prompt lên Backend để xử lý "Xếp hàng"
-                    const promptsToGenerate = emotions.slice(0, batchSize).map(e => e.prompt);
-                    
-                    const response = await fetch("/api/generate", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            imageBase64: resizedBase64,
-                            prompts: promptsToGenerate,
-                            negative_prompt: customNegativePrompt
-                        })
-                    });
+                    // --- WEB POLLING ARCHITECTURE ---
+                    // 1. Hàm Polling: Cứ 3s lại kiểm tra xem AI vẽ xong chưa
+                    async function pollStickerStatus(predictionId, itemDiv, emotionLabel) {
+                        const pollInterval = setInterval(async () => {
+                            try {
+                                const res = await fetch(`/api/check?id=${predictionId}`);
+                                const data = await res.json();
 
-                    if (!response.ok) throw new Error("Backend Queue API Error");
+                                if (data.status === "succeeded") {
+                                    clearInterval(pollInterval);
+                                    updateStickerUI(itemDiv, data.imageUrl, emotionLabel);
+                                } else if (data.status === "failed" || data.status === "canceled") {
+                                    clearInterval(pollInterval);
+                                    itemDiv.innerHTML = "<span style='font-size:1.5rem;'>❌</span>";
+                                    console.error("Polling failed:", data.error);
+                                }
+                                // Nếu status là 'starting' hoặc 'processing', tiếp tục chờ...
+                            } catch (err) {
+                                console.error("Poll error:", err);
+                                clearInterval(pollInterval);
+                                itemDiv.innerHTML = "<span style='font-size:1.5rem;'>❌</span>";
+                            }
+                        }, 3000);
+                    }
 
-                    const data = await response.json();
-                    const images = data.images; // Mảng chứa base64 hoặc {error: "..."}
-
-                    images.forEach((imgData, i) => {
-                        const itemDiv = itemDivs[i];
+                    // 2. Hàm cập nhật UI khi có ảnh
+                    function updateStickerUI(itemDiv, imgUrl, label) {
                         const itemLoading = itemDiv.querySelector(".item-loading-spinner");
                         if (itemLoading) itemLoading.remove();
 
-                        if (imgData && typeof imgData === 'string') {
-                            const imgUrl = `data:image/png;base64,${imgData}`;
-                            const img = document.createElement("img");
-                            img.src = imgUrl;
-                            img.style.width = "100%";
-                            img.style.height = "100%";
-                            img.style.objectFit = "contain";
-                            img.style.padding = "10px";
-                            img.style.filter = "drop-shadow(0 10px 20px rgba(0,0,0,0.3))";
-                            img.className = "sticker-img";
-                            img.title = emotions[i].label;
+                        const img = document.createElement("img");
+                        img.src = imgUrl;
+                        img.style.width = "100%";
+                        img.style.height = "100%";
+                        img.style.objectFit = "contain";
+                        img.style.padding = "10px";
+                        img.style.filter = "drop-shadow(0 10px 20px rgba(0,0,0,0.3))";
+                        img.className = "sticker-img";
+                        img.title = label;
 
-                            // Download button on hover overlay
-                            const dlOverlay = document.createElement("div");
-                            dlOverlay.style.position = "absolute";
-                            dlOverlay.style.inset = "0";
-                            dlOverlay.style.background = "rgba(0,0,0,0.5)";
-                            dlOverlay.style.display = "none";
-                            dlOverlay.style.alignItems = "center";
-                            dlOverlay.style.justifyContent = "center";
-                            dlOverlay.innerHTML = "📥";
-                            dlOverlay.style.fontSize = "1.5rem";
-                            dlOverlay.style.cursor = "pointer";
+                        const dlOverlay = document.createElement("div");
+                        dlOverlay.style.position = "absolute";
+                        dlOverlay.style.inset = "0";
+                        dlOverlay.style.background = "rgba(0,0,0,0.5)";
+                        dlOverlay.style.display = "none";
+                        dlOverlay.style.alignItems = "center";
+                        dlOverlay.style.justifyContent = "center";
+                        dlOverlay.innerHTML = "📥";
+                        dlOverlay.style.fontSize = "1.5rem";
+                        dlOverlay.style.cursor = "pointer";
 
-                            itemDiv.onmouseenter = () => dlOverlay.style.display = "flex";
-                            itemDiv.onmouseleave = () => dlOverlay.style.display = "none";
-                            dlOverlay.onclick = () => {
-                                const link = document.createElement('a');
-                                link.href = imgUrl;
-                                link.download = `sticker_${emotions[i].label}.png`;
-                                link.click();
-                            };
+                        itemDiv.onmouseenter = () => dlOverlay.style.display = "flex";
+                        itemDiv.onmouseleave = () => dlOverlay.style.display = "none";
+                        dlOverlay.onclick = () => {
+                            const link = document.createElement('a');
+                            link.href = imgUrl;
+                            link.download = `sticker_${label}.png`;
+                            link.click();
+                        };
 
-                            itemDiv.appendChild(img);
-                            itemDiv.appendChild(dlOverlay);
-                        } else {
-                            itemDiv.innerHTML = "<span style='font-size:1.5rem;'>❌</span>";
+                        itemDiv.appendChild(img);
+                        itemDiv.appendChild(dlOverlay);
+                    }
+
+                    // 3. Vòng lặp kích hoạt (Initiator Loop)
+                    const promptsToGenerate = emotions.slice(0, batchSize);
+                    for (let i = 0; i < promptsToGenerate.length; i++) {
+                        const current = promptsToGenerate[i];
+                        const itemDiv = itemDivs[i];
+
+                        // Delay 2 giây giữa các sticker để tránh lỗi Rate Limit (429) khi khởi tạo
+                        if (i > 0) await new Promise(r => setTimeout(r, 2000));
+
+                        try {
+                            const response = await fetch("/api/generate", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    imageBase64: resizedBase64,
+                                    prompt: current.prompt
+                                })
+                            });
+
+                            if (!response.ok) throw new Error("Initiator API Error");
+
+                            const data = await response.json();
+                            if (data.predictionId) {
+                                // Bắt đầu Polling cho sticker này
+                                pollStickerStatus(data.predictionId, itemDiv, current.label);
+                            } else {
+                                throw new Error("No predictionId returned");
+                            }
+
+                        } catch (initErr) {
+                            console.error(`Sticker ${i+1} init failed:`, initErr);
+                            const loading = itemDiv.querySelector(".item-loading-spinner");
+                            if (loading) loading.innerHTML = "❌";
                         }
-                    });
+                    }
 
                 } catch (err) {
-                    console.error("Batch generation failed:", err);
-                    alert("Tạo bộ sticker thất bại. Vui lòng kiểm tra Vercel Logs hoặc thử lại.");
-                    // Dọn dẹp loading nếu bị lỗi
-                    itemDivs.forEach(div => {
-                        const loading = div.querySelector(".item-loading-spinner");
-                        if (loading) loading.innerHTML = "❌";
-                    });
+                    console.error("Initiator loop failed:", err);
                 }
-                console.log("Sticker generation process finished.");
+                console.log("Web Polling started for all stickers.");
 
                 customStickerLoadingText.style.display = "none";
                 customStickerActions.style.display = "flex";
