@@ -1,6 +1,9 @@
 const Replicate = require("replicate");
 
 module.exports = async (req, res) => {
+    // LOG KIỂM TRA QUYỀN TRUY CẬP (Dùng cho Vercel Logs)
+    console.log("Kiem tra Token:", process.env.REPLICATE_API_TOKEN ? "Da tim thay" : "Van bi trong");
+
     // 1. Toàn bộ nội dung bọc trong Try...Catch để bắt lỗi 500 chi tiết
     try {
         if (req.method !== 'POST') {
