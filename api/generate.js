@@ -11,6 +11,11 @@ module.exports = async (req, res) => {
         const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN;
         const STABILITY_API_KEY = process.env.STABILITY_API_KEY;
 
+        // Log token presence (safe check)
+        console.log('--- API Token Check ---');
+        console.log('REPLICATE_API_TOKEN:', REPLICATE_API_TOKEN ? 'DETECTED (OK)' : 'MISSING');
+        console.log('STABILITY_API_KEY:', STABILITY_API_KEY ? 'DETECTED (OK)' : 'MISSING');
+
         if (!REPLICATE_API_TOKEN && !STABILITY_API_KEY) {
             return res.status(500).json({ message: 'No API key configured.' });
         }
@@ -19,44 +24,69 @@ module.exports = async (req, res) => {
             return res.status(400).json({ message: 'Missing imageBase64' });
         }
 
+        // 1. Upload to public host for Replicate
+        let publicImageUrl = null;
+        try {
+            console.log('Uploading input image to tmpfiles.org...');
+            publicImageUrl = await uploadToTmpFiles(imageBase64);
+            console.log('Public image URL:', publicImageUrl);
+        } catch (uploadErr) {
+            console.error('Failed to upload to public host:', uploadErr.message);
+            // Fallback to data URI for Replicate later or just rely on Stability
+        }
+
         const inputPrompts = Array.isArray(prompts) ? prompts : [prompt];
         const results = [];
 
-        console.log(`Starting generation for ${inputPrompts.length} stickers...`);
+        console.log(`--- Resilient Loop: Starting generation for ${inputPrompts.length} stickers ---`);
 
-        for (const currentPrompt of inputPrompts) {
+        for (const [index, currentPrompt] of inputPrompts.entries()) {
+            console.log(`--- Đang tạo sticker thứ: ${index + 1} / ${inputPrompts.length} ---`);
+            console.log(`Prompt: ${currentPrompt}`);
+            
+            // 2s delay to avoid 429 Throttling
+            if (index > 0) {
+                console.log('Waiting 2 seconds before next request...');
+                await new Promise(r => setTimeout(r, 2000));
+            }
+
             let stickerBuffer = null;
 
-            // ƯU TIÊN 1: REPLICATE
-            if (REPLICATE_API_TOKEN) {
-                try {
-                    stickerBuffer = await generateWithReplicate(imageBase64, currentPrompt, negative_prompt, REPLICATE_API_TOKEN);
-                } catch (repError) {
-                    console.error('Replicate failed for prompt:', currentPrompt, repError.message);
-                    if (!STABILITY_API_KEY) {
-                        results.push({ error: repError.message });
-                        continue;
+            try {
+                // ƯU TIÊN 1: REPLICATE (with public URL)
+                if (REPLICATE_API_TOKEN) {
+                    try {
+                        const inputSource = publicImageUrl || ('data:image/jpeg;base64,' + imageBase64);
+                        stickerBuffer = await generateWithReplicate(inputSource, currentPrompt, negative_prompt, REPLICATE_API_TOKEN);
+                    } catch (repError) {
+                        console.error(`Replicate failed for sticker #${index + 1}:`, repError.message);
                     }
                 }
-            }
 
-            // FALLBACK: STABILITY AI
-            if (!stickerBuffer && STABILITY_API_KEY) {
-                try {
-                    stickerBuffer = await generateWithStability(imageBase64, currentPrompt, negative_prompt, STABILITY_API_KEY);
-                } catch (stabError) {
-                    console.error('Stability AI failed for prompt:', currentPrompt, stabError.message);
-                    results.push({ error: stabError.message });
-                    continue;
+                // FALLBACK: STABILITY AI
+                if (!stickerBuffer && STABILITY_API_KEY) {
+                    try {
+                        stickerBuffer = await generateWithStability(imageBase64, currentPrompt, negative_prompt, STABILITY_API_KEY);
+                    } catch (stabError) {
+                        console.error(`Stability AI fallback failed for sticker #${index + 1}:`, stabError.message);
+                    }
                 }
-            }
 
-            if (stickerBuffer) {
-                results.push(stickerBuffer.toString('base64'));
-            } else {
-                results.push({ error: 'Generation failed' });
+                if (stickerBuffer) {
+                    results.push(stickerBuffer.toString('base64'));
+                    console.log(`✅ Sticker #${index + 1} completed.`);
+                } else {
+                    console.warn(`❌ Sticker #${index + 1} failed all methods.`);
+                    results.push({ error: 'Generation failed' });
+                }
+
+            } catch (innerError) {
+                console.error(`Critical error in loop for sticker #${index + 1}:`, innerError.message);
+                results.push({ error: innerError.message });
             }
         }
+
+        console.log('--- Batch Generation Finished ---');
 
         // Return batch results
         if (Array.isArray(prompts)) {
@@ -78,26 +108,44 @@ module.exports = async (req, res) => {
 };
 
 // ====================================
-// REPLICATE PhotoMaker (Digital Art Stylization)
+// UTILS: Public Image Hosting (tmpfiles.org)
 // ====================================
-async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiToken) {
-    const dataUri = 'data:image/jpeg;base64,' + imageBase64;
+async function uploadToTmpFiles(imageBase64) {
+    const buffer = Buffer.from(imageBase64, 'base64');
+    const formData = new FormData();
+    const blob = new Blob([buffer], { type: 'image/jpeg' });
+    formData.append('file', blob, 'input_image.jpg');
 
+    const res = await fetch('https://tmpfiles.org/api/v1/upload', {
+        method: 'POST',
+        body: formData
+    });
+
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Upload failed (${res.status}): ${text}`);
+    }
+
+    const json = await res.json();
+    const rawUrl = json.data.url.replace('https://tmpfiles.org/', 'https://tmpfiles.org/dl/');
+    return rawUrl;
+}
+
+// ====================================
+// REPLICATE fofr/face-to-sticker
+// ====================================
+async function generateWithReplicate(imageUrl, prompt, negative_prompt, apiToken) {
     const body = {
-        version: "ddfc2b6a23414e300305ab23157f43399b66236317b621e7807218ef86ca61e6",
+        // Latest version for fofr/face-to-sticker
+        version: "764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
         input: {
-            input_image: dataUri,
-            prompt: prompt, // Sẽ có chữ "img" từ frontend gửi qua
-            num_steps: 40,
-            style_name: "Digital Art",
-            num_outputs: 1,
-            guidance_scale: 5,
+            image: imageUrl,
+            prompt: prompt,
             negative_prompt: negative_prompt || "photorealistic, 3d, realistic, cinematic, bad quality, blurry, messy, extra limbs, deformed, text, watermark",
-            style_strength_ratio: 35
+            upscale: true,
+            upscale_steps: 20
         }
     };
-
-    console.log('Calling PhotoMaker (Digital Art) with prompt:', prompt);
 
     const createRes = await fetch("https://api.replicate.com/v1/predictions", {
         method: "POST",
@@ -111,12 +159,10 @@ async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiTo
 
     if (!createRes.ok) {
         const errBody = await createRes.text();
-        console.error('Replicate error:', createRes.status, errBody);
-        throw new Error('Replicate ' + createRes.status + ': ' + errBody.substring(0, 300));
+        throw new Error('Replicate API ' + createRes.status + ': ' + errBody.substring(0, 200));
     }
 
     let prediction = await createRes.json();
-    console.log('Prediction status:', prediction.status, 'id:', prediction.id);
 
     // Polling if still processing
     if (prediction.status !== "succeeded") {
@@ -127,7 +173,6 @@ async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiTo
             });
             if (!pollRes.ok) throw new Error('Poll failed');
             prediction = await pollRes.json();
-            console.log('Poll #' + (i+1) + ': ' + prediction.status);
             if (prediction.status === "succeeded") break;
             if (prediction.status === "failed" || prediction.status === "canceled") {
                 throw new Error(prediction.error || 'Generation failed');
@@ -135,14 +180,11 @@ async function generateWithReplicate(imageBase64, prompt, negative_prompt, apiTo
         }
     }
 
-    const outputUrl = Array.isArray(prediction.output)
-        ? prediction.output[0]
-        : prediction.output;
-
-    if (!outputUrl) throw new Error('No output image');
+    const outputUrl = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
+    if (!outputUrl) throw new Error('No output image URL from Replicate');
 
     const imgRes = await fetch(outputUrl);
-    if (!imgRes.ok) throw new Error('Download failed');
+    if (!imgRes.ok) throw new Error('Download from Replicate failed');
 
     return Buffer.from(await imgRes.arrayBuffer());
 }
@@ -173,7 +215,7 @@ async function generateWithStability(imageBase64, prompt, negative_prompt, apiKe
 
     if (!response.ok) {
         const errText = await response.text();
-        throw new Error(response.status + ': ' + errText.substring(0, 200));
+        throw new Error(`Stability API ${response.status}: ${errText.substring(0, 200)}`);
     }
 
     return Buffer.from(await response.arrayBuffer());
