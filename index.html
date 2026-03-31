@@ -1610,7 +1610,7 @@
                     document.getElementById("btnTextCustomSticker").innerText = " AI Đang Tạo 2 Sticker (Free)...";
                 }
 
-                // Create all item containers first
+                // Create 6 loading containers first
                 const itemDivs = emotions.map((emotion, i) => {
                     const itemDiv = document.createElement("div");
                     itemDiv.className = "sticker-result-item";
@@ -1644,77 +1644,79 @@
                     return itemDiv;
                 });
 
-                // Parallel API Requests
-                const stickerPromises = emotions.map(async (emotion, i) => {
-                    if (i >= batchSize) return null;
+                try {
+                    // Send all prompts as a batch request to the new backend logic
+                    const promptsToGenerate = emotions.slice(0, batchSize).map(e => e.prompt);
+                    
+                    const response = await fetch("/api/generate", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            imageBase64: resizedBase64,
+                            prompts: promptsToGenerate,
+                            negative_prompt: customNegativePrompt
+                        })
+                    });
 
-                    const itemDiv = itemDivs[i];
-                    const itemLoading = itemDiv.querySelector(".item-loading-spinner");
+                    if (!response.ok) throw new Error("Backend Batch API Error");
 
-                    try {
-                        const fullPrompt = `${emotion.prompt}\n(IMPORTANT: Solid pure WHITE background. No dark backgrounds).`;
+                    const data = await response.json();
+                    const images = data.images; // Array of base64 strings or {error: "..."}
 
-                        const response = await fetch("/api/generate", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                imageBase64: resizedBase64,
-                                prompt: fullPrompt,
-                                negative_prompt: customNegativePrompt,
-                                style: "chibi"
-                            })
-                        });
-
-                        if (!response.ok) throw new Error("API Error");
-
-                        const blob = await response.blob();
-                        const imgUrl = URL.createObjectURL(blob);
-
+                    images.forEach((imgData, i) => {
+                        const itemDiv = itemDivs[i];
+                        const itemLoading = itemDiv.querySelector(".item-loading-spinner");
                         if (itemLoading) itemLoading.remove();
-                        const img = document.createElement("img");
-                        img.src = imgUrl;
-                        img.style.width = "100%";
-                        img.style.height = "100%";
-                        img.style.objectFit = "contain";
-                        img.style.padding = "10px";
-                        img.style.filter = "drop-shadow(0 10px 20px rgba(0,0,0,0.3))";
-                        img.className = "sticker-img";
-                        img.title = emotion.label;
 
-                        // Download button on hover overlay
-                        const dlOverlay = document.createElement("div");
-                        dlOverlay.style.position = "absolute";
-                        dlOverlay.style.inset = "0";
-                        dlOverlay.style.background = "rgba(0,0,0,0.5)";
-                        dlOverlay.style.display = "none";
-                        dlOverlay.style.alignItems = "center";
-                        dlOverlay.style.justifyContent = "center";
-                        dlOverlay.innerHTML = "📥";
-                        dlOverlay.style.fontSize = "1.5rem";
-                        dlOverlay.style.cursor = "pointer";
+                        if (typeof imgData === 'string') {
+                            const imgUrl = `data:image/png;base64,${imgData}`;
+                            const img = document.createElement("img");
+                            img.src = imgUrl;
+                            img.style.width = "100%";
+                            img.style.height = "100%";
+                            img.style.objectFit = "contain";
+                            img.style.padding = "10px";
+                            img.style.filter = "drop-shadow(0 10px 20px rgba(0,0,0,0.3))";
+                            img.className = "sticker-img";
+                            img.title = emotions[i].label;
 
-                        itemDiv.onmouseenter = () => dlOverlay.style.display = "flex";
-                        itemDiv.onmouseleave = () => dlOverlay.style.display = "none";
-                        dlOverlay.onclick = () => {
-                            const link = document.createElement('a');
-                            link.href = imgUrl;
-                            link.download = `sticker_${emotion.label}.png`;
-                            link.click();
-                        };
+                            // Download button on hover overlay
+                            const dlOverlay = document.createElement("div");
+                            dlOverlay.style.position = "absolute";
+                            dlOverlay.style.inset = "0";
+                            dlOverlay.style.background = "rgba(0,0,0,0.5)";
+                            dlOverlay.style.display = "none";
+                            dlOverlay.style.alignItems = "center";
+                            dlOverlay.style.justifyContent = "center";
+                            dlOverlay.innerHTML = "📥";
+                            dlOverlay.style.fontSize = "1.5rem";
+                            dlOverlay.style.cursor = "pointer";
 
-                        itemDiv.appendChild(img);
-                        itemDiv.appendChild(dlOverlay);
-                        
-                        return imgUrl;
-                    } catch (err) {
-                        if (itemLoading) itemLoading.innerHTML = "❌";
-                        console.error("Parallel fetch failed for slot " + i, err);
-                        return null;
-                    }
-                });
+                            itemDiv.onmouseenter = () => dlOverlay.style.display = "flex";
+                            itemDiv.onmouseleave = () => dlOverlay.style.display = "none";
+                            dlOverlay.onclick = () => {
+                                const link = document.createElement('a');
+                                link.href = imgUrl;
+                                link.download = `sticker_${emotions[i].label}.png`;
+                                link.click();
+                            };
 
-                // Wait for all allowed to finish
-                const results = await Promise.all(stickerPromises);
+                            itemDiv.appendChild(img);
+                            itemDiv.appendChild(dlOverlay);
+                        } else {
+                            itemDiv.innerHTML = "<span style='font-size:1.5rem;'>❌</span>";
+                        }
+                    });
+
+                } catch (err) {
+                    console.error("Batch generation failed:", err);
+                    alert("Tạo bộ sticker thất bại. Vui lòng kiểm tra kết nối mạng hoặc thử lại.");
+                    // Set all loading items to error
+                    itemDivs.forEach(div => {
+                        const loading = div.querySelector(".item-loading-spinner");
+                        if (loading) loading.innerHTML = "❌";
+                    });
+                }
                 console.log("6 Stickers generation batch finished.");
 
                 customStickerLoadingText.style.display = "none";

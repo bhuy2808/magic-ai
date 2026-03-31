@@ -7,41 +7,68 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const { prompt, imageBase64, negative_prompt } = req.body;
+        const { prompts, prompt, imageBase64, negative_prompt } = req.body;
         const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN;
         const STABILITY_API_KEY = process.env.STABILITY_API_KEY;
 
         if (!REPLICATE_API_TOKEN && !STABILITY_API_KEY) {
-            return res.status(500).json({ message: 'No API key configured. Set REPLICATE_API_TOKEN in Vercel.' });
+            return res.status(500).json({ message: 'No API key configured.' });
         }
 
         if (!imageBase64) {
             return res.status(400).json({ message: 'Missing imageBase64' });
         }
 
-        console.log('Image base64 length:', imageBase64.length, 'chars (~' + Math.round(imageBase64.length * 0.75 / 1024) + 'KB)');
+        const inputPrompts = Array.isArray(prompts) ? prompts : [prompt];
+        const results = [];
 
-        // ƯU TIÊN 1: REPLICATE
-        if (REPLICATE_API_TOKEN) {
-            try {
-                const result = await generateWithReplicate(imageBase64, prompt, negative_prompt, REPLICATE_API_TOKEN);
-                res.setHeader('Content-Type', 'image/png');
-                return res.send(result);
-            } catch (repError) {
-                console.error('Replicate failed:', repError.message);
-                if (STABILITY_API_KEY) {
-                    console.log('Falling back to Stability AI...');
-                } else {
-                    return res.status(500).json({ message: repError.message });
+        console.log(`Starting generation for ${inputPrompts.length} stickers...`);
+
+        for (const currentPrompt of inputPrompts) {
+            let stickerBuffer = null;
+
+            // ƯU TIÊN 1: REPLICATE
+            if (REPLICATE_API_TOKEN) {
+                try {
+                    stickerBuffer = await generateWithReplicate(imageBase64, currentPrompt, negative_prompt, REPLICATE_API_TOKEN);
+                } catch (repError) {
+                    console.error('Replicate failed for prompt:', currentPrompt, repError.message);
+                    if (!STABILITY_API_KEY) {
+                        results.push({ error: repError.message });
+                        continue;
+                    }
                 }
+            }
+
+            // FALLBACK: STABILITY AI
+            if (!stickerBuffer && STABILITY_API_KEY) {
+                try {
+                    stickerBuffer = await generateWithStability(imageBase64, currentPrompt, negative_prompt, STABILITY_API_KEY);
+                } catch (stabError) {
+                    console.error('Stability AI failed for prompt:', currentPrompt, stabError.message);
+                    results.push({ error: stabError.message });
+                    continue;
+                }
+            }
+
+            if (stickerBuffer) {
+                results.push(stickerBuffer.toString('base64'));
+            } else {
+                results.push({ error: 'Generation failed' });
             }
         }
 
-        // FALLBACK: STABILITY AI
-        if (STABILITY_API_KEY) {
-            const result = await generateWithStability(imageBase64, prompt, negative_prompt, STABILITY_API_KEY);
-            res.setHeader('Content-Type', 'image/png');
-            return res.send(result);
+        // Return batch results
+        if (Array.isArray(prompts)) {
+            return res.status(200).json({ images: results });
+        } else {
+            // Backward compatibility for single prompt
+            if (typeof results[0] === 'string') {
+                res.setHeader('Content-Type', 'image/png');
+                return res.send(Buffer.from(results[0], 'base64'));
+            } else {
+                return res.status(500).json({ message: results[0]?.error || 'Generation failed' });
+            }
         }
 
     } catch (error) {
