@@ -1646,10 +1646,14 @@
 
                 try {
                     // --- WEB POLLING ARCHITECTURE ---
-                    // 1. Hàm Polling: Cứ 3s lại kiểm tra xem AI vẽ xong chưa
+                    // 1. Hàm Polling: Cứ 5s lại kiểm tra xem AI vẽ xong chưa
                     async function pollStickerStatus(predictionId, itemDiv, emotionLabel) {
                         const pollInterval = setInterval(async () => {
                             try {
+                                if (!predictionId) {
+                                    clearInterval(pollInterval);
+                                    return;
+                                }
                                 const res = await fetch(`/api/check?id=${predictionId}`);
                                 const data = await res.json();
 
@@ -1661,16 +1665,15 @@
                                     itemDiv.innerHTML = "<span style='font-size:1.5rem;'>❌</span>";
                                     console.error("Polling failed:", data.error);
                                 }
-                                // Nếu status là 'starting' hoặc 'processing', tiếp tục chờ...
                             } catch (err) {
                                 console.error("Poll error:", err);
                                 clearInterval(pollInterval);
                                 itemDiv.innerHTML = "<span style='font-size:1.5rem;'>❌</span>";
                             }
-                        }, 3000);
+                        }, 5000); // 5 giây một lần để tránh 429
                     }
 
-                    // 2. Hàm cập nhật UI khi có ảnh
+                    // 2. Hàm cập nhật UI khi có ảnh... (giữ nguyên logic cũ)
                     function updateStickerUI(itemDiv, imgUrl, label) {
                         const itemLoading = itemDiv.querySelector(".item-loading-spinner");
                         if (itemLoading) itemLoading.remove();
@@ -1679,9 +1682,6 @@
                         img.src = imgUrl;
                         img.style.width = "100%";
                         img.style.height = "100%";
-                        img.style.objectFit = "contain";
-                        img.style.padding = "10px";
-                        img.style.filter = "drop-shadow(0 10px 20px rgba(0,0,0,0.3))";
                         img.className = "sticker-img";
                         img.title = label;
 
@@ -1709,8 +1709,8 @@
                         itemDiv.appendChild(dlOverlay);
                     }
 
-                    // 3. Vòng lặp kích hoạt (Initiator Loop)
-                    const promptsToGenerate = emotions.slice(0, batchSize);
+                    // 3. Vòng lặp kích hoạt (Tạm thời chỉ làm 1 cái duy nhất để test)
+                    const promptsToGenerate = emotions.slice(0, 1); 
                     for (let i = 0; i < promptsToGenerate.length; i++) {
                         const current = promptsToGenerate[i];
                         const itemDiv = itemDivs[i];
