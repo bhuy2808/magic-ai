@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
             return res.status(405).json({ message: 'Method Not Allowed' });
         }
 
-        const { prompt, imageBase64 } = req.body;
+        const { prompts, prompt, imageBase64 } = req.body;
         
         if (!process.env.REPLICATE_API_TOKEN) {
             throw new Error('REPLICATE_API_TOKEN is not defined.');
@@ -31,21 +31,39 @@ module.exports = async (req, res) => {
         let publicImageUrl = await uploadToTmpFiles(imageBase64);
         console.log('Link ảnh công khai từ TmpFiles:', publicImageUrl);
 
-        const targetPrompt = prompt || "A high-quality sticker";
-        console.log(`--- REPLICATE ONLY MODE ---`);
-        console.log(`Prompt: ${targetPrompt}`);
+        const inputPrompts = Array.isArray(prompts) ? prompts : [prompt || "A high-quality sticker"];
+        const results = [];
 
-        // 2. Chạy Replicate (Đã bao gồm cơ chế đợi Succeeded của SDK)
-        const stickerBuffer = await generateWithReplicate(replicate, publicImageUrl, targetPrompt);
+        console.log(`--- CHẾ ĐỘ XẾP HÀNG: Tạo ${inputPrompts.length} sticker nối tiếp ---`);
 
-        if (stickerBuffer) {
-            console.log(`✅ Sticker thành công!`);
-            return res.status(200).json({ 
-                images: [stickerBuffer.toString('base64')] 
-            });
-        } else {
-            throw new Error('Không thể tạo được sticker từ Replicate.');
+        for (const [index, currentPrompt] of inputPrompts.entries()) {
+            // Nghỉ 15 giây từ sticker thứ 2 trở đi để tránh lỗi 429
+            if (index > 0) {
+                console.log(`Đang chờ 15 giây trước khi tạo Sticker ${index + 1}...`);
+                await new Promise(r => setTimeout(r, 15000));
+            }
+
+            console.log(`Sticker ${index + 1} bat dau...`);
+            console.log(`Prompt: ${currentPrompt}`);
+
+            try {
+                // CHỈ DÙNG REPLICATE.RUN ĐỂ TỰ ĐỘNG ĐỢI KẾT QUẢ
+                const stickerBuffer = await generateWithReplicate(replicate, publicImageUrl, currentPrompt);
+                
+                if (stickerBuffer) {
+                    results.push(stickerBuffer.toString('base64'));
+                    console.log(`Sticker ${index + 1} xong!`);
+                } else {
+                    console.error(`Sticker ${index + 1} loi: Khong co du lieu tra ve.`);
+                    results.push({ error: 'Null output from Replicate' });
+                }
+            } catch (innerError) {
+                console.error(`Sticker ${index + 1} loi nghiem trong:`, innerError.message);
+                results.push({ error: innerError.message });
+            }
         }
+
+        return res.status(200).json({ images: results });
 
     } catch (error) {
         console.error('CRITICAL BACKEND ERROR:', error);
