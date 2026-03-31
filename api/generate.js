@@ -37,6 +37,8 @@ module.exports = async (req, res) => {
             }
         });
 
+        // LOG TOÀN BỘ PHẢN HỒI BAN ĐẦU
+        console.log("PHẢN HỒI KHỞI TẠO TỪ REPLICATE:", JSON.stringify(prediction));
         console.log(`Prediction ID khoi tao: ${prediction.id}`);
 
         // Trả ID về cho Frontend ngay lập tức (Hết bị lỗi 504 Timeout)

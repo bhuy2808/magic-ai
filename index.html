@@ -1646,55 +1646,53 @@
 
                 try {
                     // --- WEB POLLING ARCHITECTURE ---
-                    // 1. Hàm Polling: Đợi 10s đầu, sau đó cứ 5s hỏi một lần
+                    // 1. Hàm Polling: Cập nhật Text cho người dùng thấy
                     async function pollStickerStatus(predictionId, itemDiv, emotionLabel) {
                         if (!predictionId || predictionId === "null") {
-                            console.error("Không có ID để Polling.");
+                            itemDiv.innerHTML = "<span style='color:#ff4d4d;'>Lỗi ID</span>";
                             return;
                         }
 
-                        console.log(`Đã có ID: ${predictionId}. Đợi 10 giây trước khi hỏi kết quả...`);
+                        const statusText = itemDiv.querySelector(".item-loading-spinner");
+                        if (statusText) statusText.innerText = "Đã gửi lệnh...";
 
-                        // Đợi 10 giây đầu tiên (theo yêu cầu của bạn)
                         setTimeout(() => {
                             const pollInterval = setInterval(async () => {
                                 try {
-                                    // Kiểm tra ID một lần nữa trước khi fetch
-                                    if (!predictionId) {
-                                        clearInterval(pollInterval);
-                                        return;
-                                    }
-
                                     const res = await fetch(`/api/check?id=${predictionId}`);
                                     const data = await res.json();
 
-                                    console.log(`Status của ${predictionId}: ${data.status}`);
+                                    if (statusText) {
+                                        if (data.status === "starting") statusText.innerText = "Đang khởi tạo...";
+                                        else if (data.status === "processing") statusText.innerText = "Đang vẽ ảnh...";
+                                    }
 
                                     if (data.status === "succeeded") {
                                         clearInterval(pollInterval);
-                                        updateStickerUI(itemDiv, data.imageUrl, emotionLabel);
+                                        if (statusText) statusText.innerText = "Xong!";
+                                        setTimeout(() => updateStickerUI(itemDiv, data.imageUrl, emotionLabel), 500);
                                     } else if (data.status === "failed" || data.status === "canceled") {
                                         clearInterval(pollInterval);
-                                        itemDiv.innerHTML = "<span style='font-size:1.5rem;'>❌</span>";
-                                        console.error("Polling failed:", data.error);
+                                        itemDiv.innerHTML = "<span style='font-size:1rem;color:#ff4d4d;'>Thất bại ❌</span>";
+                                        console.error("AI Error:", data.error);
                                     }
                                 } catch (err) {
-                                    console.error("Poll error:", err);
+                                    console.error("Poll Error:", err);
                                     clearInterval(pollInterval);
                                 }
-                            }, 5000); // 5 giây một lần cho các lượt sau
-                        }, 10000); // 10 giây cho lượt đầu tiên
+                            }, 5000);
+                        }, 10000);
                     }
 
-                    // 2. Hàm cập nhật UI khi có ảnh... (giữ nguyên logic cũ)
+                    // 2. Hàm cập nhật UI
                     function updateStickerUI(itemDiv, imgUrl, label) {
-                        const itemLoading = itemDiv.querySelector(".item-loading-spinner");
-                        if (itemLoading) itemLoading.remove();
+                        itemDiv.innerHTML = ""; // Xóa trắng loading
 
                         const img = document.createElement("img");
                         img.src = imgUrl;
                         img.style.width = "100%";
                         img.style.height = "100%";
+                        img.style.objectFit = "contain";
                         img.className = "sticker-img";
                         img.title = label;
 
