@@ -1697,15 +1697,34 @@
 
                     // 2. Hàm cập nhật UI
                     function updateStickerUI(itemDiv, imgUrl, label) {
+                        if (!imgUrl) {
+                            console.error(`updateStickerUI: imgUrl is empty for ${label}`);
+                            itemDiv.innerHTML = "<div style='display:flex;flex-direction:column;align-items:center;gap:5px;color:#ff9900;'><span style='font-size:1.5rem;'>⚠️</span><span style='font-size:0.75rem;'>Ảnh không tải được</span></div>";
+                            return;
+                        }
+
                         itemDiv.innerHTML = ""; // Xóa trắng loading
+                        console.log(`Loading sticker image for ${label}: ${imgUrl.substring(0, 80)}...`);
 
                         const img = document.createElement("img");
-                        img.src = imgUrl;
                         img.style.width = "100%";
                         img.style.height = "100%";
                         img.style.objectFit = "contain";
                         img.className = "sticker-img";
                         img.title = label;
+
+                        // Xử lý ảnh load thành công
+                        img.onload = () => {
+                            console.log(`✅ Sticker "${label}" loaded successfully!`);
+                        };
+
+                        // Xử lý ảnh load thất bại (broken image)
+                        img.onerror = () => {
+                            console.error(`❌ Sticker "${label}" image failed to load. URL: ${imgUrl.substring(0, 100)}`);
+                            itemDiv.innerHTML = "<div style='display:flex;flex-direction:column;align-items:center;gap:5px;color:#ff9900;'><span style='font-size:1.5rem;'>⚠️</span><span style='font-size:0.75rem;'>Ảnh bị lỗi, thử lại</span></div>";
+                        };
+
+                        img.src = imgUrl;
 
                         const dlOverlay = document.createElement("div");
                         dlOverlay.style.position = "absolute";
