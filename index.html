@@ -1656,8 +1656,18 @@
                         const statusText = itemDiv.querySelector(".item-loading-spinner");
                         if (statusText) statusText.innerText = "Đã gửi lệnh...";
 
+                        const MAX_POLL_TIME = 120000; // 120 giây timeout tối đa
+                        const pollStartTime = Date.now();
+
                         setTimeout(() => {
                             const pollInterval = setInterval(async () => {
+                                // Timeout check
+                                if (Date.now() - pollStartTime > MAX_POLL_TIME) {
+                                    clearInterval(pollInterval);
+                                    itemDiv.innerHTML = "<span style='font-size:0.85rem;color:#ff9900;'>⏱️ Hết thời gian chờ</span>";
+                                    console.warn(`Polling timeout for ${predictionId}`);
+                                    return;
+                                }
                                 try {
                                     const res = await fetch(`/api/check?id=${predictionId}`);
                                     const data = await res.json();
@@ -1670,7 +1680,7 @@
                                     if (data.status === "succeeded") {
                                         clearInterval(pollInterval);
                                         if (statusText) statusText.innerText = "Xong!";
-                                        setTimeout(() => updateStickerUI(itemDiv, data.imageUrl, emotionLabel), 500);
+                                        setTimeout(() => updateStickerUI(itemDiv, data.imageUrl, emotionLabel), 300);
                                     } else if (data.status === "failed" || data.status === "canceled") {
                                         clearInterval(pollInterval);
                                         itemDiv.innerHTML = "<span style='font-size:1rem;color:#ff4d4d;'>Thất bại ❌</span>";
@@ -1679,9 +1689,10 @@
                                 } catch (err) {
                                     console.error("Poll Error:", err);
                                     clearInterval(pollInterval);
+                                    itemDiv.innerHTML = "<span style='font-size:0.85rem;color:#ff4d4d;'>Lỗi kết nối ❌</span>";
                                 }
-                            }, 5000);
-                        }, 10000);
+                            }, 3000); // Poll mỗi 3 giây (thay vì 5s)
+                        }, 5000); // Đợi 5 giây trước khi poll lần đầu (thay vì 10s)
                     }
 
                     // 2. Hàm cập nhật UI
@@ -1720,8 +1731,8 @@
                         itemDiv.appendChild(dlOverlay);
                     }
 
-                    // 3. Vòng lặp kích hoạt (Tạm thời chỉ làm 1 cái duy nhất để test)
-                    const promptsToGenerate = emotions.slice(0, 1); 
+                    // 3. Vòng lặp kích hoạt theo batch size
+                    const promptsToGenerate = emotions.slice(0, batchSize);
                     for (let i = 0; i < promptsToGenerate.length; i++) {
                         const current = promptsToGenerate[i];
                         const itemDiv = itemDivs[i];
@@ -1735,7 +1746,8 @@
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                     imageBase64: resizedBase64,
-                                    prompt: current.prompt
+                                    prompt: current.prompt,
+                                    negative_prompt: customNegativePrompt
                                 })
                             });
 
