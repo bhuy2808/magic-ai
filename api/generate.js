@@ -37,16 +37,17 @@ module.exports = async (req, res) => {
             ? `${negative_prompt}, ${defaultNegative}` 
             : defaultNegative;
 
-        // === INPUT VỚI THAM SỐ NÂNG CAO ===
+        // === INPUT TINH CHỈNH CHO CHIBI/ANIME CHẤT LƯỢNG CAO ===
+        // Mục tiêu: Biến đổi mạnh sang chibi/anime nhưng VẪN NHẬN RA được người gốc
         const inputPayload = {
             image: imageDataUri,
             prompt: targetPrompt,
             negative_prompt: finalNegative,
-            steps: 25,                    // Tăng từ 20 → 25 (vẽ kỹ hơn)
-            prompt_strength: 7.5,          // Tăng từ 7 → 7.5 (chi tiết hơn)
-            instant_id_strength: 0.9,      // 0.9 giữ nét mặt tốt nhưng cho phép stylize
-            ip_adapter_weight: 0.25,       // Tăng nhẹ để ảnh hưởng phong cách mạnh hơn
-            ip_adapter_noise: 0.4,         // Giảm noise cho ảnh sạch hơn
+            steps: 30,                    // 30 steps cho chất lượng render cao nhất
+            prompt_strength: 7,            // CFG 7 - cân bằng giữa prompt & likeness
+            instant_id_strength: 0.55,     // ⭐ KEY: 0.55 = giữ nét mặt đặc trưng nhưng CHO PHÉP chibi hóa mạnh
+            ip_adapter_weight: 0.15,       // 0.15 = giảm ảnh hưởng ảnh gốc để AI tự do vẽ phong cách mới
+            ip_adapter_noise: 0.5,         // 0.5 = mức noise vừa phải cho output sáng tạo
             width: 1024,
             height: 1024,
         };

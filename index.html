@@ -1612,34 +1612,35 @@
             previousImages.forEach(img => img.remove());
 
             try {
-                // --- PREMIUM PROMPT FRAME (Bảo Huy Chibi Pixar Style) ---
-                const basePromptFrame = "A high-quality 3D chibi sticker of Bảo Huy, cool glasses, stylish hair, cute expression, vibrant colors, die-cut white border, Pixar style, 8k resolution, highly detailed, studio lighting, smooth 3D render, KEEP the exact face features, isolated on solid white background.";
-                const customNegativePrompt = "ugly, blurry, low quality, distorted face, bad anatomy, text error, missing edge, deformed, disfigured, low resolution, watermark, (big messy hair:1.5), afro hair, cloud hair, messy background, jpeg artifacts, extra fingers, poorly drawn face";
+                // --- CHIBI/ANIME TRANSFORMATION PROMPT ---
+                // Mục tiêu: Biến đổi thành nhân vật chibi/anime THỰC SỰ, không phải filter ảnh
+                const basePromptFrame = "An adorable 3D chibi character with big sparkling anime eyes, tiny rounded body, oversized head, smooth Pixar-quality 3D render, die-cut sticker with bold white border, vibrant saturated colors, cute kawaii style, studio lighting, isolated on pure white background";
+                const customNegativePrompt = "realistic photo, photograph, photorealistic, real person, real face, ugly, blurry, low quality, distorted, deformed, bad anatomy, text, watermark, signature, jpeg artifacts, extra fingers, messy background, dark background, cropped";
 
                 // Kiểm tra ô nhập prompt tùy chỉnh
                 const userCustomPrompt = document.getElementById('customPromptInput').value.trim();
 
                 let emotions;
                 if (userCustomPrompt) {
-                    // === USER TỰ NHẬP PROMPT → Tạo tất cả sticker cùng 1 phong cách ===
+                    // === USER TỰ NHẬP PROMPT ===
                     console.log(`🎨 Custom prompt: "${userCustomPrompt}"`);
                     emotions = [
-                        { label: userCustomPrompt, prompt: `${basePromptFrame} ${userCustomPrompt}, expressive and dynamic pose.` },
-                        { label: `${userCustomPrompt} v2`, prompt: `${basePromptFrame} ${userCustomPrompt}, different angle, playful energy.` },
-                        { label: `${userCustomPrompt} v3`, prompt: `${basePromptFrame} ${userCustomPrompt}, close-up portrait, vivid colors.` },
-                        { label: `${userCustomPrompt} v4`, prompt: `${basePromptFrame} ${userCustomPrompt}, full body chibi, cute accessories.` },
-                        { label: `${userCustomPrompt} v5`, prompt: `${basePromptFrame} ${userCustomPrompt}, action pose, motion effects.` },
-                        { label: `${userCustomPrompt} v6`, prompt: `${basePromptFrame} ${userCustomPrompt}, magical sparkle aura, dreamy style.` }
+                        { label: userCustomPrompt, prompt: `${basePromptFrame}, ${userCustomPrompt}, expressive chibi pose, dynamic energy.` },
+                        { label: `${userCustomPrompt} v2`, prompt: `${basePromptFrame}, ${userCustomPrompt}, different cute angle, playful chibi energy.` },
+                        { label: `${userCustomPrompt} v3`, prompt: `${basePromptFrame}, ${userCustomPrompt}, close-up chibi portrait, vivid colors, sparkle effects.` },
+                        { label: `${userCustomPrompt} v4`, prompt: `${basePromptFrame}, ${userCustomPrompt}, full body tiny chibi, adorable accessories.` },
+                        { label: `${userCustomPrompt} v5`, prompt: `${basePromptFrame}, ${userCustomPrompt}, action chibi pose, motion effects.` },
+                        { label: `${userCustomPrompt} v6`, prompt: `${basePromptFrame}, ${userCustomPrompt}, magical sparkle aura, dreamy kawaii style.` }
                     ];
                 } else {
-                    // === MẶC ĐỊNH: Bộ 6 cảm xúc đa dạng ===
+                    // === MẶC ĐỊNH: Bộ 6 cảm xúc chibi đa dạng ===
                     emotions = [
-                        { label: "Vui vẻ", prompt: `${basePromptFrame} Laughing out loud with pure joy, wide sparkling smile, confetti particles floating around, warm golden glow, eyes squeezed with happiness, rosy cheeks.` },
-                        { label: "Yêu thương", prompt: `${basePromptFrame} Blowing a magical kiss with heart-shaped sparkles, dreamy heart eyes, soft pink blushing cheeks, floating hearts around, romantic pastel aura.` },
-                        { label: "Giận dữ", prompt: `${basePromptFrame} Adorably angry expression, puffed red cheeks, tiny steam clouds above head, furrowed eyebrows, clenched fists, comic-style anger veins.` },
-                        { label: "Ngạc nhiên", prompt: `${basePromptFrame} Extremely surprised expression, huge sparkling eyes wide open, jaw dropped in amazement, exclamation marks around, dramatic lighting, pop art style effects.` },
-                        { label: "Khóc nhè", prompt: `${basePromptFrame} Cute anime-style crying, big watery teardrop eyes, adorable pout, shimmering tears streaming down, soft blue emotional aura, tissue in hand.` },
-                        { label: "Ngầu", prompt: `${basePromptFrame} Ultra cool confident pose, wearing stylish sunglasses, finger guns or peace sign, sparkling aura, neon glow effects, streetwear vibes, smug smirk.` }
+                        { label: "Vui vẻ", prompt: `${basePromptFrame}, laughing with pure joy, wide sparkling smile showing teeth, eyes squeezed shut with happiness, rosy pink cheeks, confetti and sparkles floating around, warm golden lighting.` },
+                        { label: "Yêu thương", prompt: `${basePromptFrame}, blowing a kiss with heart-shaped sparkles, dreamy anime eyes with hearts, soft pink blushing cheeks, tiny floating hearts all around, romantic pastel pink aura.` },
+                        { label: "Giận dữ", prompt: `${basePromptFrame}, adorably angry chibi expression, puffed out red cheeks, tiny steam clouds puffing from head, furrowed eyebrows, clenched tiny fists, comic anger veins on forehead.` },
+                        { label: "Ngạc nhiên", prompt: `${basePromptFrame}, extremely shocked chibi expression, huge sparkling anime eyes wide open, tiny jaw dropped, exclamation marks floating around head, dramatic zoom lines.` },
+                        { label: "Khóc nhè", prompt: `${basePromptFrame}, cute anime crying chibi, big watery sparkling eyes with oversized teardrops, adorable pout, rivers of kawaii tears streaming down, soft blue sad aura.` },
+                        { label: "Ngầu", prompt: `${basePromptFrame}, ultra cool confident chibi pose, wearing tiny stylish sunglasses, peace sign or finger guns, neon glow aura, sparkle effects, smug anime smirk.` }
                     ];
                 }
 
