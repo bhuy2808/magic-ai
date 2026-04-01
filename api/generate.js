@@ -1,7 +1,6 @@
 const Replicate = require("replicate");
 
 module.exports = async (req, res) => {
-    // LOG KIỂM TRA QUYỀN TRUY CẬP
     if (process.env.REPLICATE_API_TOKEN) {
         console.log("Token check:", process.env.REPLICATE_API_TOKEN.slice(-4));
     }
@@ -27,34 +26,41 @@ module.exports = async (req, res) => {
         if (buffer.length === 0) throw new Error("Dữ liệu ảnh rỗng hoặc không hợp lệ.");
         console.log(`Image buffer size: ${buffer.length} bytes`);
 
-        // === PHƯƠNG PHÁP MỚI: Dùng Data URI trực tiếp ===
-        // Replicate API chính thức hỗ trợ data URI, không cần upload qua bên thứ 3
+        // Data URI trực tiếp cho Replicate
         const imageDataUri = `data:image/jpeg;base64,${cleanBase64}`;
 
-        const targetPrompt = prompt || "A high-quality sticker";
+        const targetPrompt = prompt || "A beautiful 3D die-cut sticker, charming chibi character, colorful cartoon style, perfect white edge, vector art quality, highly detailed, expressive face";
 
-        // Chuẩn bị input cho model
+        // === NEGATIVE PROMPT MẠNH - Chặn ảnh xấu ===
+        const defaultNegative = "ugly, blurry, low quality, distorted face, bad anatomy, text error, missing edge, deformed, disfigured, low resolution, watermark, signature, cropped, worst quality, jpeg artifacts, duplicate, morbid, mutilated, extra fingers, poorly drawn face";
+        const finalNegative = (negative_prompt && negative_prompt.trim()) 
+            ? `${negative_prompt}, ${defaultNegative}` 
+            : defaultNegative;
+
+        // === INPUT VỚI THAM SỐ NÂNG CAO ===
         const inputPayload = {
             image: imageDataUri,
             prompt: targetPrompt,
+            negative_prompt: finalNegative,
+            steps: 25,                    // Tăng từ 20 → 25 (vẽ kỹ hơn)
+            prompt_strength: 7.5,          // Tăng từ 7 → 7.5 (chi tiết hơn)
+            instant_id_strength: 0.9,      // 0.9 giữ nét mặt tốt nhưng cho phép stylize
+            ip_adapter_weight: 0.25,       // Tăng nhẹ để ảnh hưởng phong cách mạnh hơn
+            ip_adapter_noise: 0.4,         // Giảm noise cho ảnh sạch hơn
+            width: 1024,
+            height: 1024,
         };
 
-        // Chỉ thêm negative_prompt nếu có giá trị
-        if (negative_prompt && negative_prompt.trim()) {
-            inputPayload.negative_prompt = negative_prompt;
-        }
+        console.log(`Gửi lệnh tạo sticker. Steps: ${inputPayload.steps}, CFG: ${inputPayload.prompt_strength}`);
+        console.log(`Prompt: ${targetPrompt.substring(0, 100)}...`);
+        console.log(`Negative: ${finalNegative.substring(0, 80)}...`);
 
-        console.log(`Gửi lệnh tạo sticker. Prompt: ${targetPrompt.substring(0, 80)}...`);
-        console.log(`Image size: ${cleanBase64.length} chars base64`);
-
-        // Dùng predictions.create để lấy ID ngay lập tức (Async - không chờ kết quả)
+        // Dùng predictions.create để lấy ID ngay lập tức (Async)
         const prediction = await replicate.predictions.create({
             version: "764d4827ea159608a07cdde8ddf1c6000019627515eb02b6b449695fd547e5ef",
             input: inputPayload
         });
 
-        // LOG TOÀN BỘ PHẢN HỒI
-        console.log("REPLICATE RESPONSE:", JSON.stringify(prediction).substring(0, 500));
         console.log(`Prediction ID: ${prediction.id}, Status: ${prediction.status}`);
 
         if (!prediction.id) {
@@ -62,18 +68,15 @@ module.exports = async (req, res) => {
             return res.status(500).json({ error: 'Replicate không trả về prediction ID.' });
         }
 
-        // Trả ID về cho Frontend ngay lập tức
         return res.status(200).json({ predictionId: prediction.id });
 
     } catch (error) {
         console.error('GENERATE ERROR:', error.message);
         console.error('GENERATE ERROR STACK:', error.stack);
         
-        // Xử lý các lỗi cụ thể
         let userMessage = error.message;
         let statusCode = 500;
         
-        // Replicate trả về "Too Many Requests" hoặc "rate limit"
         if (error.message && (error.message.includes('429') || error.message.includes('Too Many Requests') || error.message.includes('rate limit') || error.message.includes('Rate limit'))) {
             userMessage = 'Rate limited. Đợi 1 phút rồi thử lại.';
             statusCode = 429;

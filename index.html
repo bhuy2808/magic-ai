@@ -1579,17 +1579,17 @@
             previousImages.forEach(img => img.remove());
 
             try {
-                // --- FIXED PROMPT FRAME ---
-                const basePromptFrame = "A high-quality chibi sticker of the person in the photo, KEEP the exact face features, glasses, and neat short hairstyle. Die-cut sticker, bold white border, isolated on solid white background.";
-                const customNegativePrompt = "(big messy hair:1.5), afro hair, cloud hair, distorted face, blurry, text, messy background";
+                // --- PREMIUM PROMPT FRAME ---
+                const basePromptFrame = "A beautiful 3D die-cut sticker of the person in the photo, stylized as a charming chibi character, colorful cartoon style, perfect white edge border, vector art quality, highly detailed, studio lighting, smooth render, Pixar-quality 3D CGI, KEEP the exact face features and hairstyle, isolated on solid white background.";
+                const customNegativePrompt = "ugly, blurry, low quality, distorted face, bad anatomy, text error, missing edge, deformed, disfigured, low resolution, watermark, (big messy hair:1.5), afro hair, cloud hair, messy background, jpeg artifacts, extra fingers, poorly drawn face";
 
                 const emotions = [
-                    { label: "Vui vẻ", prompt: `${basePromptFrame} laughing out loud, wide joyful smile, sparkles` },
-                    { label: "Yêu thương", prompt: `${basePromptFrame} blowing a kiss, heart eyes, blushing cheeks` },
-                    { label: "Giận dữ", prompt: `${basePromptFrame} playful angry expression, red face, tiny steam clouds` },
-                    { label: "Ngạc nhiên", prompt: `${basePromptFrame} surprised face, wide eyes, open mouth` },
-                    { label: "Khóc nhè", prompt: `${basePromptFrame} teary eyes, crying, cute anime tears` },
-                    { label: "Ngầu", prompt: `${basePromptFrame} wearing cool sunglasses, confident smirk, stylish pose` }
+                    { label: "Vui vẻ", prompt: `${basePromptFrame} Laughing out loud with pure joy, wide sparkling smile, confetti particles floating around, warm golden glow, eyes squeezed with happiness, rosy cheeks.` },
+                    { label: "Yêu thương", prompt: `${basePromptFrame} Blowing a magical kiss with heart-shaped sparkles, dreamy heart eyes, soft pink blushing cheeks, floating hearts around, romantic pastel aura.` },
+                    { label: "Giận dữ", prompt: `${basePromptFrame} Adorably angry expression, puffed red cheeks, tiny steam clouds above head, furrowed eyebrows, clenched fists, comic-style anger veins.` },
+                    { label: "Ngạc nhiên", prompt: `${basePromptFrame} Extremely surprised expression, huge sparkling eyes wide open, jaw dropped in amazement, exclamation marks around, dramatic lighting, pop art style effects.` },
+                    { label: "Khóc nhè", prompt: `${basePromptFrame} Cute anime-style crying, big watery teardrop eyes, adorable pout, shimmering tears streaming down, soft blue emotional aura, tissue in hand.` },
+                    { label: "Ngầu", prompt: `${basePromptFrame} Ultra cool confident pose, wearing stylish sunglasses, finger guns or peace sign, sparkling aura, neon glow effects, streetwear vibes, smug smirk.` }
                 ];
 
                 const uploadedFile = uploadCustomSticker.files[0];
