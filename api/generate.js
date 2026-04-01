@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
         // Data URI trực tiếp cho Replicate
         const imageDataUri = `data:image/jpeg;base64,${cleanBase64}`;
 
-        const targetPrompt = prompt || "A beautiful 3D die-cut sticker, charming chibi character, colorful cartoon style, perfect white edge, vector art quality, highly detailed, expressive face";
+        const targetPrompt = prompt || "A high-quality 3D chibi sticker of Bảo Huy, cool glasses, stylish hair, cute expression, vibrant colors, die-cut white border, Pixar style, 8k resolution, highly detailed";
 
         // === NEGATIVE PROMPT MẠNH - Chặn ảnh xấu ===
         const defaultNegative = "ugly, blurry, low quality, distorted face, bad anatomy, text error, missing edge, deformed, disfigured, low resolution, watermark, signature, cropped, worst quality, jpeg artifacts, duplicate, morbid, mutilated, extra fingers, poorly drawn face";

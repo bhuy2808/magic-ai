@@ -803,11 +803,44 @@
                                 style="display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 5; border-radius: 22px;" />
                         </div>
 
-                        <div style="margin-bottom: 30px;">
+                        <div style="margin-bottom: 25px;">
                             <h3
-                                style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #FF8BA7; display: flex; align-items: center; gap: 10px;">
-                                Bộ 3 Sticker Cảm Xúc (Chibi Edition) <span style="font-size: 1.2rem;">🍭</span>
+                                style="margin: 0 0 12px 0; font-size: 1.15rem; font-weight: 700; color: #FF8BA7; display: flex; align-items: center; gap: 10px;">
+                                Mô tả Sticker của bạn <span style="font-size: 1.2rem;">✏️</span>
                             </h3>
+                            <input type="text" id="customPromptInput" 
+                                placeholder="VD: Đang ăn kem, Cưỡi ngựa, Chơi guitar..."
+                                style="width: 100%; padding: 14px 18px; border-radius: 14px; border: 2px solid rgba(255,139,167,0.3); background: #1a1a1a; font-family: 'Inter', sans-serif; font-size: 1rem; color: #FFF; outline: none; transition: border-color 0.3s; box-sizing: border-box; margin-bottom: 12px;"
+                                onfocus="this.style.borderColor='#FF8BA7'" 
+                                onblur="this.style.borderColor='rgba(255,139,167,0.3)'" />
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                <button class="quick-prompt-btn" onclick="document.getElementById('customPromptInput').value='Đang cười tươi rói, siêu vui vẻ'" 
+                                    style="padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: #ccc; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;"
+                                    onmouseenter="this.style.background='rgba(255,139,167,0.2)';this.style.borderColor='#FF8BA7';this.style.color='#FF8BA7'"
+                                    onmouseleave="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='#ccc'"
+                                    >😄 Vui vẻ</button>
+                                <button class="quick-prompt-btn" onclick="document.getElementById('customPromptInput').value='Đeo kính mát cực ngầu, tự tin phong cách'"
+                                    style="padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: #ccc; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;"
+                                    onmouseenter="this.style.background='rgba(255,139,167,0.2)';this.style.borderColor='#FF8BA7';this.style.color='#FF8BA7'"
+                                    onmouseleave="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='#ccc'"
+                                    >😎 Ngầu</button>
+                                <button class="quick-prompt-btn" onclick="document.getElementById('customPromptInput').value='Đang ăn kem chocolate siêu dễ thương'"
+                                    style="padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: #ccc; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;"
+                                    onmouseenter="this.style.background='rgba(255,139,167,0.2)';this.style.borderColor='#FF8BA7';this.style.color='#FF8BA7'"
+                                    onmouseleave="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='#ccc'"
+                                    >🍦 Ăn kem</button>
+                                <button class="quick-prompt-btn" onclick="document.getElementById('customPromptInput').value='Đang chơi guitar acoustic cực chất'"
+                                    style="padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: #ccc; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;"
+                                    onmouseenter="this.style.background='rgba(255,139,167,0.2)';this.style.borderColor='#FF8BA7';this.style.color='#FF8BA7'"
+                                    onmouseleave="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='#ccc'"
+                                    >🎸 Guitar</button>
+                                <button class="quick-prompt-btn" onclick="document.getElementById('customPromptInput').value='Đang khóc nhè, mắt rưng rưng dễ thương'"
+                                    style="padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: #ccc; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;"
+                                    onmouseenter="this.style.background='rgba(255,139,167,0.2)';this.style.borderColor='#FF8BA7';this.style.color='#FF8BA7'"
+                                    onmouseleave="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='#ccc'"
+                                    >😢 Khóc</button>
+                            </div>
+                            <p style="margin: 10px 0 0 0; font-size: 0.78rem; color: #666; font-style: italic;">💡 Để trống = tự động tạo bộ cảm xúc đa dạng</p>
                         </div>
 
                         <button class="btn-generate" id="generateCustomStickerBtn"
@@ -1579,18 +1612,36 @@
             previousImages.forEach(img => img.remove());
 
             try {
-                // --- PREMIUM PROMPT FRAME ---
-                const basePromptFrame = "A beautiful 3D die-cut sticker of the person in the photo, stylized as a charming chibi character, colorful cartoon style, perfect white edge border, vector art quality, highly detailed, studio lighting, smooth render, Pixar-quality 3D CGI, KEEP the exact face features and hairstyle, isolated on solid white background.";
+                // --- PREMIUM PROMPT FRAME (Bảo Huy Chibi Pixar Style) ---
+                const basePromptFrame = "A high-quality 3D chibi sticker of Bảo Huy, cool glasses, stylish hair, cute expression, vibrant colors, die-cut white border, Pixar style, 8k resolution, highly detailed, studio lighting, smooth 3D render, KEEP the exact face features, isolated on solid white background.";
                 const customNegativePrompt = "ugly, blurry, low quality, distorted face, bad anatomy, text error, missing edge, deformed, disfigured, low resolution, watermark, (big messy hair:1.5), afro hair, cloud hair, messy background, jpeg artifacts, extra fingers, poorly drawn face";
 
-                const emotions = [
-                    { label: "Vui vẻ", prompt: `${basePromptFrame} Laughing out loud with pure joy, wide sparkling smile, confetti particles floating around, warm golden glow, eyes squeezed with happiness, rosy cheeks.` },
-                    { label: "Yêu thương", prompt: `${basePromptFrame} Blowing a magical kiss with heart-shaped sparkles, dreamy heart eyes, soft pink blushing cheeks, floating hearts around, romantic pastel aura.` },
-                    { label: "Giận dữ", prompt: `${basePromptFrame} Adorably angry expression, puffed red cheeks, tiny steam clouds above head, furrowed eyebrows, clenched fists, comic-style anger veins.` },
-                    { label: "Ngạc nhiên", prompt: `${basePromptFrame} Extremely surprised expression, huge sparkling eyes wide open, jaw dropped in amazement, exclamation marks around, dramatic lighting, pop art style effects.` },
-                    { label: "Khóc nhè", prompt: `${basePromptFrame} Cute anime-style crying, big watery teardrop eyes, adorable pout, shimmering tears streaming down, soft blue emotional aura, tissue in hand.` },
-                    { label: "Ngầu", prompt: `${basePromptFrame} Ultra cool confident pose, wearing stylish sunglasses, finger guns or peace sign, sparkling aura, neon glow effects, streetwear vibes, smug smirk.` }
-                ];
+                // Kiểm tra ô nhập prompt tùy chỉnh
+                const userCustomPrompt = document.getElementById('customPromptInput').value.trim();
+
+                let emotions;
+                if (userCustomPrompt) {
+                    // === USER TỰ NHẬP PROMPT → Tạo tất cả sticker cùng 1 phong cách ===
+                    console.log(`🎨 Custom prompt: "${userCustomPrompt}"`);
+                    emotions = [
+                        { label: userCustomPrompt, prompt: `${basePromptFrame} ${userCustomPrompt}, expressive and dynamic pose.` },
+                        { label: `${userCustomPrompt} v2`, prompt: `${basePromptFrame} ${userCustomPrompt}, different angle, playful energy.` },
+                        { label: `${userCustomPrompt} v3`, prompt: `${basePromptFrame} ${userCustomPrompt}, close-up portrait, vivid colors.` },
+                        { label: `${userCustomPrompt} v4`, prompt: `${basePromptFrame} ${userCustomPrompt}, full body chibi, cute accessories.` },
+                        { label: `${userCustomPrompt} v5`, prompt: `${basePromptFrame} ${userCustomPrompt}, action pose, motion effects.` },
+                        { label: `${userCustomPrompt} v6`, prompt: `${basePromptFrame} ${userCustomPrompt}, magical sparkle aura, dreamy style.` }
+                    ];
+                } else {
+                    // === MẶC ĐỊNH: Bộ 6 cảm xúc đa dạng ===
+                    emotions = [
+                        { label: "Vui vẻ", prompt: `${basePromptFrame} Laughing out loud with pure joy, wide sparkling smile, confetti particles floating around, warm golden glow, eyes squeezed with happiness, rosy cheeks.` },
+                        { label: "Yêu thương", prompt: `${basePromptFrame} Blowing a magical kiss with heart-shaped sparkles, dreamy heart eyes, soft pink blushing cheeks, floating hearts around, romantic pastel aura.` },
+                        { label: "Giận dữ", prompt: `${basePromptFrame} Adorably angry expression, puffed red cheeks, tiny steam clouds above head, furrowed eyebrows, clenched fists, comic-style anger veins.` },
+                        { label: "Ngạc nhiên", prompt: `${basePromptFrame} Extremely surprised expression, huge sparkling eyes wide open, jaw dropped in amazement, exclamation marks around, dramatic lighting, pop art style effects.` },
+                        { label: "Khóc nhè", prompt: `${basePromptFrame} Cute anime-style crying, big watery teardrop eyes, adorable pout, shimmering tears streaming down, soft blue emotional aura, tissue in hand.` },
+                        { label: "Ngầu", prompt: `${basePromptFrame} Ultra cool confident pose, wearing stylish sunglasses, finger guns or peace sign, sparkling aura, neon glow effects, streetwear vibes, smug smirk.` }
+                    ];
+                }
 
                 const uploadedFile = uploadCustomSticker.files[0];
                 const resizedBase64 = await getResizedBase64(uploadedFile);
