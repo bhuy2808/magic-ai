@@ -1750,34 +1750,80 @@
                         itemDiv.appendChild(dlOverlay);
                     }
 
-                    // 3. Vòng lặp kích hoạt theo batch size
+                    // 3. Hàm gửi request có retry cho lỗi 429 Rate Limit
+                    async function generateWithRetry(prompt, resizedBase64, negPrompt, itemDiv, maxRetries = 3) {
+                        const retryDelays = [12000, 20000, 30000]; // 12s, 20s, 30s
+                        const statusText = itemDiv.querySelector(".item-loading-spinner");
+
+                        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                            try {
+                                if (attempt > 0 && statusText) {
+                                    statusText.innerText = `🔄 Thử lại (${attempt}/${maxRetries})...`;
+                                }
+
+                                const response = await fetch("/api/generate", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({
+                                        imageBase64: resizedBase64,
+                                        prompt: prompt,
+                                        negative_prompt: negPrompt
+                                    })
+                                });
+
+                                if (response.status === 429) {
+                                    // Rate Limited - đợi rồi thử lại
+                                    if (attempt < maxRetries) {
+                                        const waitTime = retryDelays[attempt] || 30000;
+                                        console.warn(`⚠️ Rate limited (429). Đợi ${waitTime/1000}s rồi thử lại (${attempt+1}/${maxRetries})...`);
+                                        if (statusText) statusText.innerText = `⏳ Đợi ${waitTime/1000}s (rate limit)...`;
+                                        await new Promise(r => setTimeout(r, waitTime));
+                                        continue; // Thử lại
+                                    } else {
+                                        throw new Error("Rate limit - hết lượt thử");
+                                    }
+                                }
+
+                                if (!response.ok) {
+                                    const errData = await response.json().catch(() => ({}));
+                                    throw new Error(errData.error || `API Error ${response.status}`);
+                                }
+
+                                const data = await response.json();
+                                return data; // Thành công!
+
+                            } catch (err) {
+                                if (attempt >= maxRetries) throw err;
+                                // Lỗi khác (network, etc) - cũng thử lại
+                                const waitTime = retryDelays[attempt] || 10000;
+                                console.warn(`Attempt ${attempt+1} failed: ${err.message}. Retrying in ${waitTime/1000}s...`);
+                                if (statusText) statusText.innerText = `⏳ Đợi thử lại...`;
+                                await new Promise(r => setTimeout(r, waitTime));
+                            }
+                        }
+                    }
+
+                    // 4. Vòng lặp kích hoạt theo batch size
                     const promptsToGenerate = emotions.slice(0, batchSize);
                     for (let i = 0; i < promptsToGenerate.length; i++) {
                         const current = promptsToGenerate[i];
                         const itemDiv = itemDivs[i];
 
-                        // Delay 2 giây giữa các sticker để tránh lỗi Rate Limit (429) khi khởi tạo
-                        if (i > 0) await new Promise(r => setTimeout(r, 2000));
+                        // Delay 8 giây giữa các sticker để tránh 429 Rate Limit
+                        if (i > 0) await new Promise(r => setTimeout(r, 8000));
 
                         try {
-                            const response = await fetch("/api/generate", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    imageBase64: resizedBase64,
-                                    prompt: current.prompt,
-                                    negative_prompt: customNegativePrompt
-                                })
-                            });
+                            const statusText = itemDiv.querySelector(".item-loading-spinner");
+                            if (statusText) statusText.innerText = `Đang gửi sticker ${i+1}...`;
 
-                            if (!response.ok) throw new Error("Initiator API Error");
+                            const data = await generateWithRetry(
+                                current.prompt, resizedBase64, customNegativePrompt, itemDiv
+                            );
 
-                            const data = await response.json();
-                            const pId = data.predictionId; // Lấy ID ra một biến riêng biệt
+                            const pId = data.predictionId;
 
                             if (pId && pId !== "null" && pId !== "undefined") {
-                                console.log("Khởi tạo thành công ID:", pId);
-                                // Bắt đầu Polling cho sticker này với biến pId đảm bảo có giá trị
+                                console.log(`✅ Sticker ${i+1} khởi tạo thành công ID:`, pId);
                                 pollStickerStatus(pId, itemDiv, current.label);
                             } else {
                                 console.error("Phản hồi từ Server không có ID hợp lệ:", data);
@@ -1785,9 +1831,9 @@
                             }
 
                         } catch (initErr) {
-                            console.error(`Sticker ${i+1} init failed:`, initErr);
+                            console.error(`❌ Sticker ${i+1} init failed:`, initErr);
                             const loading = itemDiv.querySelector(".item-loading-spinner");
-                            if (loading) loading.innerHTML = "❌";
+                            if (loading) loading.innerHTML = `<span style='font-size:0.8rem;color:#ff4d4d;'>❌ ${initErr.message.substring(0, 30)}</span>`;
                         }
                     }
 

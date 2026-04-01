@@ -73,7 +73,11 @@ module.exports = async (req, res) => {
         let userMessage = error.message;
         let statusCode = 500;
         
-        if (error.message && error.message.includes('rate limit')) {
+        // Replicate trả về "Too Many Requests" hoặc "rate limit"
+        if (error.message && (error.message.includes('429') || error.message.includes('Too Many Requests') || error.message.includes('rate limit') || error.message.includes('Rate limit'))) {
+            userMessage = 'Rate limited. Đợi 1 phút rồi thử lại.';
+            statusCode = 429;
+        } else if (error.status === 429) {
             userMessage = 'Rate limited. Đợi 1 phút rồi thử lại.';
             statusCode = 429;
         } else if (error.message && error.message.includes('authentication')) {
