@@ -458,7 +458,7 @@
                 </style>
 
                 <!-- 6 Result Placeholders -->
-                <div id="stickerResultGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 25px;">
+                <div id="stickerResultGrid" class="sticker-result-grid-v2">
                     <div class="sticker-slot" data-index="0">
                         <span class="slot-emoji">😄</span>
                         <span class="slot-label">Vui vẻ</span>
@@ -489,6 +489,15 @@
                         <span class="slot-label">Ngạc nhiên</span>
                         <span class="slot-status">Đang tạo...</span>
                     </div>
+                </div>
+
+                <!-- Download All Button (Hidden until 6 are done) -->
+                <div id="downloadAllContainer" class="download-all-container">
+                    <button class="btn-download-all" id="downloadAllBtn">
+                        <span style="font-size: 1.5rem;">📥</span>
+                        Tải về trọn bộ 6 Sticker
+                    </button>
+                    <p style="text-align: center; color: #666; font-size: 0.85rem; margin-top: 12px; font-weight: 500;">(Ảnh sẽ được tải xuống lần lượt vào thư viện của bạn)</p>
                 </div>
             </div>
         </section>
@@ -1023,12 +1032,12 @@
 
         // 6 Emotions config
         const STICKER_EMOTIONS = [
-            { label: 'Vui vẻ', emoji: '😄', prompt: 'happy smiling expression, joyful face' },
-            { label: 'Ngầu', emoji: '😎', prompt: 'cool confident expression with sunglasses, badass pose' },
-            { label: 'Ăn kem', emoji: '🍦', prompt: 'eating ice cream happily, holding ice cream cone' },
-            { label: 'Guitar', emoji: '🎸', prompt: 'playing guitar, music vibes, rocking out' },
-            { label: 'Khóc', emoji: '😢', prompt: 'crying with big tears, sad emotional face' },
-            { label: 'Ngạc nhiên', emoji: '😲', prompt: 'shocked surprised expression, wide open mouth, amazed' }
+            { label: 'Vui vẻ', emoji: '😄', prompt: 'happy joyful smiling expression, big expressive eyes, cute laugh' },
+            { label: 'Ngầu', emoji: '😎', prompt: 'cool confident expression wearing stylish sunglasses, thumbs up pose, streetwear style' },
+            { label: 'Ăn kem', emoji: '🍦', prompt: 'eating a giant colorful ice cream cone, strawberry cream on nose, happy messy face' },
+            { label: 'Guitar', emoji: '🎸', prompt: 'playing a small acoustic guitar, rockstar pose, musical notes floating around' },
+            { label: 'Khóc', emoji: '😢', prompt: 'crying with big dramatic watery eyes, holding a small tissue, emotional expression' },
+            { label: 'Ngạc nhiên', emoji: '😲', prompt: 'super shocked surprised expression, wide open mouth, starry eyes, hands on cheeks' }
         ];
 
         const STICKER_NEGATIVE_PROMPT = "realistic, photo, human skin texture, messy background, low quality, deformed, blurry, extra limbs, bad anatomy, text, watermark";
@@ -1134,10 +1143,38 @@
                 generateStickerBtn.classList.add('ready');
                 generateStickerBtn.style.pointerEvents = 'auto';
                 stickerSpinner.style.display = 'none';
-                stickerBtnText.innerText = 'Tạo lại 6 Sticker 🎲';
+                stickerBtnText.innerText = 'Tạo lại bộ Sticker 🎲';
 
                 // Scroll to results
                 stickerResultGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                checkAllDone();
+            };
+        }
+
+        function checkAllDone() {
+            const doneSlots = stickerResultGrid.querySelectorAll('.sticker-slot.done');
+            if (doneSlots.length === 6) {
+                document.getElementById('downloadAllContainer').style.display = 'block';
+                // Trigger success sound or confetti if available
+                try { successSound.play(); } catch(e) {}
+            }
+        }
+
+        const downloadAllBtn = document.getElementById('downloadAllBtn');
+        if (downloadAllBtn) {
+            downloadAllBtn.onclick = async function() {
+                const images = stickerResultGrid.querySelectorAll('.sticker-slot.done img');
+                for (let i = 0; i < images.length; i++) {
+                    const img = images[i];
+                    const link = document.createElement('a');
+                    link.href = img.src;
+                    link.download = `sticker_${i + 1}.png`;
+                    link.target = '_blank';
+                    link.click();
+                    // Small delay to ensure browser handles multiple downloads
+                    await new Promise(r => setTimeout(r, 800));
+                }
             };
         }
 
@@ -1183,7 +1220,8 @@
                 `;
 
                 // Download on click
-                slot.querySelector('.dl-overlay').onclick = () => {
+                slot.querySelector('.dl-overlay').onclick = (e) => {
+                    e.stopPropagation();
                     const link = document.createElement('a');
                     link.href = imageUrl;
                     link.download = `sticker_${emotion.label}.png`;
@@ -1196,8 +1234,9 @@
                 slot.classList.remove('loading');
                 slot.innerHTML = `
                     <span class="slot-emoji">${emotion.emoji}</span>
-                    <span class="slot-label" style="color: #FF6B6B;">Lỗi</span>
-                    <span style="font-size: 0.7rem; color: #888; padding: 0 10px; text-align: center;">${err.message}</span>
+                    <span class="slot-label" style="color: #FF6B6B;">Thử lại</span>
+                    <span style="font-size: 0.7rem; color: #888; padding: 0 10px; text-align: center;">Lỗi AI: ${err.message}</span>
+                    <div class="retry-badge" onclick="event.stopPropagation(); generateSingleSticker(STICKER_EMOTIONS[${index}], ${index})">🔄 Thử lại</div>
                 `;
             }
         }
