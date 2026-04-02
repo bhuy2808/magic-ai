@@ -17,16 +17,32 @@
             pointer-events: auto;
             box-shadow: 0 8px 30px rgba(255,139,167,0.3);
         }
+        /* Sticker Grid System - Inlined for GitHub Reliability */
+        .sticker-result-grid-v2 {
+            display: grid !important;
+            grid-template-columns: repeat(6, 1fr) !important;
+            gap: 8px !important;
+            margin: 20px auto 30px auto !important;
+            max-width: 600px !important;
+            width: 100% !important;
+        }
+        @media (max-width: 650px) {
+            .sticker-result-grid-v2 {
+                grid-template-columns: repeat(6, 1fr) !important;
+                gap: 5px !important;
+            }
+        }
+
         .sticker-slot {
             aspect-ratio: 1;
             border-radius: 12px;
-            background: rgba(255,255,255,0.03);
-            border: 1.5px dashed rgba(255,255,255,0.08);
+            background: rgba(255,139,167,0.05); /* Match pink theme */
+            border: 1.5px dashed rgba(255,139,167,0.2);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 4px; /* Tighter gap */
+            gap: 4px;
             position: relative;
             overflow: hidden;
             transition: all 0.5s;
