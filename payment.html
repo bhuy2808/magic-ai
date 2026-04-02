@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sticker Magic - Cổng Thanh Toán / Payment Gateway</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <title>Photo AI™ - Cổng Thanh Toán / Payment Gateway</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/payment.css">
 </head>
 <body>
@@ -25,7 +25,7 @@
         <!-- Detailed Order Summary -->
         <div class="order-details" id="orderSummary">
             <div class="order-row">
-                <span id="labelItem">Gói Sticker AI (1 Lượt)</span>
+                <span id="labelItem">Gói Photo AI (1 Lượt)</span>
                 <span id="priceItem">25.000đ</span>
             </div>
             <div class="order-row sub">
@@ -156,7 +156,7 @@
             btnText.innerText = "Tiến Hành Thanh Toán";
             secureNote.innerText = "🔒 Thanh toán được mã hóa và bảo mật tuyệt đối";
 
-            labelItem.innerText = "Gói Sticker AI (1 Lượt)";
+            labelItem.innerText = "Gói Photo AI (1 Lượt)";
             priceItem.innerText = "25.000đ";
             labelDiscount.innerText = "Giảm giá thành viên mới";
             priceDiscount.innerText = "-5.000đ";
@@ -181,7 +181,7 @@
             btnText.innerText = "Proceed to Payment";
             secureNote.innerText = "🔒 Payments are fully encrypted and secure";
 
-            labelItem.innerText = "AI Sticker Plan (1 Gen)";
+            labelItem.innerText = "AI Photo Plan (1 Gen)";
             priceItem.innerText = "$1.20";
             labelDiscount.innerText = "New user discount";
             priceDiscount.innerText = "-$0.21";
@@ -212,7 +212,7 @@
         function simulateSuccess(method) {
             localStorage.setItem("didMockPayment", "true");
             if(currentMode === "VN") {
-                alert(`Giao dịch qua ${method} thành công!\nHệ thống sẽ đóng tab này để quay lại trang tạo Sticker.`);
+                alert(`Giao dịch qua ${method} thành công!\nHệ thống sẽ đóng tab này để quay lại Photo AI.`);
             } else {
                 alert(`Transaction via ${method} was successful!\nThe system will close this tab to return to the Studio.`);
             }
