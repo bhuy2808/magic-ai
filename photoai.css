@@ -619,31 +619,36 @@ body {
 .btn-magic { color: #4834d4 !important; border-color: #4834d4 !important; }
 .btn-magic:hover { background: rgba(72, 52, 212, 0.05) !important; }
 
-/* Sticker Result Grid V2 */
+/* Sticker Result Grid V2 - More compact */
 .sticker-result-grid-v2 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-top: 25px;
+    gap: 12px;
+    margin: 25px auto 0 auto;
+    max-width: 580px; /* Compact width for stickers */
 }
 
-@media (max-width: 850px) {
+@media (max-width: 650px) {
     .sticker-result-grid-v2 {
         grid-template-columns: repeat(2, 1fr);
+        max-width: 380px;
     }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 400px) {
     .sticker-result-grid-v2 {
         grid-template-columns: 1fr;
+        max-width: 250px;
     }
 }
 
 /* Download All Section */
 .download-all-container {
-    margin-top: 30px;
+    margin: 30px auto 0 auto;
+    max-width: 580px; /* Matching grid width */
     display: none; /* Shown via JS */
     animation: fadeIn 0.5s ease;
+    padding: 0 10px;
 }
 
 .btn-download-all {
