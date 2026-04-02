@@ -420,18 +420,25 @@
                         border-color: rgba(255,139,167,0.2);
                         animation: slotPulse 2s ease-in-out infinite;
                     }
-                    .sticker-slot.done {
-                        border: 2px solid rgba(255,139,167,0.3);
-                        background: #FFF;
-                    }
-                    .sticker-slot.done img {
-                        position: absolute;
-                        inset: 0;
-                        width: 100%;
-                        height: 100%;
-                        object-fit: contain;
-                        border-radius: 14px;
-                    }
+                     .sticker-slot.done {
+                         border: 2.5px solid rgba(255,139,167,0.4);
+                         background: #FFF;
+                         cursor: zoom-in;
+                         transition: transform 0.3s;
+                     }
+                     .sticker-slot.done:hover {
+                         transform: scale(1.08) translateY(-3px);
+                         box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+                         z-index: 10;
+                     }
+                     .sticker-slot.done img {
+                         position: absolute;
+                         inset: 0;
+                         width: 100%;
+                         height: 100%;
+                         object-fit: contain;
+                         border-radius: 10px;
+                     }
                     .sticker-slot.done .slot-emoji,
                     .sticker-slot.done .slot-label,
                     .sticker-slot.done .slot-status {
@@ -1143,7 +1150,7 @@
                 generateStickerBtn.classList.add('ready');
                 generateStickerBtn.style.pointerEvents = 'auto';
                 stickerSpinner.style.display = 'none';
-                stickerBtnText.innerText = 'Tạo lại bộ Sticker 🎲';
+                stickerBtnText.innerText = 'Tạo bộ Sticker mới 🪄';
 
                 // Scroll to results
                 stickerResultGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1212,16 +1219,19 @@
                 const imageUrl = await pollPrediction(predictionId, statusEl);
 
                 // Step 3: Show result
-                slot.classList.remove('loading');
-                slot.classList.add('done');
-                slot.innerHTML = `
-                    <img src="${imageUrl}" alt="${emotion.label}" />
-                    <div class="dl-overlay" title="Tải xuống">⬇️</div>
-                `;
+                 slot.classList.remove('loading');
+                 slot.classList.add('done');
+                 slot.innerHTML = `
+                     <img src="${imageUrl}" alt="${emotion.label}" />
+                     <div class="dl-overlay" title="Tải xuống">⬇️</div>
+                 `;
 
-                // Download on click
-                slot.querySelector('.dl-overlay').onclick = (e) => {
-                    e.stopPropagation();
+                 // Click-to-Zoom logic
+                 slot.onclick = () => openZoomModal(imageUrl, emotion.label);
+
+                 // Download only on overlay click
+                 slot.querySelector('.dl-overlay').onclick = (e) => {
+                     e.stopPropagation();
                     const link = document.createElement('a');
                     link.href = imageUrl;
                     link.download = `sticker_${emotion.label}.png`;
@@ -1269,7 +1279,48 @@
 
             throw new Error('Timeout — quá lâu');
         }
+
+        // --- NEW: Zoom Modal Logic ---
+        const zoomModal = document.getElementById('zoomModal');
+        const zoomImg = document.getElementById('zoomImg');
+        const zoomLabel = document.getElementById('zoomLabel');
+        const closeZoom = document.getElementById('closeZoom');
+
+        function openZoomModal(url, label) {
+            if (!zoomModal || !zoomImg) return;
+            zoomImg.src = url;
+            zoomLabel.innerText = "Sticker: " + label;
+            zoomModal.style.display = 'flex';
+            setTimeout(() => zoomModal.classList.add('show'), 10);
+            document.body.style.overflow = 'hidden'; // Lock scroll
+        }
+
+        function closeZoomModal() {
+            if (!zoomModal) return;
+            zoomModal.classList.remove('show');
+            setTimeout(() => {
+                zoomModal.style.display = 'none';
+                document.body.style.overflow = 'auto'; // Unlock scroll
+            }, 300);
+        }
+
+        if (zoomModal) {
+            zoomModal.onclick = (e) => {
+                if (e.target === zoomModal || e.target === closeZoom) {
+                    closeZoomModal();
+                }
+            };
+        }
     </script>
+
+    <!-- Sticker Zoom Modal -->
+    <div id="zoomModal" class="zoom-modal">
+        <div class="zoom-close" id="closeZoom">&times;</div>
+        <div class="zoom-content">
+            <img id="zoomImg" src="" alt="Zoomed Sticker">
+            <div id="zoomLabel" class="zoom-label">Sticker Preview</div>
+        </div>
+    </div>
 
     <!-- Load Google OAuth async -->
     <script src="https://accounts.google.com/gsi/client" async defer onload="initGoogleClient()"
