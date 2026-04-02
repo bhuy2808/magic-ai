@@ -310,6 +310,189 @@
             </script>
         </section>
 
+        <!-- ==================== STICKER CREATOR ==================== -->
+        <section id="stickerCreatorSection" style="padding: 80px 20px; background: #0d0d0d; border-top: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden;">
+            <!-- Ambient glow -->
+            <div style="position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,139,167,0.08) 0%, transparent 70%); pointer-events: none;"></div>
+
+            <div style="max-width: 900px; margin: 0 auto; position: relative; z-index: 1;">
+                <h2 style="font-size: 2.8rem; font-weight: 800; text-align: center; margin-bottom: 15px; letter-spacing: -1px; background: linear-gradient(135deg, #FF8BA7, #FFC2C7, #FFD2A8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    ✨ Tạo Sticker AI
+                </h2>
+                <p style="text-align: center; color: #888; font-size: 1.05rem; margin-bottom: 50px;">Tải lên ảnh selfie → AI sẽ biến bạn thành 6 sticker chibi siêu cute!</p>
+
+                <!-- Upload + Controls Row -->
+                <div style="display: flex; gap: 30px; align-items: stretch; flex-wrap: wrap; margin-bottom: 30px;">
+                    <!-- Upload Zone -->
+                    <label id="stickerUploadZone" style="flex: 1; min-width: 250px; min-height: 280px; border-radius: 24px; border: 3px dashed rgba(255,139,167,0.3); background: rgba(255,255,255,0.02); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; transition: all 0.3s;">
+                        <input type="file" id="stickerUpload" accept="image/*" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;" />
+                        <div id="stickerUpIcon" style="font-size: 3.5rem; margin-bottom: 10px; transition: opacity 0.3s;">📸</div>
+                        <div id="stickerUpText" style="font-weight: 700; font-size: 1.1rem; color: #ccc; transition: opacity 0.3s;">Tải ảnh selfie lên đây</div>
+                        <div id="stickerUpSub" style="font-size: 0.85rem; color: #666; margin-top: 5px; transition: opacity 0.3s;">JPG, PNG — Rõ mặt, góc thẳng</div>
+                        <img id="stickerPreviewImg" alt="Preview" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 21px; opacity: 0; transition: opacity 0.3s; z-index: 5;" />
+                    </label>
+
+                    <!-- Emotion Labels -->
+                    <div style="flex: 1; min-width: 250px; display: flex; flex-direction: column; justify-content: center; gap: 12px;">
+                        <div style="color: #aaa; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;">6 Biểu cảm AI sẽ tạo:</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.5rem;">😄</span>
+                                <span style="font-weight: 600; color: #ddd; font-size: 0.95rem;">Vui vẻ</span>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.5rem;">😎</span>
+                                <span style="font-weight: 600; color: #ddd; font-size: 0.95rem;">Ngầu</span>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.5rem;">🍦</span>
+                                <span style="font-weight: 600; color: #ddd; font-size: 0.95rem;">Ăn kem</span>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.5rem;">🎸</span>
+                                <span style="font-weight: 600; color: #ddd; font-size: 0.95rem;">Guitar</span>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.5rem;">😢</span>
+                                <span style="font-weight: 600; color: #ddd; font-size: 0.95rem;">Khóc</span>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.5rem;">😲</span>
+                                <span style="font-weight: 600; color: #ddd; font-size: 0.95rem;">Ngạc nhiên</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <button id="generateStickerBtn" style="width: 100%; padding: 18px; border: none; border-radius: 16px; background: linear-gradient(135deg, #333, #222); color: #666; font-size: 1.15rem; font-weight: 800; font-family: inherit; cursor: not-allowed; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; pointer-events: none;">
+                    <span id="stickerSpinner" style="display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #FF8BA7; border-radius: 50%; animation: spin 0.8s linear infinite;"></span>
+                    <span id="stickerBtnText">Tải ảnh lên trước để bắt đầu</span>
+                </button>
+
+                <style>
+                    @keyframes spin { to { transform: rotate(360deg); } }
+                    #generateStickerBtn.ready {
+                        background: linear-gradient(135deg, #FF8BA7, #FC6C8F);
+                        color: #FFF;
+                        cursor: pointer;
+                        pointer-events: auto;
+                        box-shadow: 0 8px 30px rgba(255,139,167,0.3);
+                    }
+                    #generateStickerBtn.ready:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 12px 40px rgba(255,139,167,0.4);
+                    }
+                    #generateStickerBtn.ready:active {
+                        transform: translateY(0);
+                    }
+                    #stickerUploadZone:hover {
+                        border-color: rgba(255,139,167,0.6);
+                        background: rgba(255,139,167,0.03);
+                    }
+                    .sticker-slot {
+                        aspect-ratio: 1;
+                        border-radius: 16px;
+                        background: rgba(255,255,255,0.03);
+                        border: 2px dashed rgba(255,255,255,0.08);
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 8px;
+                        position: relative;
+                        overflow: hidden;
+                        transition: all 0.5s;
+                    }
+                    .sticker-slot .slot-emoji {
+                        font-size: 2.2rem;
+                        opacity: 0.3;
+                        transition: opacity 0.3s;
+                    }
+                    .sticker-slot .slot-label {
+                        font-size: 0.8rem;
+                        font-weight: 600;
+                        color: #555;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                    }
+                    .sticker-slot.loading {
+                        border-color: rgba(255,139,167,0.2);
+                        animation: slotPulse 2s ease-in-out infinite;
+                    }
+                    .sticker-slot.done {
+                        border: 2px solid rgba(255,139,167,0.3);
+                        background: #FFF;
+                    }
+                    .sticker-slot.done img {
+                        position: absolute;
+                        inset: 0;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain;
+                        border-radius: 14px;
+                    }
+                    .sticker-slot.done .slot-emoji,
+                    .sticker-slot.done .slot-label,
+                    .sticker-slot.done .slot-status {
+                        display: none;
+                    }
+                    .sticker-slot .slot-status {
+                        font-size: 0.75rem;
+                        color: #FF8BA7;
+                        font-weight: 600;
+                        display: none;
+                    }
+                    .sticker-slot.loading .slot-status { display: block; }
+                    .sticker-slot.loading .slot-emoji { opacity: 0.15; }
+                    @keyframes slotPulse {
+                        0%, 100% { border-color: rgba(255,139,167,0.1); }
+                        50% { border-color: rgba(255,139,167,0.35); }
+                    }
+                    .sticker-slot .dl-overlay {
+                        position: absolute; inset: 0; background: rgba(0,0,0,0.55);
+                        display: none; align-items: center; justify-content: center;
+                        font-size: 1.5rem; cursor: pointer; border-radius: 14px; z-index: 5;
+                    }
+                    .sticker-slot.done:hover .dl-overlay { display: flex; }
+                </style>
+
+                <!-- 6 Result Placeholders -->
+                <div id="stickerResultGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 25px;">
+                    <div class="sticker-slot" data-index="0">
+                        <span class="slot-emoji">😄</span>
+                        <span class="slot-label">Vui vẻ</span>
+                        <span class="slot-status">Đang tạo...</span>
+                    </div>
+                    <div class="sticker-slot" data-index="1">
+                        <span class="slot-emoji">😎</span>
+                        <span class="slot-label">Ngầu</span>
+                        <span class="slot-status">Đang tạo...</span>
+                    </div>
+                    <div class="sticker-slot" data-index="2">
+                        <span class="slot-emoji">🍦</span>
+                        <span class="slot-label">Ăn kem</span>
+                        <span class="slot-status">Đang tạo...</span>
+                    </div>
+                    <div class="sticker-slot" data-index="3">
+                        <span class="slot-emoji">🎸</span>
+                        <span class="slot-label">Guitar</span>
+                        <span class="slot-status">Đang tạo...</span>
+                    </div>
+                    <div class="sticker-slot" data-index="4">
+                        <span class="slot-emoji">😢</span>
+                        <span class="slot-label">Khóc</span>
+                        <span class="slot-status">Đang tạo...</span>
+                    </div>
+                    <div class="sticker-slot" data-index="5">
+                        <span class="slot-emoji">😲</span>
+                        <span class="slot-label">Ngạc nhiên</span>
+                        <span class="slot-status">Đang tạo...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
 
         <!-- Intro Demo Section -->
         <section class="photoai-multiperson" id="styleShowcaseSection"
@@ -823,7 +1006,232 @@
                 updateCreditUI();
             };
         }
+
+        // ==================== STICKER CREATOR LOGIC ====================
+        const stickerUpload = document.getElementById('stickerUpload');
+        const stickerPreviewImg = document.getElementById('stickerPreviewImg');
+        const stickerUpIcon = document.getElementById('stickerUpIcon');
+        const stickerUpText = document.getElementById('stickerUpText');
+        const stickerUpSub = document.getElementById('stickerUpSub');
+        const generateStickerBtn = document.getElementById('generateStickerBtn');
+        const stickerBtnText = document.getElementById('stickerBtnText');
+        const stickerSpinner = document.getElementById('stickerSpinner');
+        const stickerResultGrid = document.getElementById('stickerResultGrid');
+
+        let stickerImageBase64 = null;
+        let stickerGenerating = false;
+
+        // 6 Emotions config
+        const STICKER_EMOTIONS = [
+            { label: 'Vui vẻ', emoji: '😄', prompt: 'happy smiling expression, joyful face' },
+            { label: 'Ngầu', emoji: '😎', prompt: 'cool confident expression with sunglasses, badass pose' },
+            { label: 'Ăn kem', emoji: '🍦', prompt: 'eating ice cream happily, holding ice cream cone' },
+            { label: 'Guitar', emoji: '🎸', prompt: 'playing guitar, music vibes, rocking out' },
+            { label: 'Khóc', emoji: '😢', prompt: 'crying with big tears, sad emotional face' },
+            { label: 'Ngạc nhiên', emoji: '😲', prompt: 'shocked surprised expression, wide open mouth, amazed' }
+        ];
+
+        const STICKER_NEGATIVE_PROMPT = "realistic, photo, human skin texture, messy background, low quality, deformed, blurry, extra limbs, bad anatomy, text, watermark";
+
+        // Handle sticker upload
+        if (stickerUpload) {
+            stickerUpload.onchange = function () {
+                const file = this.files[0];
+                if (!file) return;
+
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Ảnh quá lớn! Giới hạn 5MB.');
+                    return;
+                }
+
+                // Show preview
+                const url = URL.createObjectURL(file);
+                stickerPreviewImg.src = url;
+                stickerPreviewImg.style.opacity = '1';
+                stickerUpIcon.style.opacity = '0';
+                stickerUpText.style.opacity = '0';
+                stickerUpSub.style.opacity = '0';
+
+                // Convert to base64
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    // Remove data URI prefix to get pure base64
+                    stickerImageBase64 = e.target.result.split(',')[1];
+
+                    // Enable generate button
+                    generateStickerBtn.classList.add('ready');
+                    stickerBtnText.innerText = 'Tạo 6 Sticker Magic 🪄';
+                };
+                reader.readAsDataURL(file);
+
+                // Reset all slots
+                resetStickerSlots();
+            };
+        }
+
+        function resetStickerSlots() {
+            const slots = stickerResultGrid.querySelectorAll('.sticker-slot');
+            slots.forEach((slot, i) => {
+                slot.className = 'sticker-slot';
+                slot.innerHTML = `
+                    <span class="slot-emoji">${STICKER_EMOTIONS[i].emoji}</span>
+                    <span class="slot-label">${STICKER_EMOTIONS[i].label}</span>
+                    <span class="slot-status">Đang tạo...</span>
+                `;
+            });
+        }
+
+        // Build prompt for each emotion
+        function buildStickerPrompt(emotionPrompt) {
+            return `A cute chibi sticker of the person, ${emotionPrompt}, 3D Pixar style, big head small body, die-cut sticker, white background, vibrant colors, high resolution, professional sticker art`;
+        }
+
+        // Generate stickers
+        if (generateStickerBtn) {
+            generateStickerBtn.onclick = async function () {
+                if (!stickerImageBase64 || stickerGenerating) return;
+
+                // Check login
+                if (!isLoggedIn) {
+                    alert('Vui lòng đăng nhập để tạo Sticker AI! 🪄');
+                    return;
+                }
+
+                // Check credits (Admin bypass)
+                if (!isAdmin && credits < 1) {
+                    if (confirm('Bạn cần 1 lượt tạo AI để tiếp tục.\nChuyển đến trang thanh toán?')) {
+                        openPaymentTab();
+                    }
+                    return;
+                }
+
+                stickerGenerating = true;
+
+                // UI: disable button, show spinner
+                generateStickerBtn.classList.remove('ready');
+                generateStickerBtn.style.pointerEvents = 'none';
+                stickerSpinner.style.display = 'inline-block';
+                stickerBtnText.innerText = 'Đang tạo 6 sticker...';
+
+                // Set all slots to loading
+                const slots = stickerResultGrid.querySelectorAll('.sticker-slot');
+                slots.forEach(slot => slot.classList.add('loading'));
+
+                // Deduct credit (skip for Admin)
+                if (!isAdmin) {
+                    deductCredit();
+                }
+
+                // Launch 6 parallel generation requests
+                const promises = STICKER_EMOTIONS.map((emotion, index) => {
+                    return generateSingleSticker(emotion, index);
+                });
+
+                await Promise.allSettled(promises);
+
+                // Done — restore button
+                stickerGenerating = false;
+                generateStickerBtn.classList.add('ready');
+                generateStickerBtn.style.pointerEvents = 'auto';
+                stickerSpinner.style.display = 'none';
+                stickerBtnText.innerText = 'Tạo lại 6 Sticker 🎲';
+
+                // Scroll to results
+                stickerResultGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            };
+        }
+
+        async function generateSingleSticker(emotion, index) {
+            const slot = stickerResultGrid.querySelector(`[data-index="${index}"]`);
+            const statusEl = slot.querySelector('.slot-status');
+
+            try {
+                statusEl.innerText = 'Đang gửi...';
+
+                // Step 1: Call /api/generate
+                const genRes = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        imageBase64: stickerImageBase64,
+                        prompt: buildStickerPrompt(emotion.prompt),
+                        negative_prompt: STICKER_NEGATIVE_PROMPT
+                    })
+                });
+
+                if (!genRes.ok) {
+                    const errData = await genRes.json().catch(() => ({}));
+                    throw new Error(errData.error || `HTTP ${genRes.status}`);
+                }
+
+                const genData = await genRes.json();
+                const predictionId = genData.predictionId;
+
+                if (!predictionId) throw new Error('No prediction ID');
+
+                statusEl.innerText = 'AI đang vẽ...';
+
+                // Step 2: Poll /api/check until done
+                const imageUrl = await pollPrediction(predictionId, statusEl);
+
+                // Step 3: Show result
+                slot.classList.remove('loading');
+                slot.classList.add('done');
+                slot.innerHTML = `
+                    <img src="${imageUrl}" alt="${emotion.label}" />
+                    <div class="dl-overlay" title="Tải xuống">⬇️</div>
+                `;
+
+                // Download on click
+                slot.querySelector('.dl-overlay').onclick = () => {
+                    const link = document.createElement('a');
+                    link.href = imageUrl;
+                    link.download = `sticker_${emotion.label}.png`;
+                    link.target = '_blank';
+                    link.click();
+                };
+
+            } catch (err) {
+                console.error(`Sticker ${emotion.label} error:`, err);
+                slot.classList.remove('loading');
+                slot.innerHTML = `
+                    <span class="slot-emoji">${emotion.emoji}</span>
+                    <span class="slot-label" style="color: #FF6B6B;">Lỗi</span>
+                    <span style="font-size: 0.7rem; color: #888; padding: 0 10px; text-align: center;">${err.message}</span>
+                `;
+            }
+        }
+
+        async function pollPrediction(predictionId, statusEl, maxAttempts = 60) {
+            for (let i = 0; i < maxAttempts; i++) {
+                await new Promise(r => setTimeout(r, 3000)); // Wait 3s between polls
+
+                const checkRes = await fetch(`/api/check?id=${predictionId}`);
+                if (!checkRes.ok) continue;
+
+                const checkData = await checkRes.json();
+
+                if (checkData.status === 'succeeded' && checkData.imageUrl) {
+                    return checkData.imageUrl;
+                }
+
+                if (checkData.status === 'failed') {
+                    throw new Error(checkData.error || 'Generation failed');
+                }
+
+                if (checkData.status === 'canceled') {
+                    throw new Error('Cancelled');
+                }
+
+                // Update status text
+                const progress = Math.min(Math.round((i / maxAttempts) * 100), 95);
+                if (statusEl) statusEl.innerText = `AI đang vẽ... ${progress}%`;
+            }
+
+            throw new Error('Timeout — quá lâu');
+        }
     </script>
+
     <!-- Load Google OAuth async -->
     <script src="https://accounts.google.com/gsi/client" async defer onload="initGoogleClient()"
         onerror="window.googleFailed=true"></script>
