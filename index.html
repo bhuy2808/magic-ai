@@ -8,6 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="assets/css/photoai.css"> <!-- New PhotoAI specific CSS -->
+    <!-- Cropper.js for image editing -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <style>
         @keyframes spin { to { transform: rotate(360deg); } }
         #generateStickerBtn.ready {
@@ -105,6 +108,40 @@
             font-size: 1.2rem; cursor: pointer; border-radius: 10px; z-index: 5;
         }
         .sticker-slot.done:hover .dl-overlay { display: flex; }
+
+        /* Crop Modal Styles */
+        .crop-modal {
+            position: fixed; inset: 0; z-index: 10000;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .crop-container {
+            background: #FFF; border-radius: 24px; padding: 25px;
+            width: 100%; max-width: 500px; position: relative;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .crop-image-wrapper {
+            background: #f0f0f0; border-radius: 16px; overflow: hidden;
+            width: 100%; aspect-ratio: 1; position: relative;
+        }
+        .crop-footer {
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .crop-zoom-row { display: flex; align-items: center; gap: 15px; }
+        .crop-btn-row { display: flex; gap: 15px; justify-content: center; margin-top: 5px; }
+        .btn-crop-cancel {
+            background: none; border: none; color: #888; font-weight: 600;
+            cursor: pointer; padding: 12px 30px; border-radius: 12px; transition: color 0.2s;
+        }
+        .btn-crop-cancel:hover { color: #333; }
+        .btn-crop-apply {
+            flex: 1; background: #FF7B51; color: white; border: none;
+            padding: 14px; border-radius: 14px; font-weight: 700; font-size: 1rem;
+            cursor: pointer; transition: transform 0.2s;
+        }
+        .btn-crop-apply:hover { transform: translateY(-2px); background: #FF6A3A; }
     </style>
 </head>
 
@@ -413,60 +450,52 @@
             <!-- Ambient glow -->
             <div style="position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,139,167,0.08) 0%, transparent 70%); pointer-events: none;"></div>
 
-            <div style="max-width: 900px; margin: 0 auto; position: relative; z-index: 1;">
-                <h2 style="font-size: 2.8rem; font-weight: 800; text-align: center; margin-bottom: 15px; letter-spacing: -1px; background: linear-gradient(135deg, #FF8BA7, #FFC2C7, #FFD2A8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-                    ✨ Tạo Sticker AI
+            <div style="max-width: 700px; margin: 0 auto; position: relative; z-index: 1;">
+                <h2 style="font-size: 2.2rem; font-weight: 800; text-align: center; margin-bottom: 8px; letter-spacing: -1px; color: #FFF;">
+                    Tải Ảnh Lên
                 </h2>
-                <p style="text-align: center; color: #888; font-size: 1.05rem; margin-bottom: 50px;">Tải lên ảnh selfie → AI sẽ biến bạn thành 6 sticker chibi siêu cute!</p>
+                <p style="text-align: center; color: #888; font-size: 0.95rem; margin-bottom: 40px;">
+                    Chọn ảnh selfie rõ nét, ánh sáng tốt để có kết quả đẹp nhất
+                </p>
 
-                <!-- Upload + Controls Row -->
-                <div style="display: flex; gap: 30px; align-items: stretch; flex-wrap: wrap; margin-bottom: 30px;">
-                    <!-- Upload Zone -->
-                    <label id="stickerUploadZone" style="flex: 1; min-width: 250px; min-height: 280px; border-radius: 24px; border: 3px dashed rgba(255,139,167,0.3); background: rgba(255,255,255,0.02); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; transition: all 0.3s;">
-                        <input type="file" id="stickerUpload" accept="image/*" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;" />
-                        <div id="stickerUpIcon" style="font-size: 3.5rem; margin-bottom: 10px; transition: opacity 0.3s;">📸</div>
-                        <div id="stickerUpText" style="font-weight: 700; font-size: 1.1rem; color: #ccc; transition: opacity 0.3s;">Tải ảnh selfie lên đây</div>
-                        <div id="stickerUpSub" style="font-size: 0.85rem; color: #666; margin-top: 5px; transition: opacity 0.3s;">JPG, PNG — Rõ mặt, góc thẳng</div>
-                        <img id="stickerPreviewImg" alt="Preview" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 21px; opacity: 0; transition: opacity 0.3s; z-index: 5;" />
-                    </label>
-
-                    <!-- Emotion Labels -->
-                    <div style="flex: 1; min-width: 250px; display: flex; flex-direction: column; justify-content: center; gap: 12px;">
-                        <div style="color: #aaa; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;">6 Biểu cảm AI sẽ tạo:</div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 1.5rem;">😄</span>
-                                <span style="font-weight: 600; color: #ddd; font-size: 0.95rem;">Vui vẻ</span>
-                            </div>
-                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 1.5rem;">😎</span>
-                                <span style="font-weight: 600; color: #ddd; font-size: 0.95rem;">Ngầu</span>
-                            </div>
-                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 1.5rem;">🍦</span>
-                                <span style="font-weight: 600; color: #ddd; font-size: 0.95rem;">Ăn kem</span>
-                            </div>
-                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 1.5rem;">🎸</span>
-                                <span style="font-weight: 600; color: #ddd; font-size: 0.95rem;">Guitar</span>
-                            </div>
-                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 1.5rem;">😢</span>
-                                <span style="font-weight: 600; color: #ddd; font-size: 0.95rem;">Khóc</span>
-                            </div>
-                            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 1.5rem;">😲</span>
-                                <span style="font-weight: 600; color: #ddd; font-size: 0.95rem;">Ngạc nhiên</span>
-                            </div>
+                <!-- New Modern Upload Area -->
+                <div class="modern-upload-card" style="background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.1); border-radius: 32px; padding: 40px; position: relative; transition: all 0.3s; margin-bottom: 40px;">
+                    <input type="file" id="stickerUpload" accept="image/*" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;" />
+                    
+                    <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 15px;">
+                        <div style="width: 80px; height: 80px; background: rgba(255,139,167,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative;">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FF8BA7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17.5 19c.4 0 .7-.1 1-.3.3-.2.5-.5.5-.8 0-.3-.1-.6-.4-.8-.3-.2-.6-.3-.9-.3-.1 0-.3 0-.4.1-.1 0-.2.1-.3.1-.1-1.3-.6-2.5-1.5-3.5a4.8 4.8 0 0 0-3.5-1.5c-1.2 0-2.3.4-3.2 1.2a4.8 4.8 0 0 0-1.6 2.8 3.5 3.5 0 0 0-.6 6.9c.3.1.6.2 1 .2h10z"/>
+                                <path d="M12 12v6"/><path d="m9 15 3-3 3 3"/>
+                            </svg>
+                            <div style="position: absolute; top: -5px; right: -5px; width: 22px; height: 22px; background: #FF8BA7; color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; border: 2px solid #0d0d0d;">+</div>
                         </div>
+                        <div>
+                            <h3 style="color: #eee; font-size: 1.15rem; font-weight: 700; margin-bottom: 5px;">Chọn ảnh để bắt đầu</h3>
+                            <p style="color: #666; font-size: 0.85rem;">Kéo thả hoặc nhấn để chọn - JPG, PNG tối đa 10MB</p>
+                        </div>
+                        <button style="background: #FFF; color: #000; border: none; padding: 10px 25px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; pointer-events: none;">Chọn File</button>
                     </div>
                 </div>
 
-                <!-- Generate Button -->
-                <button id="generateStickerBtn" style="width: 100%; padding: 18px; border: none; border-radius: 16px; background: linear-gradient(135deg, #333, #222); color: #666; font-size: 1.15rem; font-weight: 800; font-family: inherit; cursor: not-allowed; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; pointer-events: none;">
-                    <span id="stickerSpinner" style="display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #FF8BA7; border-radius: 50%; animation: spin 0.8s linear infinite;"></span>
-                    <span id="stickerBtnText">Tải ảnh lên trước để bắt đầu</span>
-                </button>
+                <!-- Feature Icons Footer -->
+                <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-bottom: 60px;">
+                    <div class="feature-item">
+                        <span class="feature-icon">👤</span>
+                        <span class="feature-text">Một khuôn mặt rõ ràng</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">💡</span>
+                        <span class="feature-text">Ánh sáng tự nhiên tốt</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📷</span>
+                        <span class="feature-text">Ảnh selfie chất lượng cao</span>
+                    </div>
+                </div>
+
+                <!-- Generate Button (Now hidden, as it starts from cropper) -->
+                <button id="generateStickerBtn" style="display: none;"></button>
 
 
                 </button>
@@ -1032,76 +1061,130 @@
 
         // ==================== STICKER CREATOR LOGIC ====================
         const stickerUpload = document.getElementById('stickerUpload');
-        const stickerPreviewImg = document.getElementById('stickerPreviewImg');
-        const stickerUpIcon = document.getElementById('stickerUpIcon');
-        const stickerUpText = document.getElementById('stickerUpText');
-        const stickerUpSub = document.getElementById('stickerUpSub');
-        const generateStickerBtn = document.getElementById('generateStickerBtn');
-        const stickerBtnText = document.getElementById('stickerBtnText');
-        const stickerSpinner = document.getElementById('stickerSpinner');
         const stickerResultGrid = document.getElementById('stickerResultGrid');
-
+        const cropModal = document.getElementById('cropModal');
+        const cropImg = document.getElementById('cropImg');
+        const cropZoomSlider = document.getElementById('cropZoomSlider');
+        const cancelCropBtn = document.getElementById('cancelCropBtn');
+        const applyCropBtn = document.getElementById('applyCropBtn');
+        
+        let cropper = null;
         let stickerImageBase64 = null;
         let stickerGenerating = false;
 
         // 6 Emotions config
         const STICKER_EMOTIONS = [
-            { label: 'Vui vẻ', emoji: '😄', prompt: 'happy joyful smiling expression, big expressive eyes, cute laugh' },
+            { label: 'Giận dữ', emoji: '😠', prompt: 'angry frustrated expression, fuming, steam coming from ears, cute cartoon anger' },
             { label: 'Ngầu', emoji: '😎', prompt: 'cool confident expression wearing stylish sunglasses, thumbs up pose, streetwear style' },
-            { label: 'Ăn kem', emoji: '🍦', prompt: 'eating a giant colorful ice cream cone, strawberry cream on nose, happy messy face' },
-            { label: 'Guitar', emoji: '🎸', prompt: 'playing a small acoustic guitar, rockstar pose, musical notes floating around' },
+            { label: 'Nháy mắt', emoji: '😉', prompt: 'cute winking expression with a mischievous smile, playful pose' },
+            { label: 'Hôn gió', emoji: '😘', prompt: 'blowing a kiss with a floating heart icon, puckered lips expression, romantic cute pose' },
             { label: 'Khóc', emoji: '😢', prompt: 'crying with big dramatic watery eyes, holding a small tissue, emotional expression' },
             { label: 'Ngạc nhiên', emoji: '😲', prompt: 'super shocked surprised expression, wide open mouth, starry eyes, hands on cheeks' }
         ];
 
         const STICKER_NEGATIVE_PROMPT = "realistic, photo, human skin texture, messy background, low quality, deformed, blurry, extra limbs, bad anatomy, text, watermark";
 
-        // Handle sticker upload
+        // Step 1: Upload triggered
         if (stickerUpload) {
-            stickerUpload.onchange = function () {
-                const file = this.files[0];
+            stickerUpload.onchange = (e) => {
+                const file = e.target.files[0];
                 if (!file) return;
-
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('Ảnh quá lớn! Giới hạn 5MB.');
+                
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('Ảnh quá lớn! Giới hạn 10MB.');
                     return;
                 }
 
-                // Show preview
-                const url = URL.createObjectURL(file);
-                stickerPreviewImg.src = url;
-                stickerPreviewImg.style.opacity = '1';
-                stickerUpIcon.style.opacity = '0';
-                stickerUpText.style.opacity = '0';
-                stickerUpSub.style.opacity = '0';
-
-                // Convert to base64
                 const reader = new FileReader();
-                reader.onload = function (e) {
-                    // Remove data URI prefix to get pure base64
-                    stickerImageBase64 = e.target.result.split(',')[1];
-
-                    // Enable generate button
-                    generateStickerBtn.classList.add('ready');
-                    stickerBtnText.innerText = 'Tạo 6 Sticker Magic 🪄';
+                reader.onload = (event) => {
+                    openCropModal(event.target.result);
                 };
                 reader.readAsDataURL(file);
-
-                // Reset all slots
-                resetStickerSlots();
             };
         }
 
-        function resetStickerSlots() {
-            const slots = stickerResultGrid.querySelectorAll('.sticker-slot');
-            slots.forEach((slot, i) => {
-                slot.className = 'sticker-slot';
-                slot.innerHTML = `
-                    <span class="slot-emoji">${STICKER_EMOTIONS[i].emoji}</span>
-                    <span class="slot-label">${STICKER_EMOTIONS[i].label}</span>
-                    <span class="slot-status">Đang tạo...</span>
-                `;
+        function openCropModal(imgUrl) {
+            cropImg.src = imgUrl;
+            cropModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            if (cropper) cropper.destroy();
+            
+            cropper = new Cropper(cropImg, {
+                aspectRatio: 1,
+                viewMode: 1,
+                autoCropArea: 0.8,
+                dragMode: 'move',
+                guides: true,
+                center: true,
+                highlight: false,
+                background: false,
+                cropBoxMovable: false,
+                cropBoxResizable: false,
+                zoomOnWheel: true,
+                ready() {
+                    cropZoomSlider.value = 1;
+                }
             });
+        }
+
+        if (cropZoomSlider) {
+            cropZoomSlider.oninput = (e) => {
+                if (cropper) {
+                    const val = parseFloat(e.target.value);
+                    cropper.zoomTo(val);
+                }
+            };
+        }
+
+        if (cancelCropBtn) {
+            cancelCropBtn.onclick = () => {
+                closeCropModal();
+                stickerUpload.value = ''; 
+            };
+        }
+
+        if (applyCropBtn) {
+            applyCropBtn.onclick = async () => {
+                if (!cropper) return;
+
+                // Check login
+                if (!isLoggedIn) {
+                    alert('Vui lòng đăng nhập để tạo Sticker AI! 🪄');
+                    closeCropModal();
+                    document.getElementById('loginBtn').click();
+                    return;
+                }
+
+                // Check credits
+                if (!isAdmin && credits < 1) {
+                    if (confirm('Bạn cần 1 lượt tạo AI để tiếp tục.\nChuyển đến trang thanh toán?')) {
+                        openPaymentTab();
+                    }
+                    closeCropModal();
+                    return;
+                }
+
+                const canvas = cropper.getCroppedCanvas({
+                    width: 1024,
+                    height: 1024
+                });
+                // We need the raw base64 (no prefix) for the API
+                const fullBase64 = canvas.toDataURL('image/jpeg', 0.9);
+                stickerImageBase64 = fullBase64.split(',')[1]; 
+                
+                closeCropModal();
+                startStickerGeneration();
+            };
+        }
+
+        function closeCropModal() {
+            cropModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
         }
 
         // Build prompt for each emotion
@@ -1109,68 +1192,42 @@
             return `A cute chibi sticker of the person, ${emotionPrompt}, 3D Pixar style, big head small body, die-cut sticker, white background, vibrant colors, high resolution, professional sticker art`;
         }
 
-        // Generate stickers
-        if (generateStickerBtn) {
-            generateStickerBtn.onclick = async function () {
-                if (!stickerImageBase64 || stickerGenerating) return;
+        async function startStickerGeneration() {
+            if (!stickerImageBase64 || stickerGenerating) return;
 
-                // Check login
-                if (!isLoggedIn) {
-                    alert('Vui lòng đăng nhập để tạo Sticker AI! 🪄');
-                    return;
-                }
+            stickerGenerating = true;
 
-                // Check credits (Admin bypass)
-                if (!isAdmin && credits < 1) {
-                    if (confirm('Bạn cần 1 lượt tạo AI để tiếp tục.\nChuyển đến trang thanh toán?')) {
-                        openPaymentTab();
-                    }
-                    return;
-                }
+            // Deduct credit
+            if (!isAdmin) deductCredit();
 
-                stickerGenerating = true;
+            // UI: Set all slots to loading
+            const slots = stickerResultGrid.querySelectorAll('.sticker-slot');
+            slots.forEach((slot, i) => {
+                slot.className = 'sticker-slot loading';
+                slot.innerHTML = `
+                    <span class="slot-emoji">${STICKER_EMOTIONS[i].emoji}</span>
+                    <span class="slot-label">${STICKER_EMOTIONS[i].label}</span>
+                    <span class="slot-status">Đang chuẩn bị...</span>
+                `;
+            });
 
-                // UI: disable button, show spinner
-                generateStickerBtn.classList.remove('ready');
-                generateStickerBtn.style.pointerEvents = 'none';
-                stickerSpinner.style.display = 'inline-block';
-                stickerBtnText.innerText = 'Đang tạo 6 sticker...';
+            // Scroll to results
+            stickerResultGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                // Set all slots to loading
-                const slots = stickerResultGrid.querySelectorAll('.sticker-slot');
-                slots.forEach(slot => slot.classList.add('loading'));
+            // Launch 6 parallel generation requests
+            const promises = STICKER_EMOTIONS.map((emotion, index) => {
+                return generateSingleSticker(emotion, index);
+            });
 
-                // Deduct credit (skip for Admin)
-                if (!isAdmin) {
-                    deductCredit();
-                }
-
-                // Launch 6 parallel generation requests
-                const promises = STICKER_EMOTIONS.map((emotion, index) => {
-                    return generateSingleSticker(emotion, index);
-                });
-
-                await Promise.allSettled(promises);
-
-                // Done — restore button
-                stickerGenerating = false;
-                generateStickerBtn.classList.add('ready');
-                generateStickerBtn.style.pointerEvents = 'auto';
-                stickerSpinner.style.display = 'none';
-                stickerBtnText.innerText = 'Tạo bộ Sticker mới 🪄';
-
-                // Scroll to results
-                stickerResultGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                checkAllDone();
-            };
+            await Promise.allSettled(promises);
+            stickerGenerating = false;
+            checkAllDone();
         }
 
         function checkAllDone() {
             const doneSlots = stickerResultGrid.querySelectorAll('.sticker-slot.done');
             if (doneSlots.length === 6) {
                 document.getElementById('downloadAllContainer').style.display = 'block';
-                // Trigger success sound or confetti if available
                 try { successSound.play(); } catch(e) {}
             }
         }
@@ -1326,6 +1383,26 @@
         <div class="zoom-content">
             <img id="zoomImg" src="" alt="Zoomed Sticker">
             <div id="zoomLabel" class="zoom-label">Sticker Preview</div>
+        </div>
+    </div>
+
+    <!-- Image Crop Modal -->
+    <div id="cropModal" class="crop-modal">
+        <div class="crop-container" style="background: white; color: black; padding: 25px; border-radius: 20px; width: 90%; max-width: 480px;">
+            <h3 style="text-align: center; margin-bottom: 20px; font-weight: 800;">Chỉnh Sửa Ảnh</h3>
+            <div class="crop-image-wrapper" style="width: 100%; aspect-ratio: 1; margin-bottom: 20px; background: #ddd; position: relative;">
+                <img id="cropImg" src="" alt="Crop Preview" style="max-width: 100%; display: block;">
+            </div>
+            <div class="crop-footer">
+                <div class="crop-zoom-row" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                    <span style="font-size: 0.9rem; color: #666;">Phóng To</span>
+                    <input type="range" id="cropZoomSlider" min="0.1" max="3" step="0.1" value="1" style="flex: 1; accent-color: #FF7B51;">
+                </div>
+                <div class="crop-btn-row" style="display: flex; gap: 15px;">
+                    <button id="cancelCropBtn" class="btn-crop-cancel" style="flex: 1; padding: 12px; border-radius: 12px; border: none; background: #f0f0f0; color: #666; font-weight: 700; cursor: pointer;">Hủy</button>
+                    <button id="applyCropBtn" class="btn-crop-apply" style="flex: 2; padding: 12px; border-radius: 12px; border: none; background: #FF7B51; color: white; font-weight: 700; cursor: pointer;">Áp Dụng</button>
+                </div>
+            </div>
         </div>
     </div>
 
