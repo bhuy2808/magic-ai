@@ -622,25 +622,21 @@ body {
 /* Sticker Result Grid V2 - Ultra Compact Library Style */
 .sticker-result-grid-v2 {
     display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 6 columns for library feel */
+    grid-template-columns: repeat(6, 1fr); /* 6 columns always for that pack look */
     gap: 8px;
-    margin: 25px auto 0 auto;
-    max-width: 650px; 
+    margin: 20px auto 30px auto;
+    max-width: 600px; /* Force it to be compact like the right image */
+    width: 100%;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 650px) {
     .sticker-result-grid-v2 {
-        grid-template-columns: repeat(4, 1fr);
-        max-width: 450px;
+        grid-template-columns: repeat(6, 1fr); /* Keep 6 even on small screens for the 'pack' feel */
+        gap: 5px;
+        max-width: 95%;
     }
 }
-
-@media (max-width: 450px) {
-    .sticker-result-grid-v2 {
-        grid-template-columns: repeat(3, 1fr);
-        max-width: 320px;
-    }
-}
+/* Parchment-style compact stickers */
 
 /* Download All Section */
 .download-all-container {
