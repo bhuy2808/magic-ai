@@ -798,7 +798,7 @@
 
                             <div id="generate-form" style="pointer-events: auto;">
                                 <button type="button" class="btn-generate" id="generate-btn" onclick="handleGenerate()"
-                                    style="width: 100%; padding: 20px; border-radius: 18px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #FF8BA7, #FFC2C7); color: #FFF; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 25px rgba(255, 139, 167, 0.4);">
+                                    style="pointer-events: auto !important; opacity: 1 !important; width: 100%; padding: 20px; border-radius: 18px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #FF8BA7, #FFC2C7); color: #FFF; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 25px rgba(255, 139, 167, 0.4);">
                                     <span class="spinner" id="spinnerV2" style="display: none; width: 24px; height: 24px; border: 3px solid #FFF; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></span>
                                     <span id="btnTextV2">Tạo Ngay 6 Sticker Biểu Cảm ✨</span>
                                 </button>
@@ -1066,8 +1066,6 @@
                 return;
             }
 
-            generateBtn.disabled = true;
-            generateBtn.style.opacity = "0.7";
             spinnerV2.style.display = "inline-block";
             btnTextV2.innerText = " Đang xử lý... 🪄";
 
@@ -1210,8 +1208,6 @@
                     console.error("Lỗi khi tạo Sticker:", e);
                     alert("Lỗi trong quá trình khởi tạo Sticker:\n" + e.message);
                 } finally {
-                    generateBtn.disabled = false;
-                    generateBtn.style.opacity = "1";
                     spinnerV2.style.display = "none";
                     btnTextV2.innerText = "Tạo Lại (Re-roll) 🎲";
                 }
@@ -1258,4 +1254,3 @@
     </script>
 </body>
 </html>
-
