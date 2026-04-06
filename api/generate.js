@@ -6,8 +6,8 @@ export default async function handler(req, res) {
 
   try {
     const { imageBase64, prompt } = req.body;
-    // DÙNG TOKEN TRỰC TIẾP ĐỂ LOẠI TRỪ LỖI VERCEL
-    const apiToken = "r8_ctRFEjBRTrOe82bzuCFfeCa7o0aqIbL33qDB4"; 
+    // DÙNG BIẾN MÔI TRƯỜNG CHO AN TOÀN (NHỚ CẬP NHẬT TOKEN MỚI TRÊN VERCEL)
+    const apiToken = process.env.REPLICATE_API_TOKEN; 
 
     const response = await fetch("https://api.replicate.com/v1/predictions", {
       method: "POST",
@@ -16,7 +16,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // DÙNG ĐÚNG MÃ TRONG ẢNH HUY VỪA CHỤP:
+        // DÙNG ĐÚNG MÃ VERSION TRONG ẢNH HUY CHỤP
         version: "a07f252abbbd832009640b27f063ea52d87d7a23a185ca165bec23b5adc8deaf",
         input: {
           image: `data:image/jpeg;base64,${imageBase64}`,
