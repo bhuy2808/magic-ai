@@ -1230,31 +1230,47 @@
                     const emo = emotionsMap[i];
                     const fullPrompt = `A ${currentActiveStyle} sticker of the person, ${emo.kw} expression, centered, white background, die-cut, high quality, vibrant colors, vector art`;
 
-                    // Đệm 1.5s giữa các request để giảm tải Replicate API
+                    // Đệm nhẹ 1.5s lúc bắt đầu mỗi ô
                     if (i > 0) await new Promise(r => setTimeout(r, 1500));
 
-                    const response = await fetch("/api/generate", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            imageBase64: resizedBase64,
-                            prompt: fullPrompt,
-                            style: currentActiveStyle
-                        })
-                    });
-                    const data = await response.json();
+                    let success = false;
                     
-                    if (response.status !== 200) {
-                        console.error("API trả lỗi:", data);
-                        itemDivs[i].innerHTML = `<div style='color:red; text-align:center; padding:10px;'>❌ Error<br><small style="font-size:0.7rem">${data.error || ''}</small></div>`;
-                        continue;
-                    }
-                    
-                    if (data.id || data.predictionId) {
-                        const finalId = data.id || data.predictionId;
-                        pollSticker(finalId, itemDivs[i], emo.label, emo.icon, emo);
-                    } else {
-                        itemDivs[i].innerHTML = "<div style='color:red;'>❌ API Info Error</div>";
+                    while (!success) {
+                        const response = await fetch("/api/generate", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                imageBase64: resizedBase64,
+                                prompt: fullPrompt,
+                                style: currentActiveStyle
+                            })
+                        });
+                        const data = await response.json();
+                        
+                        // Xử lý riêng biệt lỗi 429 (Mạng kẹt do giới hạn Rate Limit Khắc Nghe của con Bot Free)
+                        if (response.status === 429) {
+                            console.warn(`[Ô ${i+1}] Bị nghẽn Rate Limit. Đang tự động thử lại...`);
+                            // Hiển thị giao diện "Đang xếp hàng chờ" cực mượt chứ không hiện lỗi đỏ đỏ nữa
+                            itemDivs[i].innerHTML = `<div style='color:#666; text-align:center; padding:10px;'><div style="font-size:2.5rem; animation: spin 2s infinite linear;">⏳</div><br><small style="font-size:0.75rem; font-weight: bold; margin-top: 10px; display: block;">Đang xếp hàng chờ tải...<br>(Chống kẹt mạng)</small></div>`;
+                            // Đợi hẳn 3.5 giây rồi mới đấm lại lệnh 
+                            await new Promise(r => setTimeout(r, 3500));
+                            continue; // Bắt đầu lại vòng lặp của đúng ô thứ i này
+                        }
+
+                        if (response.status !== 200) {
+                            console.error("API trả lỗi:", data);
+                            itemDivs[i].innerHTML = `<div style='color:red; text-align:center; padding:10px;'>❌ Error<br><small style="font-size:0.7rem">${data.error || ''}</small></div>`;
+                            break; // Ngưng thử và bỏ qua ô này
+                        }
+                        
+                        if (data.id || data.predictionId) {
+                            success = true; // Đánh dấu thành công để thoát khỏi vòng waiting limit
+                            const finalId = data.id || data.predictionId;
+                            pollSticker(finalId, itemDivs[i], emo.label, emo.icon, emo);
+                        } else {
+                            itemDivs[i].innerHTML = "<div style='color:red;'>❌ API Info Error</div>";
+                            break;
+                        }
                     }
                 }
             } catch (e) {
