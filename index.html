@@ -1001,12 +1001,11 @@
                     reader.onload = function(event) {
                         const cropImageDOM = document.getElementById("cropImage");
                         const cropModalDOM = document.getElementById("cropModal");
-                        cropImageDOM.src = event.target.result;
-                        cropModalDOM.style.display = "flex";
-                        if (window.cropperInstance) window.cropperInstance.destroy();
                         
-                        // Small timeout to ensure image acts correctly in DOM
-                        setTimeout(() => {
+                        cropImageDOM.onload = function() {
+                            if (window.cropperInstance) {
+                                window.cropperInstance.destroy();
+                            }
                             window.cropperInstance = new Cropper(cropImageDOM, {
                                 aspectRatio: 1,
                                 viewMode: 1,
@@ -1020,7 +1019,7 @@
                                 cropBoxResizable: false,
                                 toggleDragModeOnDblclick: false,
                             });
-                        }, 100);
+                        };
                     };
                     reader.readAsDataURL(file);
                 }
