@@ -20,17 +20,21 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: "REPLICATE_API_TOKEN not configured" });
     }
 
+    console.log("Token length:", apiToken.length);
+
     // Convert base64 to data URI for Replicate
     const imageDataUri = `data:image/jpeg;base64,${imageBase64}`;
 
-    // Cập nhật URL gọi API: https://api.replicate.com/v1/models/.../predictions
-    const response = await fetch("https://api.replicate.com/v1/models/fofr/face-to-many/versions/a416f413cbf2a828b1085b318e76869e0a66817c1829bb539afc397b0a3111fc/predictions", {
+    // 1. Quay về URL gốc
+    const response = await fetch("https://api.replicate.com/v1/predictions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Token ${apiToken}`
       },
+      // 2. Đưa mã Version vào Body lên hàng đầu tiên
       body: JSON.stringify({
+        version: "a416f413cbf2a828b1085b318e76869e0a66817c1829bb539afc397b0a3111fc",
         input: {
           image: imageDataUri,
           prompt: prompt,
