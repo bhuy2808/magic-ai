@@ -1106,48 +1106,53 @@
 
         const handleGenerate = async () => {
             console.log("Nút đã hoạt động!");
-
+            
             const generateBtn = document.getElementById("generate-btn");
             if (!generateBtn) return;
-
+            
             if (!window.finalCroppedBase64) {
                 alert("Vui lòng tải lên và cắt ảnh selfie của bạn trước nhé! 📸");
                 return;
             }
 
             spinnerV2.style.display = "inline-block";
-            // 1. Phản hồi thông báo giới hạn 1 ảnh
-            btnTextV2.innerText = " Đang tạo sticker của bạn... (Giới hạn 1 ảnh/phút)";
+            btnTextV2.innerText = " Đang xuất xưởng 6 khuôn bậc cảm xúc... 🪄";
 
-            // 2. Chỉnh Grid thành 1 Ô to nằm giữa màn hình
-            v2ResultContainer.style.display = "flex";
-            v2ResultContainer.style.justifyContent = "center";
+            v2ResultContainer.style.display = "grid";
             v2ResultContainer.innerHTML = "";
 
-            // Chỉ dùng duy nhất biểu cảm Cười
-            const emo = { icon: "😂", label: "Cười", kw: "smiling" };
+            const emotionsMap = [
+                { icon: "😂", label: "Cười", kw: "smiling, laughing" },
+                { icon: "🥰", label: "Yêu thương", kw: "loving, hearts, cute" },
+                { icon: "🤔", label: "Suy nghĩ", kw: "thinking, wondering" },
+                { icon: "😉", label: "Nháy mắt", kw: "winking, playful" },
+                { icon: "😘", label: "Hôn gió", kw: "blowing a kiss" },
+                { icon: "😢", label: "Khóc nhè", kw: "crying, sad" }
+            ];
+
             let resizedBase64 = window.finalCroppedBase64;
 
-            const wrap = document.createElement("div");
-            wrap.style.width = "300px";
-            wrap.style.height = "300px";
-            wrap.style.aspectRatio = "1";
-            wrap.style.background = "#fff";
-            wrap.style.borderRadius = "20px";
-            wrap.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
-            wrap.style.display = "flex";
-            wrap.style.alignItems = "center";
-            wrap.style.justifyContent = "center";
-            wrap.style.position = "relative";
-            wrap.style.overflow = "hidden";
-
-            const loader = document.createElement("div");
-            loader.innerHTML = `<div style="font-size:3rem; animation: spin 1s infinite linear;">🪄</div><div style="font-size:1rem; color:#888; font-weight:800; margin-top:10px; text-transform:uppercase;">${emo.label}</div>`;
-            loader.style.textAlign = "center";
-            loader.className = "loader-overlay";
-
-            wrap.appendChild(loader);
-            v2ResultContainer.appendChild(wrap);
+            const itemDivs = emotionsMap.map((emo) => {
+                const wrap = document.createElement("div");
+                wrap.style.aspectRatio = "1";
+                wrap.style.background = "#fff";
+                wrap.style.borderRadius = "16px";
+                wrap.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
+                wrap.style.display = "flex";
+                wrap.style.alignItems = "center";
+                wrap.style.justifyContent = "center";
+                wrap.style.position = "relative";
+                wrap.style.overflow = "hidden";
+                
+                const loader = document.createElement("div");
+                loader.innerHTML = `<div style="font-size:2rem; animation: spin 1s infinite linear;">🪄</div><div style="font-size:0.8rem; color:#888; font-weight:800; margin-top:5px; text-transform:uppercase;">${emo.label}</div>`;
+                loader.style.textAlign = "center";
+                loader.className = "loader-overlay";
+                
+                wrap.appendChild(loader);
+                v2ResultContainer.appendChild(wrap);
+                return wrap;
+            });
 
             v2ResultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
@@ -1171,32 +1176,32 @@
                             img.style.width = "100%";
                             img.style.height = "100%";
                             img.style.objectFit = "cover";
-
+                            
                             const labelDiv = document.createElement("div");
                             labelDiv.innerHTML = `${emotionIcon} ${emotionLabel}`;
                             labelDiv.style.position = "absolute";
-                            labelDiv.style.bottom = "15px";
+                            labelDiv.style.bottom = "10px";
                             labelDiv.style.left = "50%";
                             labelDiv.style.transform = "translateX(-50%)";
                             labelDiv.style.background = "rgba(0,0,0,0.6)";
                             labelDiv.style.backdropFilter = "blur(5px)";
                             labelDiv.style.color = "#FFF";
-                            labelDiv.style.padding = "8px 16px";
+                            labelDiv.style.padding = "6px 12px";
                             labelDiv.style.borderRadius = "20px";
-                            labelDiv.style.fontSize = "1rem";
+                            labelDiv.style.fontSize = "0.85rem";
                             labelDiv.style.fontWeight = "bold";
-
+                            
                             const dlBtn = document.createElement("button");
                             dlBtn.innerHTML = "Tải Sticker 📥";
                             dlBtn.style.position = "absolute";
-                            dlBtn.style.top = "15px";
-                            dlBtn.style.right = "15px";
+                            dlBtn.style.top = "10px";
+                            dlBtn.style.right = "10px";
                             dlBtn.style.background = "linear-gradient(135deg, #FF8BA7, #FFC2C7)";
                             dlBtn.style.color = "#FFF";
                             dlBtn.style.fontWeight = "bold";
                             dlBtn.style.border = "none";
                             dlBtn.style.borderRadius = "20px";
-                            dlBtn.style.padding = "10px 20px";
+                            dlBtn.style.padding = "8px 15px";
                             dlBtn.style.cursor = "pointer";
                             dlBtn.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
                             dlBtn.onclick = () => {
@@ -1205,7 +1210,7 @@
                                 a.download = `stickerme_${currentActiveStyle.replace(/\s+/g, '_')}_${currentEmo.label}.png`;
                                 a.click();
                             };
-
+                            
                             wrapDiv.appendChild(img);
                             wrapDiv.appendChild(labelDiv);
                             wrapDiv.appendChild(dlBtn);
@@ -1221,33 +1226,39 @@
             }
 
             try {
-                // 3. Gọi 1 phát ăn ngay - Bỏ Vòng Lặp For
-                // Prompt tự động lấy chữ Smiling theo cấu hình
-                const fullPrompt = `A ${currentActiveStyle} sticker of the person, ${emo.kw} expression, centered, white background, die-cut, high quality, vibrant colors, vector art`;
+                for (let i = 0; i < emotionsMap.length; i++) {
+                    const emo = emotionsMap[i];
+                    const fullPrompt = `A ${currentActiveStyle} sticker of the person, ${emo.kw} expression, centered, white background, die-cut, high quality, vibrant colors, vector art`;
 
-                const response = await fetch("/api/generate", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        imageBase64: resizedBase64,
-                        prompt: fullPrompt,
-                        style: currentActiveStyle
-                    })
-                });
-                const data = await response.json();
+                    // Đệm 1.5s giữa các request để giảm tải Replicate API
+                    if (i > 0) await new Promise(r => setTimeout(r, 1500));
 
-                if (response.status !== 200) {
-                    throw new Error(data.error || "Gặp lỗi phản hồi từ API Backend");
-                }
-
-                if (data.id || data.predictionId) {
-                    const finalId = data.id || data.predictionId;
-                    pollSticker(finalId, wrap, emo.label, emo.icon, emo);
-                } else {
-                    wrap.innerHTML = "<div style='color:red;'>❌ API Error</div>";
+                    const response = await fetch("/api/generate", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            imageBase64: resizedBase64,
+                            prompt: fullPrompt,
+                            style: currentActiveStyle
+                        })
+                    });
+                    const data = await response.json();
+                    
+                    if (response.status !== 200) {
+                        console.error("API trả lỗi:", data);
+                        itemDivs[i].innerHTML = `<div style='color:red; text-align:center; padding:10px;'>❌ Error<br><small style="font-size:0.7rem">${data.error || ''}</small></div>`;
+                        continue;
+                    }
+                    
+                    if (data.id || data.predictionId) {
+                        const finalId = data.id || data.predictionId;
+                        pollSticker(finalId, itemDivs[i], emo.label, emo.icon, emo);
+                    } else {
+                        itemDivs[i].innerHTML = "<div style='color:red;'>❌ API Info Error</div>";
+                    }
                 }
             } catch (e) {
-                console.error("Lỗi khi tạo Sticker:", e);
+                console.error("Lỗi khi tạo chuỗi Sticker:", e);
                 alert("Lỗi trong quá trình khởi tạo Sticker:\n" + e.message);
             } finally {
                 spinnerV2.style.display = "none";
