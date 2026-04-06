@@ -1119,18 +1119,27 @@
             btnTextV2.innerText = " Đang xuất xưởng 6 khuôn bậc cảm xúc... 🪄";
 
             v2ResultContainer.innerHTML = "";
-            v2ResultContainer.style.display = "grid";
-            v2ResultContainer.style.gridTemplateColumns = "repeat(auto-fit, minmax(250px, 1fr))";
-            v2ResultContainer.style.gap = "20px";
-            v2ResultContainer.style.justifyContent = "center";
-            v2ResultContainer.style.background = "transparent";
-            v2ResultContainer.style.boxShadow = "none";
-            v2ResultContainer.style.padding = "0";
+            v2ResultContainer.style.display = "flex";
+            v2ResultContainer.style.flexDirection = "column";
+            v2ResultContainer.style.alignItems = "center";
+            v2ResultContainer.style.background = "#fff";
+            v2ResultContainer.style.borderRadius = "24px";
+            v2ResultContainer.style.padding = "40px";
+            v2ResultContainer.style.boxShadow = "0 10px 40px rgba(0,0,0,0.4)";
+            v2ResultContainer.style.marginTop = "40px";
+
+            // Grid 6 Ảnh
+            const gridWrap = document.createElement("div");
+            gridWrap.style.display = "grid";
+            gridWrap.style.gridTemplateColumns = "repeat(auto-fit, minmax(220px, 1fr))";
+            gridWrap.style.gap = "20px";
+            gridWrap.style.width = "100%";
+            gridWrap.style.maxWidth = "800px"; // Giữ form đứng gọn gàng
 
             const itemDivs = emotionsMap.map((emo) => {
                 const wrap = document.createElement("div");
                 wrap.style.aspectRatio = "1";
-                // Nền và viền nhạt giống mẫu (Khi ảnh tách nền trong suốt, màu này sẽ hiện lên)
+                // Nền và viền nhạt giống mẫu (Khi có PNG trong suốt, màu nền này sẽ hiện rõ)
                 wrap.style.background = "#FDF0EA";
                 wrap.style.border = "2px solid #F5D3C8";
                 wrap.style.borderRadius = "20px";
@@ -1139,7 +1148,6 @@
                 wrap.style.justifyContent = "center";
                 wrap.style.position = "relative";
                 wrap.style.overflow = "hidden";
-                wrap.style.padding = "0px"; 
                 
                 const loader = document.createElement("div");
                 loader.innerHTML = `<div style="font-size:2rem; animation: spin 1s infinite linear;">🪄</div><div style="font-size:0.8rem; color:#888; font-weight:800; margin-top:5px; text-transform:uppercase;">${emo.label}</div>`;
@@ -1147,9 +1155,19 @@
                 loader.className = "loader-overlay";
                 
                 wrap.appendChild(loader);
-                v2ResultContainer.appendChild(wrap);
+                gridWrap.appendChild(wrap);
                 return wrap;
             });
+            
+            const rightText = document.createElement("div");
+            rightText.innerText = "✨ 6 Sticker Độc Đáo ✨";
+            rightText.style.color = "#999";
+            rightText.style.fontSize = "1.1rem";
+            rightText.style.fontWeight = "bold";
+            rightText.style.marginTop = "25px";
+
+            v2ResultContainer.appendChild(gridWrap);
+            v2ResultContainer.appendChild(rightText);
 
             v2ResultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
