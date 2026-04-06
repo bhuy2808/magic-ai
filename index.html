@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -1239,8 +1239,9 @@
                     throw new Error(data.error || "Gặp lỗi phản hồi từ API Backend");
                 }
 
-                if (data.predictionId) {
-                    pollSticker(data.predictionId, wrap, emo.label, emo.icon, emo);
+                if (data.id || data.predictionId) {
+                    const finalId = data.id || data.predictionId;
+                    pollSticker(finalId, wrap, emo.label, emo.icon, emo);
                 } else {
                     wrap.innerHTML = "<div style='color:red;'>❌ API Error</div>";
                 }
