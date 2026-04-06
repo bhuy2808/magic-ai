@@ -1020,6 +1020,10 @@
                                 toggleDragModeOnDblclick: false,
                             });
                         };
+                        
+                        // Kích hoạt render preview
+                        cropImageDOM.src = event.target.result;
+                        cropModalDOM.style.display = "flex";
                     };
                     reader.readAsDataURL(file);
                 }
