@@ -1,14 +1,14 @@
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") return res.status(200).end();
 
   try {
     const { imageBase64, prompt } = req.body;
-    const apiToken = process.env.REPLICATE_API_TOKEN;
+    // DÙNG TOKEN TRỰC TIẾP ĐỂ LOẠI TRỪ LỖI VERCEL
+    const apiToken = "r8_ctRFEjBRTrOe82bzuCFfeCa7o0aqIbL33qDB4"; 
 
-    // ĐƯỜNG CHÍNH NGẠCH:
     const response = await fetch("https://api.replicate.com/v1/predictions", {
       method: "POST",
       headers: {
@@ -16,14 +16,13 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // ĐỊA CHỈ NHÀ CHUẨN CỦA FACE-TO-MANY
-        version: "a416f413cbf2a828b1085b318e76869e0a66817c1829bb539afc397b0a3111fc",
+        // DÙNG ĐÚNG MÃ TRONG ẢNH HUY VỪA CHỤP:
+        version: "a07f252abbbd832009640b27f063ea52d87d7a23a185ca165bec23b5adc8deaf",
         input: {
           image: `data:image/jpeg;base64,${imageBase64}`,
           prompt: prompt,
-          style: "3D Cartoon",
-          instant_id_strength: 0.5,
-          denoising_strength: 0.7
+          style: "Clay",
+          instant_id_strength: 0.8
         }
       })
     });
