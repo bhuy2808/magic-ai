@@ -796,11 +796,13 @@
                                 <div class="style-card" data-style="Minimalist" style="padding: 15px; font-size: 0.95rem;">🖋️ Minimalist</div>
                             </div>
 
-                            <button class="btn-generate" id="generateV2Btn"
-                                style="width: 100%; padding: 20px; border-radius: 18px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #FF8BA7, #FFC2C7); color: #FFF; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 25px rgba(255, 139, 167, 0.4);">
-                                <span class="spinner" id="spinnerV2" style="display: none; width: 24px; height: 24px; border: 3px solid #FFF; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></span>
-                                <span id="btnTextV2">Tạo Ngay 6 Sticker Biểu Cảm ✨</span>
-                            </button>
+                            <form id="generate-form" style="pointer-events: auto;" onsubmit="handleCreateStickers(event)">
+                                <button type="submit" class="btn-generate" id="generate-btn"
+                                    style="width: 100%; padding: 20px; border-radius: 18px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #FF8BA7, #FFC2C7); color: #FFF; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 25px rgba(255, 139, 167, 0.4);">
+                                    <span class="spinner" id="spinnerV2" style="display: none; width: 24px; height: 24px; border: 3px solid #FFF; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></span>
+                                    <span id="btnTextV2">Tạo Ngay 6 Sticker Biểu Cảm ✨</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
 
@@ -1053,22 +1055,25 @@
             });
         }
 
-        if (generateV2Btn) {
-            generateV2Btn.onclick = async function () {
-                console.log('Nút đã được bấm'); // Xác nhận sự kiện onClick đã kích hoạt
-                
-                if (!window.finalCroppedBase64) {
-                    alert("Vui lòng tải lên và cắt ảnh selfie của bạn trước nhé! 📸");
-                    return;
-                }
+        async function handleCreateStickers(event) {
+            event.preventDefault();
+            console.log("Đã bấm nút tạo sticker");
+            
+            const generateBtn = document.getElementById("generate-btn");
+            if (!generateBtn) return;
+            
+            if (!window.finalCroppedBase64) {
+                alert("Vui lòng tải lên và cắt ảnh selfie của bạn trước nhé! 📸");
+                return;
+            }
 
-                generateV2Btn.disabled = true;
-                generateV2Btn.style.opacity = "0.7";
-                spinnerV2.style.display = "inline-block";
-                btnTextV2.innerText = " Đang phù phép... 🪄";
+            generateBtn.disabled = true;
+            generateBtn.style.opacity = "0.7";
+            spinnerV2.style.display = "inline-block";
+            btnTextV2.innerText = " Đang xử lý... 🪄";
 
-                v2ResultContainer.style.display = "grid";
-                v2ResultContainer.innerHTML = "";
+            v2ResultContainer.style.display = "grid";
+            v2ResultContainer.innerHTML = "";
 
                 const emotionsMap = [
                     { icon: "😂", label: "Cười", kw: "laughing" },
@@ -1206,13 +1211,12 @@
                     console.error("Lỗi khi tạo Sticker:", e);
                     alert("Lỗi trong quá trình khởi tạo Sticker:\n" + e.message);
                 } finally {
-                    generateV2Btn.disabled = false;
-                    generateV2Btn.style.opacity = "1";
+                    generateBtn.disabled = false;
+                    generateBtn.style.opacity = "1";
                     spinnerV2.style.display = "none";
                     btnTextV2.innerText = "Tạo Lại (Re-roll) 🎲";
                 }
-            };
-        }
+            }
     </script>
     
     <!-- Crop Modal -->
