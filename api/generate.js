@@ -20,23 +20,35 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: "REPLICATE_API_TOKEN not configured" });
     }
 
-    const replicate = new Replicate({ auth: apiToken });
-
     // Convert base64 to data URI for Replicate
     const imageDataUri = `data:image/jpeg;base64,${imageBase64}`;
 
-    // Create prediction using face-to-many model (async — returns prediction ID)
-    const prediction = await replicate.predictions.create({
-      model: "fofr/face-to-many",
-      input: {
-        image: imageDataUri,
-        prompt: prompt,
-        negative_prompt: negative_prompt || "(big messy hair:1.5), deformed, blurry, realistic, human skin, ugly, bad anatomy, bad background, messy background",
-        style: style || "3D",
-        instant_id_strength: 0.55,
-        denoising_strength: 0.7
-      }
+    // Gọi trực tiếp API Endpoint /v1/predictions với Version ID
+    const response = await fetch("https://api.replicate.com/v1/predictions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Token ${apiToken}`
+      },
+      body: JSON.stringify({
+        version: "a416f413cbf2a828b1085b318e76869e0a66817c1829bb539afc397b0a3111fc",
+        input: {
+          image: imageDataUri,
+          prompt: prompt,
+          negative_prompt: negative_prompt || "(big messy hair:1.5), deformed, blurry, realistic, human skin, ugly, bad anatomy, bad background, messy background",
+          style: style || "3D",
+          instant_id_strength: 0.5,
+          denoising_strength: 0.7
+        }
+      })
     });
+
+    const prediction = await response.json();
+
+    if (!response.ok) {
+      console.error("Replicate API Error:", prediction);
+      return res.status(response.status).json({ error: prediction.detail || "Error from Replicate API" });
+    }
 
     return res.status(200).json({
       predictionId: prediction.id,
