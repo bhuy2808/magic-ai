@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   try {
-    const { imageBase64, prompt, negative_prompt } = req.body;
+    const { imageBase64, prompt, negative_prompt, style } = req.body;
 
     if (!imageBase64 || !prompt) {
       return res.status(400).json({ error: "Missing imageBase64 or prompt" });
@@ -25,19 +25,16 @@ module.exports = async function handler(req, res) {
     // Convert base64 to data URI for Replicate
     const imageDataUri = `data:image/jpeg;base64,${imageBase64}`;
 
-    // Create prediction using Instant-ID model (async — returns prediction ID)
+    // Create prediction using face-to-many model (async — returns prediction ID)
     const prediction = await replicate.predictions.create({
-      model: "lucataco/instant-id",
+      model: "fofr/face-to-many",
       input: {
         image: imageDataUri,
         prompt: prompt,
-        negative_prompt: negative_prompt || "realistic, photo, human skin, messy background, low quality, deformed",
-        ip_adapter_scale: 0.8,
-        controlnet_conditioning_scale: 0.7,
-        num_inference_steps: 30,
-        guidance_scale: 5,
-        width: 640,
-        height: 640
+        negative_prompt: negative_prompt || "(big messy hair:1.5), deformed, blurry, realistic, human skin, ugly, bad anatomy, bad background, messy background",
+        style: style || "3D",
+        instant_id_strength: 0.55,
+        denoising_strength: 0.7
       }
     });
 
