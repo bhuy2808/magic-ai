@@ -1165,8 +1165,9 @@
                         if (data.status === "succeeded") {
                             clearInterval(interval);
                             wrapDiv.innerHTML = "";
+                            const imgUrl = Array.isArray(data.output) ? data.output[0] : data.output;
                             const img = document.createElement("img");
-                            img.src = data.imageUrl;
+                            img.src = imgUrl;
                             img.style.width = "100%";
                             img.style.height = "100%";
                             img.style.objectFit = "cover";
@@ -1200,7 +1201,7 @@
                             dlBtn.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
                             dlBtn.onclick = () => {
                                 const a = document.createElement("a");
-                                a.href = data.imageUrl;
+                                a.href = imgUrl;
                                 a.download = `stickerme_${currentActiveStyle.replace(/\s+/g, '_')}_${currentEmo.label}.png`;
                                 a.click();
                             };
