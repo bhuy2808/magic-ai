@@ -4,160 +4,24 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Photo AI™ - Sáng tạo ảnh AI cùng Idol</title>
+    <title>Sticker Chibi - Borderless & Magic (Photo AI Version)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="assets/css/photoai.css"> <!-- New PhotoAI specific CSS -->
-    <!-- Cropper.js for image editing -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-    <style>
-        @keyframes spin { to { transform: rotate(360deg); } }
-        #generateStickerBtn.ready {
-            background: linear-gradient(135deg, #FF8BA7, #FC6C8F);
-            color: #FFF;
-            cursor: pointer;
-            pointer-events: auto;
-            box-shadow: 0 8px 30px rgba(255,139,167,0.3);
-        }
-        /* Sticker Grid System - Inlined for GitHub Reliability */
-        .sticker-result-grid-v2 {
-            display: grid !important;
-            grid-template-columns: repeat(6, 1fr) !important;
-            gap: 8px !important;
-            margin: 20px auto 30px auto !important;
-            max-width: 600px !important;
-            width: 100% !important;
-        }
-        @media (max-width: 650px) {
-            .sticker-result-grid-v2 {
-                grid-template-columns: repeat(6, 1fr) !important;
-                gap: 5px !important;
-            }
-        }
-
-        .sticker-slot {
-            aspect-ratio: 1;
-            border-radius: 12px;
-            background: rgba(255,139,167,0.05); /* Match pink theme */
-            border: 1.5px dashed rgba(255,139,167,0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.5s;
-        }
-        .sticker-slot .slot-emoji {
-            font-size: 1.6rem; /* Smaller for pact icons */
-            opacity: 0.3;
-            transition: opacity 0.3s;
-        }
-        .sticker-slot .slot-label {
-            font-size: 0.65rem; /* Tiny labels */
-            font-weight: 700;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .sticker-slot.loading {
-            border-color: rgba(255,139,167,0.2);
-            animation: slotPulse 2s ease-in-out infinite;
-        }
-        .sticker-slot.done {
-            border: 2px solid rgba(255,139,167,0.4);
-            background: #FFF;
-            cursor: zoom-in;
-            transition: transform 0.3s;
-        }
-        .sticker-slot.done:hover {
-            transform: scale(1.1);
-            z-index: 10;
-        }
-        .sticker-slot.done img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 10px;
-        }
-        .sticker-slot.done .slot-emoji,
-        .sticker-slot.done .slot-label,
-        .sticker-slot.done .slot-status {
-            display: none;
-        }
-        .sticker-slot .slot-status {
-            font-size: 0.65rem;
-            color: #FF8BA7;
-            font-weight: 700;
-            display: none;
-            text-align: center;
-        }
-        .sticker-slot.loading .slot-status { display: block; }
-        .sticker-slot.loading .slot-emoji { opacity: 0.15; }
-        @keyframes slotPulse {
-            0%, 100% { border-color: rgba(255,139,167,0.1); }
-            50% { border-color: rgba(255,139,167,0.35); }
-        }
-        .sticker-slot .dl-overlay {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.55);
-            display: none; align-items: center; justify-content: center;
-            font-size: 1.2rem; cursor: pointer; border-radius: 10px; z-index: 5;
-        }
-        .sticker-slot.done:hover .dl-overlay { display: flex; }
-
-        /* Crop Modal Styles */
-        .crop-modal {
-            position: fixed; inset: 0; z-index: 10000;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
-            display: none; align-items: center; justify-content: center;
-            padding: 20px;
-        }
-        .crop-container {
-            background: #FFF; border-radius: 24px; padding: 25px;
-            width: 100%; max-width: 500px; position: relative;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
-            display: flex; flex-direction: column; gap: 20px;
-        }
-        .crop-image-wrapper {
-            background: #f0f0f0; border-radius: 16px; overflow: hidden;
-            width: 100%; aspect-ratio: 1; position: relative;
-        }
-        .crop-footer {
-            display: flex; flex-direction: column; gap: 15px;
-        }
-        .crop-zoom-row { display: flex; align-items: center; gap: 15px; }
-        .crop-btn-row { display: flex; gap: 15px; justify-content: center; margin-top: 5px; }
-        .btn-crop-cancel {
-            background: none; border: none; color: #888; font-weight: 600;
-            cursor: pointer; padding: 12px 30px; border-radius: 12px; transition: color 0.2s;
-        }
-        .btn-crop-cancel:hover { color: #333; }
-        .btn-crop-apply {
-            flex: 1; background: #FF7B51; color: white; border: none;
-            padding: 14px; border-radius: 14px; font-weight: 700; font-size: 1rem;
-            cursor: pointer; transition: transform 0.2s;
-        }
-        .btn-crop-apply:hover { transform: translateY(-2px); background: #FF6A3A; }
-    </style>
 </head>
 
 <body>
     <!-- Sticky Header -->
     <header class="photoai-header">
         <nav class="photoai-nav">
-            <a href="#" class="nav-brand">✨ Photo AI™</a>
-            <div style="font-weight: 600; cursor: pointer;" onclick="document.getElementById('loginBtn').click();">Log
-                In</div>
+            <a href="#" class="nav-brand">✨ Sticker AI™</a>
         </nav>
+
 
         <!-- Marquee Banner -->
         <div class="photoai-marquee">
             <div class="marquee-content">
-                ✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Photo&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                ✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✨&nbsp;Sticker&nbsp;AI™&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </div>
         </div>
     </header>
@@ -218,9 +82,9 @@
                 <div class="hero-fade-overlay"></div>
             </div>
 
-            <div class="hero-left">
-                <h1>Hãy sáng tạo theo trí tưởng tượng của bạn</h1>
-                <ul class="hero-features">
+            <div class="hero-left" style="flex: 1; max-width: 800px; margin: 0 auto; text-align: center;">
+                <h1 style="font-size: 3.5rem;">Hãy sáng tạo theo trí tưởng tượng của bạn</h1>
+                <ul class="hero-features" style="display: inline-block; text-align: left; margin-top: 30px;">
                     <li>🚀 Tải lên ảnh selfie của bạn &rarr; Tạo mô hình AI cho riêng bạn</li>
                     <li>📸 Sau đó chụp ảnh AI với mô hình AI của bạn ở bất kỳ không gian nào</li>
                     <li>🎥 Và tạo các video chuyển động với bạn là nhân vật chính</li>
@@ -229,54 +93,12 @@
                 </ul>
             </div>
 
-            <div class="hero-right">
-                <!-- Login Box Modern -->
-                <div class="photoai-login-custom">
-                    <div class="login-inner-dark" id="loginStateGuest"
-                        style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 25px 20px;">
-                        <h3 style="margin: 0 0 10px 0; font-size: 1.4rem; color: #FFF;">Đăng Nhập 🚀</h3>
-                        <p style="margin: 0 0 25px 0; color: #BBB; font-size: 0.95rem;">Đăng nhập siêu nhanh, không cần
-                            tạo tài khoản hay nhớ mật khẩu rườm rà.</p>
-                        <button class="btn-google-modern" id="loginBtn" style="width: 100%; justify-content: center;">
-                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M23.51 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.46c-.28 1.45-1.07 2.68-2.25 3.47v2.88h3.64c2.13-1.96 3.36-4.85 3.36-8.59z"
-                                    fill="#4285F4"></path>
-                                <path
-                                    d="M12 24c3.24 0 5.96-1.07 7.94-2.91l-3.64-2.88c-1.07.72-2.45 1.14-4.3 1.14-3.3 0-6.09-2.23-7.09-5.22H1.18v2.96C3.17 20.9 7.27 24 12 24z"
-                                    fill="#34A853"></path>
-                                <path
-                                    d="M4.91 14.13A7.54 7.54 0 0 1 4.54 12c0-.75.13-1.48.37-2.13V6.91H1.18A11.96 11.96 0 0 0 0 12c0 1.93.46 3.77 1.18 5.4l3.73-3.27z"
-                                    fill="#FBBC05"></path>
-                                <path
-                                    d="M12 4.65c1.76 0 3.35.61 4.6 1.8l3.44-3.44C17.96 1.07 15.24 0 12 0 7.27 0 3.17 3.1 1.18 6.91l3.73 3.27C5.91 6.88 8.7 4.65 12 4.65z"
-                                    fill="#EA4335"></path>
-                            </svg>
-                            Tiếp tục với Google
-                        </button>
-                        <div class="login-footer-modern" style="margin-top: 25px; color: #888;">Cam kết bảo mật tuyệt
-                            đối thông tin 🔒</div>
-                    </div>
-                    <div class="login-inner-dark" id="loginStateUser"
-                        style="display: none; flex-direction: column; align-items: center;">
-                        <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User Avatar"
-                            class="user-avatar" style="width: 50px; height: 50px; margin-bottom: 10px;">
-                        <h3 style="margin: 0 0 5px 0; font-size: 1.1rem; color: #FFF;">Chào Phù Thủy!</h3>
-                        <p style="margin: 0 0 15px 0; color: #BBB; font-size: 0.9rem;">Lượt tạo AI: <strong
-                                id="creditAmount" style="color: #FFF;">0</strong></p>
-                        <button class="btn-google-modern" id="logoutBtn"
-                            style="color: #000; justify-content: center;">Đăng Xuất</button>
-                        <audio id="successSound" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"
-                            preload="auto"></audio>
-                    </div>
-                </div>
-            </div>
         </section>
 
         <!-- Showcase Grid Section -->
         <!-- Showcase Grid Section -->
         <section class="photoai-showcase">
-            <h2 class="showcase-title">Thư viện phong cách AI 🪄</h2>
+            <h2 class="showcase-title">Thư viện phong cách AI Sticker 🪄</h2>
             <div class="chibi-gallery">
                 <!-- Visible Pairs (1-6) -->
                 <div class="chibi-pair">
@@ -443,106 +265,6 @@
                     }
                 });
             </script>
-        </section>
-
-        <!-- ==================== STICKER CREATOR ==================== -->
-        <section id="stickerCreatorSection" style="padding: 80px 20px; background: #0d0d0d; border-top: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden;">
-            <!-- Ambient glow -->
-            <div style="position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,139,167,0.08) 0%, transparent 70%); pointer-events: none;"></div>
-
-            <div style="max-width: 700px; margin: 0 auto; position: relative; z-index: 1;">
-                <h2 style="font-size: 2.2rem; font-weight: 800; text-align: center; margin-bottom: 8px; letter-spacing: -1px; color: #FFF;">
-                    Tải Ảnh Lên
-                </h2>
-                <p style="text-align: center; color: #888; font-size: 0.95rem; margin-bottom: 40px;">
-                    Chọn ảnh selfie rõ nét, ánh sáng tốt để có kết quả đẹp nhất
-                </p>
-
-                <!-- New Modern Upload Area -->
-                <div class="modern-upload-card" style="background: rgba(255,255,255,0.02); border: 2px dashed rgba(255,255,255,0.1); border-radius: 32px; padding: 40px; position: relative; transition: all 0.3s; margin-bottom: 40px;">
-                    <input type="file" id="stickerUpload" accept="image/*" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;" />
-                    
-                    <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 15px;">
-                        <div style="width: 80px; height: 80px; background: rgba(255,139,167,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative;">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FF8BA7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M17.5 19c.4 0 .7-.1 1-.3.3-.2.5-.5.5-.8 0-.3-.1-.6-.4-.8-.3-.2-.6-.3-.9-.3-.1 0-.3 0-.4.1-.1 0-.2.1-.3.1-.1-1.3-.6-2.5-1.5-3.5a4.8 4.8 0 0 0-3.5-1.5c-1.2 0-2.3.4-3.2 1.2a4.8 4.8 0 0 0-1.6 2.8 3.5 3.5 0 0 0-.6 6.9c.3.1.6.2 1 .2h10z"/>
-                                <path d="M12 12v6"/><path d="m9 15 3-3 3 3"/>
-                            </svg>
-                            <div style="position: absolute; top: -5px; right: -5px; width: 22px; height: 22px; background: #FF8BA7; color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; border: 2px solid #0d0d0d;">+</div>
-                        </div>
-                        <div>
-                            <h3 style="color: #eee; font-size: 1.15rem; font-weight: 700; margin-bottom: 5px;">Chọn ảnh để bắt đầu</h3>
-                            <p style="color: #666; font-size: 0.85rem;">Kéo thả hoặc nhấn để chọn - JPG, PNG tối đa 10MB</p>
-                        </div>
-                        <button style="background: #FFF; color: #000; border: none; padding: 10px 25px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; pointer-events: none;">Chọn File</button>
-                    </div>
-                </div>
-
-                <!-- Feature Icons Footer -->
-                <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-bottom: 60px;">
-                    <div class="feature-item">
-                        <span class="feature-icon">👤</span>
-                        <span class="feature-text">Một khuôn mặt rõ ràng</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">💡</span>
-                        <span class="feature-text">Ánh sáng tự nhiên tốt</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">📷</span>
-                        <span class="feature-text">Ảnh selfie chất lượng cao</span>
-                    </div>
-                </div>
-
-                <!-- Generate Button (Now hidden, as it starts from cropper) -->
-                <button id="generateStickerBtn" style="display: none;"></button>
-
-
-                </button>
-
-                <!-- 6 Result Placeholders -->
-                <div id="stickerResultGrid" class="sticker-result-grid-v2">
-                    <div class="sticker-slot" data-index="0">
-                        <span class="slot-emoji">😄</span>
-                        <span class="slot-label">Vui vẻ</span>
-                        <span class="slot-status">Đang tạo...</span>
-                    </div>
-                    <div class="sticker-slot" data-index="1">
-                        <span class="slot-emoji">😎</span>
-                        <span class="slot-label">Ngầu</span>
-                        <span class="slot-status">Đang tạo...</span>
-                    </div>
-                    <div class="sticker-slot" data-index="2">
-                        <span class="slot-emoji">🍦</span>
-                        <span class="slot-label">Ăn kem</span>
-                        <span class="slot-status">Đang tạo...</span>
-                    </div>
-                    <div class="sticker-slot" data-index="3">
-                        <span class="slot-emoji">🎸</span>
-                        <span class="slot-label">Guitar</span>
-                        <span class="slot-status">Đang tạo...</span>
-                    </div>
-                    <div class="sticker-slot" data-index="4">
-                        <span class="slot-emoji">😢</span>
-                        <span class="slot-label">Khóc</span>
-                        <span class="slot-status">Đang tạo...</span>
-                    </div>
-                    <div class="sticker-slot" data-index="5">
-                        <span class="slot-emoji">😲</span>
-                        <span class="slot-label">Ngạc nhiên</span>
-                        <span class="slot-status">Đang tạo...</span>
-                    </div>
-                </div>
-
-                <!-- Download All Button (Hidden until 6 are done) -->
-                <div id="downloadAllContainer" class="download-all-container">
-                    <button class="btn-download-all" id="downloadAllBtn">
-                        <span style="font-size: 1.5rem;">📥</span>
-                        Tải về trọn bộ 6 Sticker
-                    </button>
-                    <p style="text-align: center; color: #666; font-size: 0.85rem; margin-top: 12px; font-weight: 500;">(Ảnh sẽ được tải xuống lần lượt vào thư viện của bạn)</p>
-                </div>
-            </div>
         </section>
 
 
@@ -866,14 +588,142 @@
 
 
 
+        <!-- Product Interaction Area (Hidden for redesign) -->
+        <section class="photoai-app-area" style="display: none;">
+            <h2 style="text-align: center; font-size: 2.2rem; margin-top: 0; margin-bottom: 30px;">Studio AI của bạn 🎨
+            </h2>
+            <div class="app-container">
+                <!-- Header -->
+                <div class="bento-box bento-header photoai-tabs" style="display: none;">
+                    <div class="tab-nav photoai-tab-nav">
+                        <button class="tab-btn active" id="tabIdol">📸 Cùng Idol</button>
+                    </div>
+                </div>
+
+                <!-- View: Tạo Sticker Magic (Deleted for Redesign) -->
+
+                <!-- View: Sống cùng Người Nổi Tiếng -->
+                <div id="viewIdol" style="display: block;">
+                    <div class="bento-box bento-upload"
+                        style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05);">
+                        <h3>Khuôn mặt của bạn 🙎‍♂️</h3>
+                        <div class="upload-zone" onclick="document.getElementById('uploadIdol').click()"
+                            style="cursor: pointer; position: relative;">
+                            <div class="upload-icon" id="upIconIdol">📸</div>
+                            <div class="upload-text" id="upTextIdol">Tải lên ảnh Selfie rõ mặt</div>
+                            <div class="upload-sub" id="upSubIdol">Góc chụp thẳng là tốt nhất</div>
+                            <img id="previewImgIdol" alt="Preview"
+                                style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 18px; position: absolute; z-index: 5; pointer-events: none;" />
+                        </div>
+                        <input type="file" id="uploadIdol" accept="image/*" style="display: none;" />
+                    </div>
+
+                    <div class="bento-box bento-style"
+                        style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05); margin-top: 20px;">
+                        <h3>Chọn Idol Ghép Cặp 🤩</h3>
+                        <div class="style-grid" id="idolGrid">
+                            <div class="style-card active" data-idol="lisa" data-tier="free">
+                                
+                                <div class="style-icon">💃</div>
+                                <div class="style-name">Lisa (BP)</div>
+                                <div class="style-desc">Thiên thần tỷ lệ vàng</div>
+                            </div>
+                            <div class="style-card" data-idol="taylor" data-tier="vip">
+                                
+                                <div class="style-icon">🎸</div>
+                                <div class="style-name">Taylor Swift</div>
+                                <div class="style-desc">Dạo phố ở New York</div>
+                            </div>
+                            <div class="style-card" data-idol="ronaldo" data-tier="vip">
+                                
+                                <div class="style-icon">⚽</div>
+                                <div class="style-name">Cristiano Ronaldo</div>
+                                <div class="style-desc">CR7 - Siêu sao bóng đá</div>
+                            </div>
+                            <div class="style-card" data-idol="messi" data-tier="vip">
+                                
+                                <div class="style-icon">⚽</div>
+                                <div class="style-name">Lionel Messi</div>
+                                <div class="style-desc">Huyền thoại thế giới</div>
+                            </div>
+                            <div class="style-card" data-idol="rose" data-tier="free">
+                                
+                                <div class="style-icon">🌹</div>
+                                <div class="style-name">Rosé (BP)</div>
+                                <div class="style-desc">Saint Laurent vibes</div>
+                            </div>
+                            <div class="style-card" data-idol="hanni" data-tier="free">
+                                
+                                <div class="style-icon">🐰</div>
+                                <div class="style-name">Hanni</div>
+                                <div class="style-desc">Hani của NewJeans</div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-top: 25px;">Hoặc tự tải ảnh người bạn muốn ghép <span
+                                class="tier-badge tier-vip" style="position: static; vertical-align: middle;">VIP</span>
+                        </h3>
+                        <div class="upload-zone" onclick="document.getElementById('uploadCustomIdol').click()"
+                            style="min-height: 180px; cursor: pointer; position: relative; border: 2px dashed rgba(255,255,255,0.1); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <div class="upload-icon" id="upIconCustomIdol" style="font-size: 2rem;">👤</div>
+                            <div class="upload-text" id="upTextCustomIdol" style="font-size: 1rem;">Tải ảnh tùy chọn lên
+                                đây</div>
+                            <img id="previewImgCustomIdol" alt="Preview"
+                                style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 18px; position: absolute; z-index: 5; pointer-events: none;" />
+                        </div>
+                        <input type="file" id="uploadCustomIdol" accept="image/*" style="display: none;" />
+
+                        <h3 style="margin-top: 25px;">Bối cảnh (Scenario) 🎬</h3>
+                        <div class="style-grid" id="scenarioGrid">
+                            <div class="style-card active" data-scenario="coffee" style="padding: 15px;">
+                                <div class="style-name" style="font-size: 1rem;">☕ Uống Cà Phê</div>
+                            </div>
+                            <div class="style-card" data-scenario="redcarpet" style="padding: 15px;">
+                                <div class="style-name" style="font-size: 1rem;">📸 Thảm Đỏ</div>
+                            </div>
+                            <div class="style-card" data-scenario="travel" style="padding: 15px;">
+                                <div class="style-name" style="font-size: 1rem;">✈️ Du Lịch</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 15px;">
+                            <input type="text" id="customScenarioInput" placeholder="Hoặc tự mô tả bối cảnh..."
+                                style="width: 100%; padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); font-family: 'Outfit', sans-serif; font-size: 1rem; color: #FFF; outline: none;">
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button class="btn-generate" id="processBtnIdol">
+                            <span class="spinner" id="spinnerIdol" style="display: none;"></span>
+                            <span id="btnTextIdol">Chụp ảnh ngay 📸</span>
+                        </button>
+                    </div>
+
+                    <div class="bento-box bento-result" id="resultBentoIdol"
+                        style="display: none; text-align: center; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05); margin-top: 20px;">
+                        <h3>Bức ảnh thế kỷ 🌟</h3>
+                        <div class="polaroid-frame" id="polaroidContainer" style="display: inline-block;">
+                            <img id="idolFinalImg" src="" style="max-width: 100%; display: block;" />
+                            <div class="polaroid-caption">Kỉ niệm đáng nhớ! ❤️</div>
+                        </div>
+                        <div style="margin-top: 25px;">
+                            <button class="btn-magic" id="downloadIdolBtn"
+                                style="width: auto; padding: 12px 30px; border-radius: 100px;">Tải ảnh về máy
+                                📥</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
 
 
         <!-- Testimonials Section -->
         <section class="photoai-testimonials">
-            <h2>Báo chí nói gì về Photo AI™</h2>
+            <h2>Báo chí nói gì về Sticker AI™</h2>
             <div class="testimonial-row">
                 <div class="testimonial-card photoai-card">
-                    <p>"Photo AI đang kiếm tiền bằng cách bán sức mạnh điện toán cần thiết để chạy prompt và tạo ra
+                    <p>"Sticker AI đang kiếm tiền bằng cách bán sức mạnh điện toán cần thiết để chạy prompt và tạo ra
                         ảnh"</p>
                     <div style="color: #00a650; font-weight: 800; margin-top: 15px;">TechCrunch</div>
                 </div>
@@ -898,9 +748,34 @@
         &copy; 2026
     </footer>
 
-    <!-- SCRIPT -->
+
+
+    <!-- SCRIPT (Reusing the EXACT SAME logic as original index.html) -->
     <script>
-        // --- Login & Payment Elements ---
+        // Simplified Logic as Sticker is removed
+        const tabIdol = document.getElementById("tabIdol");
+        const viewIdol = document.getElementById("viewIdol");
+
+        if (tabIdol) tabIdol.classList.add("active");
+        if (viewIdol) viewIdol.style.display = "block";
+
+
+
+        // Idol Elements
+        const uploadIdol = document.getElementById("uploadIdol");
+        const previewImgIdol = document.getElementById("previewImgIdol");
+        const processBtnIdol = document.getElementById("processBtnIdol");
+        const idolCards = document.querySelectorAll("#idolGrid .style-card");
+        const uploadCustomIdol = document.getElementById("uploadCustomIdol");
+        const previewImgCustomIdol = document.getElementById("previewImgCustomIdol");
+        const scenarioCards = document.querySelectorAll("#scenarioGrid .style-card");
+        const customScenarioInput = document.getElementById("customScenarioInput");
+        const resultBentoIdol = document.getElementById("resultBentoIdol");
+        const idolFinalImg = document.getElementById("idolFinalImg");
+        const spinnerIdol = document.getElementById("spinnerIdol");
+        const btnTextIdol = document.getElementById("btnTextIdol");
+
+        // Payment & Login Elements
         const creditAmount = document.getElementById("creditAmount");
         const loginBtn = document.getElementById("loginBtn");
         const logoutBtn = document.getElementById("logoutBtn");
@@ -908,507 +783,95 @@
         const loginStateUser = document.getElementById("loginStateUser");
         const successSound = document.getElementById("successSound");
 
-        let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-        let credits = parseInt(localStorage.getItem("credits")) || 0;
 
-        // --- Admin Configuration ---
-        const ADMIN_EMAIL = "bhuy2808@gmail.com";
-        let isAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
 
-        function updateUserUI(userInfo) {
-            if (!userInfo) return;
-            const avatarImg = loginStateUser.querySelector('.user-avatar');
-            const welcomeText = loginStateUser.querySelector('h3');
-            if (userInfo.picture && avatarImg) {
-                avatarImg.src = userInfo.picture;
-            } else if (avatarImg) {
-                avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userInfo.name)}&background=random`;
+        // Auth & Credits removed - all features unlocked
+        let isLoggedIn = true;
+        let isAdmin = true;
+        let credits = 999;
+
+        function updateCreditUI() {}
+        function requireCredits() { return { allowed: true, useCredit: false }; }
+        function deductCredit() {}
+
+
+
+
+
+        uploadIdol.onchange = function () {
+            const file = this.files[0];
+            if (file) {
+                previewImgIdol.src = URL.createObjectURL(file);
+                previewImgIdol.style.display = "block";
+                document.getElementById("upIconIdol").style.opacity = 0;
+                document.getElementById("upTextIdol").style.opacity = 0;
+                document.getElementById("upSubIdol").style.opacity = 0;
+                processBtnIdol.classList.add("ready");
+                resultBentoIdol.style.display = "none";
             }
-            if (welcomeText) welcomeText.innerText = `Chào ${userInfo.name}!`;
         }
 
-        function updateCreditUI() {
-            if (creditAmount) creditAmount.innerText = credits;
+        idolCards.forEach(card => card.addEventListener("click", () => {
+            idolCards.forEach(c => c.classList.remove("active"));
+            card.classList.add("active");
+            uploadCustomIdol.value = "";
+            previewImgCustomIdol.style.display = "none";
+            document.getElementById("upIconCustomIdol").style.opacity = 1;
+            document.getElementById("upTextCustomIdol").style.opacity = 1;
+        }));
+
+        uploadCustomIdol.onchange = function () {
+            const file = this.files[0];
+            if (file) {
+                idolCards.forEach(c => c.classList.remove("active"));
+                previewImgCustomIdol.src = URL.createObjectURL(file);
+                previewImgCustomIdol.style.display = "block";
+                document.getElementById("upIconCustomIdol").style.opacity = 0;
+                document.getElementById("upTextCustomIdol").style.opacity = 0;
+            }
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            if (isLoggedIn) {
-                const storedUser = localStorage.getItem("userInfo");
-                if (storedUser) {
-                    try {
-                        const userInfo = JSON.parse(storedUser);
-                        updateUserUI(userInfo);
-                    } catch (e) { }
-                }
-                loginStateGuest.style.display = "none";
-                loginStateUser.style.display = "flex";
-                updateCreditUI();
+        scenarioCards.forEach(card => card.addEventListener("click", () => {
+            scenarioCards.forEach(c => c.classList.remove("active"));
+            card.classList.add("active");
+            customScenarioInput.value = "";
+        }));
+
+        customScenarioInput.addEventListener("input", () => {
+            if (customScenarioInput.value.trim() !== "") {
+                scenarioCards.forEach(c => c.classList.remove("active"));
             }
         });
 
-        // --- Payment ---
-        let paymentWindow = null;
-        function openPaymentTab() {
-            if (paymentWindow && !paymentWindow.closed) {
-                paymentWindow.focus();
-                return;
-            }
-            paymentWindow = window.open("payment.html", "_blank");
-            localStorage.removeItem("didMockPayment");
-        }
 
-        window.addEventListener("message", (event) => {
-            if (event.data === "payment_success") {
-                credits += 1;
-                localStorage.setItem("credits", credits);
-                updateCreditUI();
-                try { successSound.play(); } catch (e) { }
-            }
-        });
 
-        function deductCredit() {
-            if (credits > 0) {
-                credits -= 1;
-                localStorage.setItem("credits", credits);
-                updateCreditUI();
-            }
-        }
+        if (processBtnIdol) {
+            processBtnIdol.onclick = function () {
+                if (!uploadIdol.files[0]) return;
+                processBtnIdol.style.pointerEvents = "none";
+                spinnerIdol.style.display = "inline-block";
+                btnTextIdol.innerText = " AI đang gọi Idol...";
 
-        // --- Google OAuth ---
-        const GOOGLE_CLIENT_ID = "156235885516-vct53chm1770dub2s35cldk8br5hnv74.apps.googleusercontent.com";
-        let googleTokenClient;
+                setTimeout(() => {
+                    processBtnIdol.style.pointerEvents = "auto";
+                    spinnerIdol.style.display = "none";
+                    btnTextIdol.innerText = "Chụp lại ảnh 📸";
 
-        function initGoogleClient() {
-            try {
-                if (typeof google !== 'undefined' && google.accounts && !googleTokenClient) {
-                    googleTokenClient = google.accounts.oauth2.initTokenClient({
-                        client_id: GOOGLE_CLIENT_ID,
-                        scope: 'email profile openid',
-                        callback: (tokenResponse) => {
-                            if (tokenResponse && tokenResponse.access_token) {
-                                fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                                    headers: { 'Authorization': 'Bearer ' + tokenResponse.access_token }
-                                })
-                                    .then(res => res.json())
-                                    .then(userInfo => handleLoginSuccess(userInfo))
-                                    .catch(err => alert("Lỗi kết nối API Google: " + err.message));
-                            }
-                        },
-                        error_callback: (err) => alert("Lỗi từ hệ thống Google: " + err.message)
-                    });
-                }
-            } catch (err) {
-                console.error("initGoogleClient Exception:", err);
+                    resultBentoIdol.style.display = "block";
+                    idolFinalImg.src = previewImgIdol.src;
+
+                    document.getElementById("downloadIdolBtn").onclick = () => {
+                        const link = document.createElement('a');
+                        link.href = idolFinalImg.src;
+                        link.download = `idol_moment.png`;
+                        link.click();
+                    };
+                    resultBentoIdol.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 2500);
             }
         }
 
-        window.addEventListener('load', () => initGoogleClient());
 
-        function handleLoginSuccess(userInfo) {
-            loginStateGuest.style.display = "none";
-            loginStateUser.style.display = "flex";
-            isLoggedIn = true;
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("userInfo", JSON.stringify(userInfo));
-
-            if (userInfo.email === ADMIN_EMAIL) {
-                isAdmin = true;
-                console.log("Welcome Admin: " + ADMIN_EMAIL);
-            }
-
-            updateUserUI(userInfo);
-            updateCreditUI();
-        }
-
-        function triggerGoogleLogin() {
-            const ua = navigator.userAgent || navigator.vendor || window.opera;
-            if (ua.indexOf("FBAN") > -1 || ua.indexOf("FBAV") > -1 || ua.indexOf("Zalo") > -1) {
-                alert("Trình duyệt nội bộ Facebook/Zalo có thể chặn Đăng Nhập Google. Vui lòng bấm vào dấu 3 chấm góc phải và chọn 'Mở bằng trình duyệt (Chrome/Safari)' để tiếp tục.");
-                return;
-            }
-
-            if ((typeof google === 'undefined') || !google.accounts || GOOGLE_CLIENT_ID.includes("YOUR") || GOOGLE_CLIENT_ID === "") {
-                if (confirm("Chế độ Google Login chưa sẵn sàng. Bạn có muốn dùng quyền Admin (Simulated) để tiếp tục không?")) {
-                    handleLoginSuccess({ name: "Admin (Direct)", email: ADMIN_EMAIL, picture: "" });
-                }
-                return;
-            }
-
-            if (!googleTokenClient) initGoogleClient();
-
-            if (googleTokenClient) {
-                try { googleTokenClient.requestAccessToken(); }
-                catch (e) { alert("Lỗi Pop-up: " + e.message); }
-            } else {
-                alert("Dịch vụ Google chưa sẵn sàng. Thử lại sau 1 giây.");
-            }
-        }
-
-        if (loginBtn) loginBtn.onclick = triggerGoogleLogin;
-
-        if (logoutBtn) {
-            logoutBtn.onclick = function () {
-                loginStateGuest.style.display = "block";
-                loginStateUser.style.display = "none";
-                isLoggedIn = false;
-                localStorage.setItem("isLoggedIn", "false");
-                localStorage.removeItem("userInfo");
-                credits = 0;
-                localStorage.setItem("credits", "0");
-                updateCreditUI();
-            };
-        }
-
-        // ==================== STICKER CREATOR LOGIC ====================
-        const stickerUpload = document.getElementById('stickerUpload');
-        const stickerResultGrid = document.getElementById('stickerResultGrid');
-        const cropModal = document.getElementById('cropModal');
-        const cropImg = document.getElementById('cropImg');
-        const cropZoomSlider = document.getElementById('cropZoomSlider');
-        const cancelCropBtn = document.getElementById('cancelCropBtn');
-        const applyCropBtn = document.getElementById('applyCropBtn');
-        
-        let cropper = null;
-        let stickerImageBase64 = null;
-        let stickerGenerating = false;
-
-        // 6 Emotions config
-        const STICKER_EMOTIONS = [
-            { label: 'Giận dữ', emoji: '😠', prompt: 'angry frustrated expression, fuming, steam coming from ears, cute cartoon anger' },
-            { label: 'Ngầu', emoji: '😎', prompt: 'cool confident expression wearing stylish sunglasses, thumbs up pose, streetwear style' },
-            { label: 'Nháy mắt', emoji: '😉', prompt: 'cute winking expression with a mischievous smile, playful pose' },
-            { label: 'Hôn gió', emoji: '😘', prompt: 'blowing a kiss with a floating heart icon, puckered lips expression, romantic cute pose' },
-            { label: 'Khóc', emoji: '😢', prompt: 'crying with big dramatic watery eyes, holding a small tissue, emotional expression' },
-            { label: 'Ngạc nhiên', emoji: '😲', prompt: 'super shocked surprised expression, wide open mouth, starry eyes, hands on cheeks' }
-        ];
-
-        const STICKER_NEGATIVE_PROMPT = "realistic, photo, human skin texture, messy background, low quality, deformed, blurry, extra limbs, bad anatomy, text, watermark";
-
-        // Step 1: Upload triggered
-        if (stickerUpload) {
-            stickerUpload.onchange = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                if (file.size > 10 * 1024 * 1024) {
-                    alert('Ảnh quá lớn! Giới hạn 10MB.');
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    openCropModal(event.target.result);
-                };
-                reader.readAsDataURL(file);
-            };
-        }
-
-        function openCropModal(imgUrl) {
-            cropImg.src = imgUrl;
-            cropModal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-
-            if (cropper) cropper.destroy();
-            
-            cropper = new Cropper(cropImg, {
-                aspectRatio: 1,
-                viewMode: 1,
-                autoCropArea: 0.8,
-                dragMode: 'move',
-                guides: true,
-                center: true,
-                highlight: false,
-                background: false,
-                cropBoxMovable: false,
-                cropBoxResizable: false,
-                zoomOnWheel: true,
-                ready() {
-                    cropZoomSlider.value = 1;
-                }
-            });
-        }
-
-        if (cropZoomSlider) {
-            cropZoomSlider.oninput = (e) => {
-                if (cropper) {
-                    const val = parseFloat(e.target.value);
-                    cropper.zoomTo(val);
-                }
-            };
-        }
-
-        if (cancelCropBtn) {
-            cancelCropBtn.onclick = () => {
-                closeCropModal();
-                stickerUpload.value = ''; 
-            };
-        }
-
-        if (applyCropBtn) {
-            applyCropBtn.onclick = async () => {
-                if (!cropper) return;
-
-                // Check login
-                if (!isLoggedIn) {
-                    alert('Vui lòng đăng nhập để tạo Sticker AI! 🪄');
-                    closeCropModal();
-                    document.getElementById('loginBtn').click();
-                    return;
-                }
-
-                // Check credits
-                if (!isAdmin && credits < 1) {
-                    if (confirm('Bạn cần 1 lượt tạo AI để tiếp tục.\nChuyển đến trang thanh toán?')) {
-                        openPaymentTab();
-                    }
-                    closeCropModal();
-                    return;
-                }
-
-                const canvas = cropper.getCroppedCanvas({
-                    width: 1024,
-                    height: 1024
-                });
-                // We need the raw base64 (no prefix) for the API
-                const fullBase64 = canvas.toDataURL('image/jpeg', 0.9);
-                stickerImageBase64 = fullBase64.split(',')[1]; 
-                
-                closeCropModal();
-                startStickerGeneration();
-            };
-        }
-
-        function closeCropModal() {
-            cropModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            if (cropper) {
-                cropper.destroy();
-                cropper = null;
-            }
-        }
-
-        // Build prompt for each emotion
-        function buildStickerPrompt(emotionPrompt) {
-            return `A cute chibi sticker of the person, ${emotionPrompt}, 3D Pixar style, big head small body, die-cut sticker, white background, vibrant colors, high resolution, professional sticker art`;
-        }
-
-        async function startStickerGeneration() {
-            if (!stickerImageBase64 || stickerGenerating) return;
-
-            stickerGenerating = true;
-
-            // Deduct credit
-            if (!isAdmin) deductCredit();
-
-            // UI: Set all slots to loading
-            const slots = stickerResultGrid.querySelectorAll('.sticker-slot');
-            slots.forEach((slot, i) => {
-                slot.className = 'sticker-slot loading';
-                slot.innerHTML = `
-                    <span class="slot-emoji">${STICKER_EMOTIONS[i].emoji}</span>
-                    <span class="slot-label">${STICKER_EMOTIONS[i].label}</span>
-                    <span class="slot-status">Đang chuẩn bị...</span>
-                `;
-            });
-
-            // Scroll to results
-            stickerResultGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-            // Launch 6 parallel generation requests
-            const promises = STICKER_EMOTIONS.map((emotion, index) => {
-                return generateSingleSticker(emotion, index);
-            });
-
-            await Promise.allSettled(promises);
-            stickerGenerating = false;
-            checkAllDone();
-        }
-
-        function checkAllDone() {
-            const doneSlots = stickerResultGrid.querySelectorAll('.sticker-slot.done');
-            if (doneSlots.length === 6) {
-                document.getElementById('downloadAllContainer').style.display = 'block';
-                try { successSound.play(); } catch(e) {}
-            }
-        }
-
-        const downloadAllBtn = document.getElementById('downloadAllBtn');
-        if (downloadAllBtn) {
-            downloadAllBtn.onclick = async function() {
-                const images = stickerResultGrid.querySelectorAll('.sticker-slot.done img');
-                for (let i = 0; i < images.length; i++) {
-                    const img = images[i];
-                    const link = document.createElement('a');
-                    link.href = img.src;
-                    link.download = `sticker_${i + 1}.png`;
-                    link.target = '_blank';
-                    link.click();
-                    // Small delay to ensure browser handles multiple downloads
-                    await new Promise(r => setTimeout(r, 800));
-                }
-            };
-        }
-
-        async function generateSingleSticker(emotion, index) {
-            const slot = stickerResultGrid.querySelector(`[data-index="${index}"]`);
-            const statusEl = slot.querySelector('.slot-status');
-
-            try {
-                statusEl.innerText = 'Đang gửi...';
-
-                // Step 1: Call /api/generate
-                const genRes = await fetch('/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        imageBase64: stickerImageBase64,
-                        prompt: buildStickerPrompt(emotion.prompt),
-                        negative_prompt: STICKER_NEGATIVE_PROMPT
-                    })
-                });
-
-                if (!genRes.ok) {
-                    const errData = await genRes.json().catch(() => ({}));
-                    throw new Error(errData.error || `HTTP ${genRes.status}`);
-                }
-
-                const genData = await genRes.json();
-                const predictionId = genData.predictionId;
-
-                if (!predictionId) throw new Error('No prediction ID');
-
-                statusEl.innerText = 'AI đang vẽ...';
-
-                // Step 2: Poll /api/check until done
-                const imageUrl = await pollPrediction(predictionId, statusEl);
-
-                // Step 3: Show result
-                 slot.classList.remove('loading');
-                 slot.classList.add('done');
-                 slot.innerHTML = `
-                     <img src="${imageUrl}" alt="${emotion.label}" />
-                     <div class="dl-overlay" title="Tải xuống">⬇️</div>
-                 `;
-
-                 // Click-to-Zoom logic
-                 slot.onclick = () => openZoomModal(imageUrl, emotion.label);
-
-                 // Download only on overlay click
-                 slot.querySelector('.dl-overlay').onclick = (e) => {
-                     e.stopPropagation();
-                    const link = document.createElement('a');
-                    link.href = imageUrl;
-                    link.download = `sticker_${emotion.label}.png`;
-                    link.target = '_blank';
-                    link.click();
-                };
-
-            } catch (err) {
-                console.error(`Sticker ${emotion.label} error:`, err);
-                slot.classList.remove('loading');
-                slot.innerHTML = `
-                    <span class="slot-emoji">${emotion.emoji}</span>
-                    <span class="slot-label" style="color: #FF6B6B;">Thử lại</span>
-                    <span style="font-size: 0.7rem; color: #888; padding: 0 10px; text-align: center;">Lỗi AI: ${err.message}</span>
-                    <div class="retry-badge" onclick="event.stopPropagation(); generateSingleSticker(STICKER_EMOTIONS[${index}], ${index})">🔄 Thử lại</div>
-                `;
-            }
-        }
-
-        async function pollPrediction(predictionId, statusEl, maxAttempts = 60) {
-            for (let i = 0; i < maxAttempts; i++) {
-                await new Promise(r => setTimeout(r, 3000)); // Wait 3s between polls
-
-                const checkRes = await fetch(`/api/check?id=${predictionId}`);
-                if (!checkRes.ok) continue;
-
-                const checkData = await checkRes.json();
-
-                if (checkData.status === 'succeeded' && checkData.imageUrl) {
-                    return checkData.imageUrl;
-                }
-
-                if (checkData.status === 'failed') {
-                    throw new Error(checkData.error || 'Generation failed');
-                }
-
-                if (checkData.status === 'canceled') {
-                    throw new Error('Cancelled');
-                }
-
-                // Update status text
-                const progress = Math.min(Math.round((i / maxAttempts) * 100), 95);
-                if (statusEl) statusEl.innerText = `AI đang vẽ... ${progress}%`;
-            }
-
-            throw new Error('Timeout — quá lâu');
-        }
-
-        // --- NEW: Zoom Modal Logic ---
-        const zoomModal = document.getElementById('zoomModal');
-        const zoomImg = document.getElementById('zoomImg');
-        const zoomLabel = document.getElementById('zoomLabel');
-        const closeZoom = document.getElementById('closeZoom');
-
-        function openZoomModal(url, label) {
-            if (!zoomModal || !zoomImg) return;
-            zoomImg.src = url;
-            zoomLabel.innerText = "Sticker: " + label;
-            zoomModal.style.display = 'flex';
-            setTimeout(() => zoomModal.classList.add('show'), 10);
-            document.body.style.overflow = 'hidden'; // Lock scroll
-        }
-
-        function closeZoomModal() {
-            if (!zoomModal) return;
-            zoomModal.classList.remove('show');
-            setTimeout(() => {
-                zoomModal.style.display = 'none';
-                document.body.style.overflow = 'auto'; // Unlock scroll
-            }, 300);
-        }
-
-        if (zoomModal) {
-            zoomModal.onclick = (e) => {
-                if (e.target === zoomModal || e.target === closeZoom) {
-                    closeZoomModal();
-                }
-            };
-        }
     </script>
-
-    <!-- Sticker Zoom Modal -->
-    <div id="zoomModal" class="zoom-modal">
-        <div class="zoom-close" id="closeZoom">&times;</div>
-        <div class="zoom-content">
-            <img id="zoomImg" src="" alt="Zoomed Sticker">
-            <div id="zoomLabel" class="zoom-label">Sticker Preview</div>
-        </div>
-    </div>
-
-    <!-- Image Crop Modal -->
-    <div id="cropModal" class="crop-modal">
-        <div class="crop-container" style="background: white; color: black; padding: 25px; border-radius: 20px; width: 90%; max-width: 480px;">
-            <h3 style="text-align: center; margin-bottom: 20px; font-weight: 800;">Chỉnh Sửa Ảnh</h3>
-            <div class="crop-image-wrapper" style="width: 100%; aspect-ratio: 1; margin-bottom: 20px; background: #ddd; position: relative;">
-                <img id="cropImg" src="" alt="Crop Preview" style="max-width: 100%; display: block;">
-            </div>
-            <div class="crop-footer">
-                <div class="crop-zoom-row" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-                    <span style="font-size: 0.9rem; color: #666;">Phóng To</span>
-                    <input type="range" id="cropZoomSlider" min="0.1" max="3" step="0.1" value="1" style="flex: 1; accent-color: #FF7B51;">
-                </div>
-                <div class="crop-btn-row" style="display: flex; gap: 15px;">
-                    <button id="cancelCropBtn" class="btn-crop-cancel" style="flex: 1; padding: 12px; border-radius: 12px; border: none; background: #f0f0f0; color: #666; font-weight: 700; cursor: pointer;">Hủy</button>
-                    <button id="applyCropBtn" class="btn-crop-apply" style="flex: 2; padding: 12px; border-radius: 12px; border: none; background: #FF7B51; color: white; font-weight: 700; cursor: pointer;">Áp Dụng</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Load Google OAuth async -->
-    <script src="https://accounts.google.com/gsi/client" async defer onload="initGoogleClient()"
-        onerror="window.googleFailed=true"></script>
 </body>
-
 </html>
