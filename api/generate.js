@@ -1,7 +1,4 @@
-const Replicate = require("replicate");
-
 module.exports = async function handler(req, res) {
-  // CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -20,19 +17,14 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: "REPLICATE_API_TOKEN not configured" });
     }
 
-    console.log("Token length:", apiToken.length);
-
-    // Convert base64 to data URI for Replicate
     const imageDataUri = `data:image/jpeg;base64,${imageBase64}`;
 
-    // 1. Quay về URL gốc
     const response = await fetch("https://api.replicate.com/v1/predictions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Token ${apiToken}`
+        "Authorization": "Token " + apiToken
       },
-      // 2. Đưa mã Version vào Body lên hàng đầu tiên
       body: JSON.stringify({
         version: "a416f413cbf2a828b1085b318e76869e0a66817c1829bb539afc397b0a3111fc",
         input: {
@@ -49,7 +41,6 @@ module.exports = async function handler(req, res) {
     const prediction = await response.json();
 
     if (!response.ok) {
-      console.error("Replicate API Error:", prediction);
       return res.status(response.status).json({ error: prediction.detail || "Error from Replicate API" });
     }
 
@@ -59,8 +50,6 @@ module.exports = async function handler(req, res) {
     });
 
   } catch (err) {
-    console.error("Generate API Error:", err);
-
     if (err.response && err.response.status === 429) {
       return res.status(429).json({ error: "Rate limited. Please wait and try again." });
     }
