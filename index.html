@@ -1055,6 +1055,8 @@
 
         if (generateV2Btn) {
             generateV2Btn.onclick = async function () {
+                console.log('Nút đã được bấm'); // Xác nhận sự kiện onClick đã kích hoạt
+                
                 if (!window.finalCroppedBase64) {
                     alert("Vui lòng tải lên và cắt ảnh selfie của bạn trước nhé! 📸");
                     return;
@@ -1188,6 +1190,12 @@
                             })
                         });
                         const data = await response.json();
+                        
+                        // Kiểm tra lỗi nếu Server trả về thông báo lỗi (ví dụ thiếu API Key)
+                        if (response.status !== 200) {
+                            throw new Error(data.error || "Gặp lỗi phản hồi từ API Backend");
+                        }
+                        
                         if (data.predictionId) {
                             pollSticker(data.predictionId, itemDivs[i], emo.label, emo.icon, emo);
                         } else {
@@ -1195,7 +1203,8 @@
                         }
                     }
                 } catch (e) {
-                    alert("Có lỗi kết nối máy chủ AI!");
+                    console.error("Lỗi khi tạo Sticker:", e);
+                    alert("Lỗi trong quá trình khởi tạo Sticker:\n" + e.message);
                 } finally {
                     generateV2Btn.disabled = false;
                     generateV2Btn.style.opacity = "1";
