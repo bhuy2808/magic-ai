@@ -19,14 +19,18 @@ module.exports = async function handler(req, res) {
 
     const imageDataUri = `data:image/jpeg;base64,${imageBase64}`;
 
-    const response = await fetch("https://api.replicate.com/v1/predictions", {
+    // 1. Sửa Model Path gọi trực tiếp vào địa chỉ Version
+    const response = await fetch("https://api.replicate.com/v1/models/fofr/face-to-many/versions/a416f413cbf2a828b1085b318e76869e0a66817c1829bb539afc397b0a3111fc/predictions", {
       method: "POST",
+      
+      // 3. Token Format chuẩn
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Token " + apiToken
       },
+      
+      // 2. Xóa tham số thừa (Chỉ để lại khối input)
       body: JSON.stringify({
-        version: "a416f413cbf2a828b1085b318e76869e0a66817c1829bb539afc397b0a3111fc",
         input: {
           image: imageDataUri,
           prompt: prompt,
@@ -41,6 +45,7 @@ module.exports = async function handler(req, res) {
     const prediction = await response.json();
 
     if (!response.ok) {
+      console.error("Replicate API Error:", prediction);
       return res.status(response.status).json({ error: prediction.detail || "Error from Replicate API" });
     }
 
@@ -50,6 +55,8 @@ module.exports = async function handler(req, res) {
     });
 
   } catch (err) {
+    console.error("Generate API Error:", err);
+    
     if (err.response && err.response.status === 429) {
       return res.status(429).json({ error: "Rate limited. Please wait and try again." });
     }
