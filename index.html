@@ -1118,31 +1118,26 @@
             spinnerV2.style.display = "inline-block";
             btnTextV2.innerText = " Đang xuất xưởng 6 khuôn bậc cảm xúc... 🪄";
 
+            v2ResultContainer.style.display = "grid";
             v2ResultContainer.innerHTML = "";
-            v2ResultContainer.style.display = "flex";
-            v2ResultContainer.style.flexDirection = "column";
-            v2ResultContainer.style.alignItems = "center";
-            v2ResultContainer.style.background = "#fff";
-            v2ResultContainer.style.borderRadius = "24px";
-            v2ResultContainer.style.padding = "40px";
-            v2ResultContainer.style.boxShadow = "0 10px 40px rgba(0,0,0,0.4)";
-            v2ResultContainer.style.marginTop = "40px";
 
-            // Grid 6 Ảnh
-            const gridWrap = document.createElement("div");
-            gridWrap.style.display = "grid";
-            gridWrap.style.gridTemplateColumns = "repeat(auto-fit, minmax(220px, 1fr))";
-            gridWrap.style.gap = "20px";
-            gridWrap.style.width = "100%";
-            gridWrap.style.maxWidth = "800px"; // Giữ form đứng gọn gàng
+            const emotionsMap = [
+                { icon: "😂", label: "Cười", kw: "smiling, laughing" },
+                { icon: "🥰", label: "Yêu thương", kw: "loving, hearts, cute" },
+                { icon: "🤔", label: "Suy nghĩ", kw: "thinking, wondering" },
+                { icon: "😉", label: "Nháy mắt", kw: "winking, playful" },
+                { icon: "😘", label: "Hôn gió", kw: "blowing a kiss" },
+                { icon: "😢", label: "Khóc nhè", kw: "crying, sad" }
+            ];
+
+            let resizedBase64 = window.finalCroppedBase64;
 
             const itemDivs = emotionsMap.map((emo) => {
                 const wrap = document.createElement("div");
                 wrap.style.aspectRatio = "1";
-                // Nền và viền nhạt giống mẫu (Khi có PNG trong suốt, màu nền này sẽ hiện rõ)
-                wrap.style.background = "#FDF0EA";
-                wrap.style.border = "2px solid #F5D3C8";
-                wrap.style.borderRadius = "20px";
+                wrap.style.background = "#fff";
+                wrap.style.borderRadius = "16px";
+                wrap.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
                 wrap.style.display = "flex";
                 wrap.style.alignItems = "center";
                 wrap.style.justifyContent = "center";
@@ -1155,19 +1150,9 @@
                 loader.className = "loader-overlay";
                 
                 wrap.appendChild(loader);
-                gridWrap.appendChild(wrap);
+                v2ResultContainer.appendChild(wrap);
                 return wrap;
             });
-            
-            const rightText = document.createElement("div");
-            rightText.innerText = "✨ 6 Sticker Độc Đáo ✨";
-            rightText.style.color = "#999";
-            rightText.style.fontSize = "1.1rem";
-            rightText.style.fontWeight = "bold";
-            rightText.style.marginTop = "25px";
-
-            v2ResultContainer.appendChild(gridWrap);
-            v2ResultContainer.appendChild(rightText);
 
             v2ResultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
