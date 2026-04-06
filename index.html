@@ -5,9 +5,45 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sticker Chibi - Borderless & Magic (Photo AI Version)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/photoai.css"> <!-- New PhotoAI specific CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/photoai.css">
+    
+    <!-- Cropper.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+    <style>
+        /* Circular Crop UI */
+        .cropper-view-box,
+        .cropper-face {
+            border-radius: 50%;
+        }
+        /* Crop Modal Container */
+        #cropModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .crop-container {
+            width: 100%;
+            max-width: 500px;
+            height: 60vh;
+            background: #111;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255,139,167,0.3);
+        }
+        .crop-actions { display: flex; gap: 15px; }
+        .crop-btn { padding: 12px 30px; border-radius: 30px; font-weight: bold; border: none; cursor: pointer; font-size: 1.1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .btn-cancel { background: #333; color: #FFF; }
+        .btn-confirm { background: linear-gradient(135deg, #FF8BA7, #FFC2C7); color: #FFF; border: none; }
+    </style>
 </head>
 
 <body>
@@ -958,15 +994,37 @@
         });
 
         if (uploadV2) {
-            uploadV2.onchange = function () {
-                const file = this.files[0];
+            uploadV2.onchange = function (e) {
+                const file = e.target.files[0];
                 if (file) {
-                    previewImgV2.src = URL.createObjectURL(file);
-                    previewImgV2.style.display = "block";
-                    upIconV2.style.opacity = 0;
-                    upTextV2.style.opacity = 0;
-                    upSubV2.style.opacity = 0;
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const cropImageDOM = document.getElementById("cropImage");
+                        const cropModalDOM = document.getElementById("cropModal");
+                        cropImageDOM.src = event.target.result;
+                        cropModalDOM.style.display = "flex";
+                        if (window.cropperInstance) window.cropperInstance.destroy();
+                        
+                        // Small timeout to ensure image acts correctly in DOM
+                        setTimeout(() => {
+                            window.cropperInstance = new Cropper(cropImageDOM, {
+                                aspectRatio: 1,
+                                viewMode: 1,
+                                dragMode: 'move',
+                                autoCropArea: 0.9,
+                                restore: false,
+                                guides: false,
+                                center: false,
+                                highlight: false,
+                                cropBoxMovable: false,
+                                cropBoxResizable: false,
+                                toggleDragModeOnDblclick: false,
+                            });
+                        }, 100);
+                    };
+                    reader.readAsDataURL(file);
                 }
+                this.value = ''; // Reset
             };
         }
 
@@ -994,15 +1052,15 @@
 
         if (generateV2Btn) {
             generateV2Btn.onclick = async function () {
-                if (!uploadV2.files[0]) {
-                    alert("Vui lòng tải lên ảnh selfie của bạn trước nhé! 📸");
+                if (!window.finalCroppedBase64) {
+                    alert("Vui lòng tải lên và cắt ảnh selfie của bạn trước nhé! 📸");
                     return;
                 }
 
                 generateV2Btn.disabled = true;
                 generateV2Btn.style.opacity = "0.7";
                 spinnerV2.style.display = "inline-block";
-                btnTextV2.innerText = " AI Đang Xử Lý...";
+                btnTextV2.innerText = " Đang phù phép... 🪄";
 
                 v2ResultContainer.style.display = "grid";
                 v2ResultContainer.innerHTML = "";
@@ -1016,17 +1074,7 @@
                     { icon: "😢", label: "Khóc", kw: "crying" }
                 ];
 
-                const uploadedFile = uploadV2.files[0];
-                let resizedBase64;
-                try {
-                    resizedBase64 = await getResizedBase64(uploadedFile);
-                } catch(e) {
-                    alert("Lỗi đọc ảnh!");
-                    generateV2Btn.disabled = false;
-                    spinnerV2.style.display = "none";
-                    btnTextV2.innerText = "Tạo Ngay 6 Sticker Biểu Cảm ✨";
-                    return;
-                }
+                let resizedBase64 = window.finalCroppedBase64;
 
                 const itemDivs = emotionsMap.map((emo) => {
                     const wrap = document.createElement("div");
@@ -1087,15 +1135,16 @@
                                 labelDiv.style.fontWeight = "bold";
                                 
                                 const dlBtn = document.createElement("button");
-                                dlBtn.innerHTML = "⬇️";
+                                dlBtn.innerHTML = "Tải Sticker 📥";
                                 dlBtn.style.position = "absolute";
                                 dlBtn.style.top = "10px";
                                 dlBtn.style.right = "10px";
-                                dlBtn.style.background = "rgba(255,255,255,0.9)";
+                                dlBtn.style.background = "linear-gradient(135deg, #FF8BA7, #FFC2C7)";
+                                dlBtn.style.color = "#FFF";
+                                dlBtn.style.fontWeight = "bold";
                                 dlBtn.style.border = "none";
-                                dlBtn.style.borderRadius = "50%";
-                                dlBtn.style.width = "36px";
-                                dlBtn.style.height = "36px";
+                                dlBtn.style.borderRadius = "20px";
+                                dlBtn.style.padding = "8px 15px";
                                 dlBtn.style.cursor = "pointer";
                                 dlBtn.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
                                 dlBtn.onclick = () => {
@@ -1152,6 +1201,45 @@
                 }
             };
         }
+    </script>
+    
+    <!-- Crop Modal -->
+    <div id="cropModal">
+        <div class="crop-container">
+            <img id="cropImage" src="" style="display:block; max-width:100%;">
+        </div>
+        <div class="crop-actions">
+            <button class="crop-btn btn-cancel" onclick="document.getElementById('cropModal').style.display='none'">Hủy</button>
+            <button class="crop-btn btn-confirm" id="confirmCropBtn">Cắt ảnh ✂️</button>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+        const cropModalDOM = document.getElementById("cropModal");
+        const cropImageDOM = document.getElementById("cropImage");
+        const confirmCropBtnDOM = document.getElementById("confirmCropBtn");
+        
+        confirmCropBtnDOM.addEventListener("click", () => {
+            if (!window.cropperInstance) return;
+            const canvas = window.cropperInstance.getCroppedCanvas({
+                width: 512,
+                height: 512,
+                fillColor: '#fff',
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+            });
+            
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+            window.finalCroppedBase64 = dataUrl.split(',')[1];
+            
+            const previewImgV2DOM = document.getElementById("previewImgV2");
+            previewImgV2DOM.src = dataUrl;
+            previewImgV2DOM.style.display = "block";
+            document.getElementById("upIconV2").style.opacity = 0;
+            document.getElementById("upTextV2").style.opacity = 0;
+            document.getElementById("upSubV2").style.opacity = 0;
+            cropModalDOM.style.display = "none";
+        });
     </script>
 </body>
 </html>
