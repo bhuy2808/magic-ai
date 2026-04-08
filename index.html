@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -1338,7 +1338,7 @@
                 for (let i = 0; i < emotionsMap.length; i++) {
                     const emo = emotionsMap[i];
                     // Append the specific emotion to the base style prompt
-                    const fullPrompt = `A professional sticker in ${currentStyle} style. (CRITICAL: 100% faithful to the identity in the reference photo. MUST EXACTLY replicate the person's gender, hairstyle, and specific accessories like glasses. DO NOT deviate from the original identity). Expression MUST BE: ${emo.kw}. High-quality render, thick white sticker border, isolated on clean background.`;
+                    const fullPrompt = `${targetPrompt}. Expression MUST BE: ${emo.kw}.`;
 
                     // Đệm nhẹ 1.5s lúc bắt đầu mỗi ô
                     if (i > 0) await new Promise(r => setTimeout(r, 1500));
