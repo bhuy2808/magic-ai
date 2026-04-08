@@ -20,16 +20,17 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // Model ID của SDXL Image-to-Image cực kỳ ổn định
-        version: "da1e64448dc795f680da39f7331575850901e9d5735041438902882f0578667c",
+        // Model Flux Schnell này cực nhanh, rẻ và ổn định trên Replicate
+        version: "740fca6834468f936da5f3da530263f4581146757d544ba8e1c6b5b5b08df04e",
         input: {
           image: `data:image/jpeg;base64,${imageBase64}`,
           prompt: masterPrompt,
-          negative_prompt: "(photorealistic:1.3), photo, real, human, bad anatomy, deformed hands, extra fingers, blurry, low quality, distorted face, distorted text, signature, watermark, copy-paste look, bad background, messy layout.",
-          prompt_strength: 0.75, // TĂNG LÊN 0.8 ĐỂ AI DÁM VẼ BIỂU CẢM MỚI
-          guidance_scale: 12,    // ÉP AI NGHE LỜI PROMPT HƠN ẢNH GỐC
-          num_inference_steps: 40,
-          scheduler: "K_EULER_ANCESTRAL"
+          // Với Flux, ta dùng prompt_strength khoảng 0.7 là đẹp
+          prompt_strength: 0.7, 
+          num_inference_steps: 4, // Schnell chỉ cần 4 bước là ra ảnh cực nét
+          guidance_scale: 3.5,
+          output_format: "webp",
+          aspect_ratio: "1:1"
         }
       })
     });
