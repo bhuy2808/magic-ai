@@ -21,6 +21,7 @@ export default async function handler(req, res) {
         input: {
           image: `data:image/jpeg;base64,${imageBase64}`,
           prompt: prompt,
+          negative_prompt: "(photorealistic:1.3), photo, real, human, bad anatomy, deformed hands, extra fingers, blurry, low quality, distorted face, distorted text, signature, watermark, copy-paste look, bad background, messy layout.",
           instant_id_strength: 0.6
         }
       })
