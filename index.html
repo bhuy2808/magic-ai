@@ -1144,10 +1144,11 @@
             const generateBtn = document.getElementById("generate-btn");
             if (!generateBtn) return;
             
-            if (!window.finalCroppedBase64) {
-                alert("Vui lòng tải lên và cắt ảnh selfie của bạn trước nhé! 📸");
-                return;
-            }
+            // Đã tắt yêu cầu upload ảnh selfie (không cần giữ mặt gốc nữa)
+            // if (!window.finalCroppedBase64) {
+            //     alert("Vui lòng tải lên và cắt ảnh selfie của bạn trước nhé! 📸");
+            //     return;
+            // }
 
             spinnerV2.style.display = "inline-block";
             btnTextV2.innerText = " Đang xuất xưởng 6 khuôn bậc cảm xúc... 🪄";
@@ -1262,7 +1263,8 @@
             try {
                 for (let i = 0; i < emotionsMap.length; i++) {
                     const emo = emotionsMap[i];
-                    let fullPrompt = `A ${currentActiveStyle} sticker of the person, ${emo.kw} expression, centered, white background, die-cut, high quality, vibrant colors, vector art`;
+                    
+                    let fullPrompt = "";
                     if (currentActiveStyle === "3D Caricature") {
                         fullPrompt = `A highly stylized 3D caricature of the person in the uploaded image, with ${emo.kw} expression, expressive facial features, and playful exaggeration. Rendered in a smooth, polished style with clean materials and soft ambient lighting. Bold color background to emphasize the character’s charm and presence.`;
                     }
