@@ -795,68 +795,36 @@
 
                     <div style="display: flex; gap: 40px; flex-wrap: wrap;">
                         <!-- Left Column: Upload -->
-                        <div class="creator-left" style="flex: 1; min-width: 300px;">
-                            <h3 style="margin-top: 0; font-size: 1.4rem; color: #FFF; margin-bottom: 20px;">1. Ảnh của
-                                bạn 📷</h3>
+                        <div class="creator-left" style="flex: 1; min-width: 300px; background: #FFF; padding: 20px; border-radius: 16px; border: 1px solid #E0E0E0;">
+                            <h3 style="margin-top: 0; font-size: 1.1rem; color: #000; margin-bottom: 15px; font-weight: 800;">Box 1: Ảnh của bạn 📷</h3>
                             <div class="upload-zone" id="uploadV2Zone"
                                 onclick="document.getElementById('uploadV2').click()"
-                                style="min-height: 250px; position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #1a1a1a; border: 2px dashed rgba(255,255,255,0.1); border-radius: 24px; transition: all 0.3s; overflow: hidden;">
+                                style="min-height: 250px; position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #F8F9FA; border: 2px dashed #CCC; border-radius: 12px; transition: all 0.3s; overflow: hidden;">
 
                                 <div id="upIconV2" style="font-size: 3rem; margin-bottom: 10px;">👤</div>
-                                <div id="upTextV2" style="color: #888; font-weight: 500;">Bấm hoặc Kéo thả ảnh Selfie
+                                <div id="upTextV2" style="color: #555; font-weight: 500;">Bấm hoặc Kéo thả ảnh Selfie
                                 </div>
-                                <div id="upSubV2" style="color: #555; font-size: 0.85rem; margin-top: 5px;">Gương mặt rõ
+                                <div id="upSubV2" style="color: #888; font-size: 0.85rem; margin-top: 5px;">Gương mặt rõ
                                     ràng là tốt nhất</div>
 
                                 <img id="previewImgV2" alt="Preview"
-                                    style="display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 5; border-radius: 22px;" />
+                                    style="display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 5; border-radius: 10px;" />
                             </div>
                             <input type="file" id="uploadV2" accept="image/*" style="display: none;" />
                         </div>
 
-                        <!-- Right Column: Style & Action -->
-                        <div class="creator-right" style="flex: 1.5; min-width: 300px;">
-                            <h3 style="margin-top: 0; font-size: 1.4rem; color: #FFF; margin-bottom: 20px;">2. Nhập 6 Prompt Tự Do 🎨</h3>
-                            <div class="style-grid" id="customPromptsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 30px;">
-                                
-                                <div class="style-card active" style="padding: 10px; cursor: pointer; display: flex; flex-direction: column;">
-                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; pointer-events: none;">3D Pixar Grid</div>
-                                    <textarea id="customPrompt1" placeholder="(VD: Chibi, đang cười...)" style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;">A high-quality 3D render, Disney Pixar-style sticker sheet grid of 6 distinct character busts, heavily focused on the identity of the person from the reference photo. The character MUST clearly and accurately retain the distinct facial features, smile, hairstyle, and glasses of the person from the uploaded image, ensuring extremely high identity fidelity. Layout & Style: A professional 2x3 grid of 6 individual circular stickers, each with a very thick, clean white die-cut border. The background must be a clean, simple, light pastel-peach circular background shape. 6 Deep Expressions (Crucial to change): (Top-Left): Broad, open-mouthed laugh, head slightly back. (Top-Right): Shy, deeply blushing face, a small hand giving a bashful wave. (Middle-Left): Pensive/thinking face, finger to chin. (Middle-Right): Happy, confident smile, eyes beaming. (Bottom-Left): Making a playful kiss face with a small floating 3D heart icon. (Bottom-Right): Very sad, crying face with big tearful eyes. Technical: Octane render, cinematic lighting, soft shadows, vibrant colors, clean details, cute and friendly aesthetic, 8k. Ensure the facial muscles change drastically to reflect each emotion.</textarea>
-                                </div>
-                                
-                                <div class="style-card" style="padding: 10px; cursor: pointer; display: flex; flex-direction: column;">
-                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; pointer-events: none;">Box 2</div>
-                                    <textarea id="customPrompt2" placeholder="(VD: Anime, chớp mắt...)" style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
-                                </div>
-                                
-                                <div class="style-card" style="padding: 10px; cursor: pointer; display: flex; flex-direction: column;">
-                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; pointer-events: none;">Box 3</div>
-                                    <textarea id="customPrompt3" placeholder="(VD: Cyber Punk, ngầu...)" style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
-                                </div>
-                                
-                                <div class="style-card" style="padding: 10px; cursor: pointer; display: flex; flex-direction: column;">
-                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; pointer-events: none;">Box 4</div>
-                                    <textarea id="customPrompt4" placeholder="Để trống nếu chưa có ý tưởng..." style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
-                                </div>
-                                
-                                <div class="style-card" style="padding: 10px; cursor: pointer; display: flex; flex-direction: column;">
-                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; pointer-events: none;">Box 5</div>
-                                    <textarea id="customPrompt5" placeholder="Để trống nếu chưa có ý tưởng..." style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
-                                </div>
-                                
-                                <div class="style-card" style="padding: 10px; cursor: pointer; display: flex; flex-direction: column;">
-                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; pointer-events: none;">Box 6</div>
-                                    <textarea id="customPrompt6" placeholder="Để trống nếu chưa có ý tưởng..." style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
-                                </div>
-
-                            </div>
-
+                        <!-- Right Column: Textarea & Button -->
+                        <div class="creator-right" style="flex: 1.5; min-width: 300px; background: #FFF; padding: 20px; border-radius: 16px; border: 1px solid #E0E0E0; display: flex; flex-direction: column;">
+                            <h3 style="margin-top: 0; font-size: 1.1rem; color: #000; margin-bottom: 15px; font-weight: 800;">Box 2: Nhập Prompt Tự Do 🎨</h3>
+                            
+                            <textarea id="mainPromptInput" placeholder="Nhập prompt phong cách chung cho 6 biểu cảm..." style="flex: 1; width: 100%; min-height: 150px; padding: 15px; background: #FFF; border: 1px solid #CCC; color: #000; outline: none; font-size: 0.95rem; resize: none; font-family: inherit; border-radius: 8px; margin-bottom: 20px;">A high-quality 3D render, Disney Pixar-style sticker sheet grid of 6 distinct character busts, heavily focused on the identity of the person from the reference photo. The character MUST clearly and accurately retain the distinct facial features, smile, hairstyle, and glasses of the person from the uploaded image, ensuring extremely high identity fidelity. Technical: Octane render, cinematic lighting, soft shadows, vibrant colors, clean details, cute and friendly aesthetic, 8k.</textarea>
+                            
                             <div id="generate-form" style="pointer-events: auto;">
                                 <button type="button" class="btn-generate" id="generate-btn" onclick="handleGenerate()"
-                                    style="pointer-events: auto !important; opacity: 1 !important; width: 100%; padding: 20px; border-radius: 18px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #FF8BA7, #FFC2C7); color: #FFF; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 25px rgba(255, 139, 167, 0.4);">
+                                    style="pointer-events: auto !important; opacity: 1 !important; width: 100%; padding: 15px; border-radius: 8px; font-size: 1rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; background: #1976d2; color: #FFF; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 10px rgba(25, 118, 210, 0.3);">
                                     <span class="spinner" id="spinnerV2"
-                                        style="display: none; width: 24px; height: 24px; border: 3px solid #FFF; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></span>
-                                    <span id="btnTextV2">Tạo Sticker ✨</span>
+                                        style="display: none; width: 20px; height: 20px; border: 3px solid #FFF; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></span>
+                                    <span id="btnTextV2">Tạo sticker 3D (3D Pixar Style)</span>
                                 </button>
                             </div>
                         </div>
@@ -865,19 +833,23 @@
                     <!-- Result Grid (Underneath) -->
                     <style>
                         @keyframes spin {
-                            to {
-                                transform: rotate(360deg);
-                            }
+                            to { transform: rotate(360deg); }
+                        }
+
+                        #v2ResultContainer {
+                            background-color: #fde4d8;
+                            background-image: radial-gradient(#fac8b9 20%, transparent 20%), 
+                                              radial-gradient(#fac8b9 20%, transparent 20%);
+                            background-size: 30px 30px;
+                            background-position: 0 0, 15px 15px;
                         }
 
                         @media (max-width: 600px) {
-                            #v2ResultContainer {
-                                grid-template-columns: repeat(2, 1fr) !important;
-                            }
+                            #v2ResultContainer { grid-template-columns: repeat(2, 1fr) !important; }
                         }
                     </style>
                     <div id="v2ResultContainer"
-                        style="width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; display: none; background: #0a0a0a; border-radius: 24px; padding: 25px; border: 1px dashed rgba(255,255,255,0.1);">
+                        style="width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px 20px; margin-top: 20px; display: none; border-radius: 16px; padding: 40px 20px; border: 1px solid #E0E0E0;">
                         <!-- JS injected -->
                     </div>
 
@@ -1122,78 +1094,74 @@
         const btnTextV2 = document.getElementById("btnTextV2");
         const v2ResultContainer = document.getElementById("v2ResultContainer");
 
-        // Logic make boxes selectable
-        const promptCards = document.querySelectorAll("#customPromptsGrid .style-card");
-        promptCards.forEach(card => {
-            card.addEventListener("click", () => {
-                promptCards.forEach(c => c.classList.remove("active"));
-                card.classList.add("active");
-            });
-
-            // Prevent textarea click from causing weird behaviors, but still focusable
-            const ta = card.querySelector("textarea");
-            if (ta) {
-                ta.addEventListener("click", (e) => {
-                    e.stopPropagation(); // stop click from bubbling if needed, but we do want it to select the card.
-                    promptCards.forEach(c => c.classList.remove("active"));
-                    card.classList.add("active");
-                });
-            }
-        });
-
         const handleGenerate = async () => {
             const generateBtn = document.getElementById("generate-btn");
             if (!generateBtn) return;
             
             if (!window.finalCroppedBase64) {
-                alert("Vui lòng tải lên và cắt ảnh selfie của bạn trước nhé! 📸");
+                alert("Vui lòng tải lên ảnh của bạn trước nhé! 📸");
                 return;
             }
 
             spinnerV2.style.display = "inline-block";
-            btnTextV2.innerText = " Đang xử lý... 🪄";
+            btnTextV2.innerText = " Đang xử lý...";
 
             v2ResultContainer.style.display = "grid";
             v2ResultContainer.style.gridTemplateColumns = "repeat(3, 1fr)";
             v2ResultContainer.innerHTML = "";
 
-            // Get selected prompt
-            const activeCard = document.querySelector("#customPromptsGrid .style-card.active");
-            let targetPrompt = "A cute cartoon sticker";
-            if (activeCard) {
-                const ta = activeCard.querySelector("textarea");
-                if (ta && ta.value.trim() !== "") {
-                    targetPrompt = ta.value.trim();
-                }
-            }
+            const targetPrompt = document.getElementById("mainPromptInput").value.trim() || "A high quality 3D sticker";
 
             const emotionsMap = [
-                { icon: "😂", label: "Cười", kw: "broad open-mouthed laugh, big happy smile" },
-                { icon: "🥰", label: "Đáng yêu", kw: "shy, deeply blushing face, bashful" },
-                { icon: "🤔", label: "Suy nghĩ", kw: "pensive, thinking face, finger to chin" },
-                { icon: "😎", label: "Tự tin", kw: "happy, confident smile, beaming" },
-                { icon: "😘", label: "Hôn gió", kw: "playful kiss face, blowing a kiss" },
-                { icon: "😢", label: "Khóc nhè", kw: "very sad, crying face, big tearful eyes" }
+                { id: "em1", label: "Cười Lớn", kw: "broad open-mouthed laugh, big happy smile" },
+                { id: "em2", label: "Bẽn Lẽn", kw: "shy, deeply blushing face, bashful hand wave" },
+                { id: "em3", label: "Trầm Tư", kw: "pensive, thinking face, finger to chin" },
+                { id: "em4", label: "Tự Tin", kw: "happy, confident smile, eyes beaming" },
+                { id: "em5", label: "Chu Môi", kw: "playful kiss face, blowing a kiss" },
+                { id: "em6", label: "Buồn Bã", kw: "very sad, crying face, big tearful eyes" }
             ];
 
-            const itemDivs = emotionsMap.map((emo, index) => {
+            const itemDivs = emotionsMap.map((emo) => {
                 const wrap = document.createElement("div");
-                wrap.style.aspectRatio = "1"; 
-                wrap.style.background = "#fff";
-                wrap.style.borderRadius = "16px";
-                wrap.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
                 wrap.style.display = "flex";
+                wrap.style.flexDirection = "column";
                 wrap.style.alignItems = "center";
-                wrap.style.justifyContent = "center";
                 wrap.style.position = "relative";
-                wrap.style.overflow = "hidden";
+                
+                // Vòng tròn chứa Avatar
+                const avatarCircle = document.createElement("div");
+                avatarCircle.id = `avatar_${emo.id}`;
+                avatarCircle.style.width = "85%";
+                avatarCircle.style.aspectRatio = "1";
+                avatarCircle.style.borderRadius = "50%";
+                avatarCircle.style.backgroundColor = "#fff";
+                avatarCircle.style.border = "6px solid #fff";
+                avatarCircle.style.boxShadow = "0px 8px 24px rgba(0,0,0,0.15)";
+                avatarCircle.style.display = "flex";
+                avatarCircle.style.alignItems = "center";
+                avatarCircle.style.justifyContent = "center";
+                avatarCircle.style.overflow = "hidden";
                 
                 const loader = document.createElement("div");
-                loader.innerHTML = `<div style="font-size:2rem; animation: spin 1s infinite linear;">🪄</div><div style="font-size:0.8rem; color:#888; font-weight:800; margin-top:5px; text-transform:uppercase;">${emo.label}</div>`;
-                loader.style.textAlign = "center";
-                loader.className = "loader-overlay";
+                loader.innerHTML = `<span class='spinner' style='width:30px;height:30px;border:3px solid #ccc;border-top-color:#1976d2;border-radius:50%;animation:spin 1s linear infinite;display:block;'></span>`;
+                avatarCircle.appendChild(loader);
+
+                // Nhãn Text Pill
+                const labelDiv = document.createElement("div");
+                labelDiv.innerHTML = emo.label;
+                labelDiv.style.backgroundColor = "#fff";
+                labelDiv.style.color = "#000";
+                labelDiv.style.fontWeight = "900";
+                labelDiv.style.fontSize = "1rem";
+                labelDiv.style.padding = "6px 24px";
+                labelDiv.style.borderRadius = "30px";
+                labelDiv.style.marginTop = "-18px";
+                labelDiv.style.zIndex = "10";
+                labelDiv.style.boxShadow = "0px 4px 12px rgba(0,0,0,0.1)";
+
+                wrap.appendChild(avatarCircle);
+                wrap.appendChild(labelDiv);
                 
-                wrap.appendChild(loader);
                 v2ResultContainer.appendChild(wrap);
                 return wrap;
             });
@@ -1213,7 +1181,10 @@
                         const data = await res.json();
                         if (data.status === "succeeded") {
                             clearInterval(interval);
-                            wrapDiv.innerHTML = "";
+                            
+                            const avatarCircle = wrapDiv.querySelector("div");
+                            avatarCircle.innerHTML = "";
+                            
                             const imgUrl = Array.isArray(data.output) ? data.output[0] : data.output;
                             const img = document.createElement("img");
                             img.src = imgUrl;
@@ -1222,26 +1193,28 @@
                             img.style.objectFit = "cover";
                             
                             const dlBtn = document.createElement("button");
-                            dlBtn.innerHTML = "Tải Sticker 📥";
+                            dlBtn.innerHTML = "📥";
                             dlBtn.style.position = "absolute";
                             dlBtn.style.top = "10px";
                             dlBtn.style.right = "10px";
-                            dlBtn.style.background = "linear-gradient(135deg, #FF8BA7, #FFC2C7)";
+                            dlBtn.style.background = "#1976d2";
                             dlBtn.style.color = "#FFF";
                             dlBtn.style.fontWeight = "bold";
                             dlBtn.style.border = "none";
-                            dlBtn.style.borderRadius = "20px";
-                            dlBtn.style.padding = "8px 15px";
+                            dlBtn.style.borderRadius = "50%";
+                            dlBtn.style.width = "30px";
+                            dlBtn.style.height = "30px";
                             dlBtn.style.cursor = "pointer";
-                            dlBtn.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
-                            dlBtn.onclick = () => {
+                            dlBtn.style.boxShadow = "0 2px 5px rgba(0,0,0,0.3)";
+                            dlBtn.onclick = (e) => {
+                                e.stopPropagation();
                                 const a = document.createElement("a");
                                 a.href = imgUrl;
                                 a.download = `sticker_${index + 1}.png`;
                                 a.click();
                             };
                             
-                            wrapDiv.appendChild(img);
+                            avatarCircle.appendChild(img);
                             wrapDiv.appendChild(dlBtn);
                         } else if (data.status === "failed") {
                             clearInterval(interval);
