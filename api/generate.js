@@ -21,8 +21,8 @@ export default async function handler(req, res) {
         input: {
           image: `data:image/jpeg;base64,${imageBase64}`,
           prompt: prompt || "a smiling person, 3d cartoon style, sticker",
-          style: "Clay",
-          instant_id_strength: 0.8
+          style: req.body.style && ["3D", "Clay", "Video game", "Emoji", "Toy", "Pixel art"].includes(req.body.style) ? req.body.style : "Clay",
+          instant_id_strength: 0.65
         }
       })
     });

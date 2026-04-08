@@ -1264,12 +1264,21 @@
                 for (let i = 0; i < emotionsMap.length; i++) {
                     const emo = emotionsMap[i];
                     
-                    let fullPrompt = "";
+                    let fullPrompt = `A highly stylized ${currentActiveStyle} of the person in the uploaded image, with ${emo.kw} expression, highly detailed.`;
+                    
                     if (currentActiveStyle === "3D Caricature") {
                         fullPrompt = `A highly stylized 3D caricature of the person in the uploaded image, with ${emo.kw} expression, expressive facial features, and playful exaggeration. Rendered in a smooth, polished style with clean materials and soft ambient lighting. Bold color background to emphasize the character’s charm and presence.`;
+                    } else if (currentActiveStyle === "3D Cartoon") {
+                        fullPrompt = `A cute 3D cartoon style sticker of the person, with ${emo.kw} expression, high quality, colorful background.`;
+                    } else if (currentActiveStyle === "Anime Kawaii") {
+                        fullPrompt = `A kawaii anime style sticker of the person, with ${emo.kw} expression, cute styling, pastel colors.`;
+                    } else if (currentActiveStyle === "Chibi Gamer") {
+                        fullPrompt = `A chibi gamer style sticker of the person, with ${emo.kw} expression, gaming aesthetic, vibrant lighting.`;
+                    } else if (currentActiveStyle === "Watercolor") {
+                        fullPrompt = `A beautiful watercolor painting style sticker of the person, with ${emo.kw} expression, artistic, soft blending.`;
+                    } else if (currentActiveStyle === "Pop Art") {
+                        fullPrompt = `A vibrant pop art style sticker of the person, with ${emo.kw} expression, comic book style, graphic background.`;
                     }
-
-                    // Đệm nhẹ 1.5s lúc bắt đầu mỗi ô
                     if (i > 0) await new Promise(r => setTimeout(r, 1500));
 
                     let success = false;
