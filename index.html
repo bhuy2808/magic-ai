@@ -816,37 +816,62 @@
 
                         <!-- Right Column: Style & Action -->
                         <div class="creator-right" style="flex: 1.5; min-width: 300px;">
-                            <h3 style="margin-top: 0; font-size: 1.4rem; color: #FFF; margin-bottom: 20px;">2. Nhập 6 Prompt Tự Do 🎨</h3>
-                            <div class="style-grid" id="customPromptsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 30px;">
-                                
-                                <div class="style-card active" style="padding: 10px; cursor: pointer; display: flex; flex-direction: column;">
-                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; pointer-events: none;">3D Pixar Grid</div>
-                                    <textarea id="customPrompt1" placeholder="(VD: Chibi, đang cười...)" style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;">A high-quality 3D render, Disney Pixar-style sticker sheet grid of 6 distinct character busts, heavily focused on the identity of the person from the reference photo. The character MUST clearly and accurately retain the distinct facial features, smile, hairstyle, and glasses of the person from the uploaded image, ensuring extremely high identity fidelity. Layout & Style: A professional 2x3 grid of 6 individual circular stickers, each with a very thick, clean white die-cut border. The background must be a clean, simple, light pastel-peach circular background shape. 6 Deep Expressions (Crucial to change): (Top-Left): Broad, open-mouthed laugh, head slightly back. (Top-Right): Shy, deeply blushing face, a small hand giving a bashful wave. (Middle-Left): Pensive/thinking face, finger to chin. (Middle-Right): Happy, confident smile, eyes beaming. (Bottom-Left): Making a playful kiss face with a small floating 3D heart icon. (Bottom-Right): Very sad, crying face with big tearful eyes. Technical: Octane render, cinematic lighting, soft shadows, vibrant colors, clean details, cute and friendly aesthetic, 8k. Ensure the facial muscles change drastically to reflect each emotion.</textarea>
+                            <h3 style="margin-top: 0; font-size: 1.4rem; color: #FFF; margin-bottom: 20px;">2. Chọn phong cách sticker muốn tạo 🎨</h3>
+                            <div class="style-grid" id="customPromptsGrid"
+                                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 30px;">
+
+                                <div class="style-card active"
+                                    style="padding: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; border-radius: 12px; transition: all 0.2s;">
+                                    <div
+                                        style="font-size: 1.1rem; color: #FFF; font-weight: bold; pointer-events: none;">
+                                        3D Pixar</div>
+                                    <textarea id="customPrompt1" placeholder="Nhập prompt cho phong cách 3D Pixar..."
+                                        style="display: none;"></textarea>
                                 </div>
-                                
-                                <div class="style-card" style="padding: 10px; cursor: pointer; display: flex; flex-direction: column;">
-                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; pointer-events: none;">Box 2</div>
-                                    <textarea id="customPrompt2" placeholder="(VD: Anime, chớp mắt...)" style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
+
+                                <div class="style-card"
+                                    style="padding: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; border-radius: 12px; transition: all 0.2s;">
+                                    <div
+                                        style="font-size: 1.1rem; color: #FFF; font-weight: bold; pointer-events: none;">
+                                        Anime</div>
+                                    <textarea id="customPrompt2" placeholder="Nhập prompt cho phong cách Anime..."
+                                        style="display: none;"></textarea>
                                 </div>
-                                
-                                <div class="style-card" style="padding: 10px; cursor: pointer; display: flex; flex-direction: column;">
-                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; pointer-events: none;">Box 3</div>
-                                    <textarea id="customPrompt3" placeholder="(VD: Cyber Punk, ngầu...)" style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
+
+                                <div class="style-card"
+                                    style="padding: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; border-radius: 12px; transition: all 0.2s;">
+                                    <div
+                                        style="font-size: 1.1rem; color: #FFF; font-weight: bold; pointer-events: none;">
+                                        Chibi Cute</div>
+                                    <textarea id="customPrompt3" placeholder="Nhập prompt cho phong cách Chibi..."
+                                        style="display: none;"></textarea>
                                 </div>
-                                
-                                <div class="style-card" style="padding: 10px; cursor: pointer; display: flex; flex-direction: column;">
-                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; pointer-events: none;">Box 4</div>
-                                    <textarea id="customPrompt4" placeholder="Để trống nếu chưa có ý tưởng..." style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
+
+                                <div class="style-card"
+                                    style="padding: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; border-radius: 12px; transition: all 0.2s;">
+                                    <div
+                                        style="font-size: 1.1rem; color: #FFF; font-weight: bold; pointer-events: none;">
+                                        Cyberpunk</div>
+                                    <textarea id="customPrompt4" placeholder="Nhập prompt cho phong cách Cyberpunk..."
+                                        style="display: none;"></textarea>
                                 </div>
-                                
-                                <div class="style-card" style="padding: 10px; cursor: pointer; display: flex; flex-direction: column;">
-                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; pointer-events: none;">Box 5</div>
-                                    <textarea id="customPrompt5" placeholder="Để trống nếu chưa có ý tưởng..." style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
+
+                                <div class="style-card"
+                                    style="padding: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; border-radius: 12px; transition: all 0.2s;">
+                                    <div
+                                        style="font-size: 1.1rem; color: #FFF; font-weight: bold; pointer-events: none;">
+                                        Phong cách 5</div>
+                                    <textarea id="customPrompt5" placeholder="Để trống..."
+                                        style="display: none;"></textarea>
                                 </div>
-                                
-                                <div class="style-card" style="padding: 10px; cursor: pointer; display: flex; flex-direction: column;">
-                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold; pointer-events: none;">Box 6</div>
-                                    <textarea id="customPrompt6" placeholder="Để trống nếu chưa có ý tưởng..." style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
+
+                                <div class="style-card"
+                                    style="padding: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-align: center; border-radius: 12px; transition: all 0.2s;">
+                                    <div
+                                        style="font-size: 1.1rem; color: #FFF; font-weight: bold; pointer-events: none;">
+                                        Phong cách 6</div>
+                                    <textarea id="customPrompt6" placeholder="Để trống..."
+                                        style="display: none;"></textarea>
                                 </div>
 
                             </div>
@@ -910,7 +935,8 @@
 
     <!-- Footer -->
     <footer style="background: #0a0a0a; border-top: 1px solid rgba(255,255,255,0.05); padding: 60px 20px 20px;">
-        <div class="container" style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px; margin-bottom: 40px;">
+        <div class="container"
+            style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px; margin-bottom: 40px;">
             <!-- Brand -->
             <div style="flex: 1.5; min-width: 250px;">
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
@@ -923,16 +949,24 @@
 
             <!-- Pháp Lý -->
             <div style="flex: 1; min-width: 200px;">
-                <h4 style="color: #FFF; font-size: 1.1rem; margin-top: 0; margin-bottom: 20px; font-weight: 700;">🛡️ Pháp Lý</h4>
+                <h4 style="color: #FFF; font-size: 1.1rem; margin-top: 0; margin-bottom: 20px; font-weight: 700;">🛡️
+                    Pháp Lý</h4>
                 <ul style="list-style: none; padding: 0; margin: 0;">
-                    <li style="margin-bottom: 12px;"><a href="privacy.html" target="_blank" style="color: #888; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#FFF'" onmouseout="this.style.color='#888'">Chính Sách Bảo Mật</a></li>
-                    <li style="margin-bottom: 12px;"><a href="terms.html" target="_blank" style="color: #888; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#FFF'" onmouseout="this.style.color='#888'">Điều Khoản Sử Dụng</a></li>
+                    <li style="margin-bottom: 12px;"><a href="privacy.html" target="_blank"
+                            style="color: #888; text-decoration: none; transition: color 0.2s;"
+                            onmouseover="this.style.color='#FFF'" onmouseout="this.style.color='#888'">Chính Sách Bảo
+                            Mật</a></li>
+                    <li style="margin-bottom: 12px;"><a href="terms.html" target="_blank"
+                            style="color: #888; text-decoration: none; transition: color 0.2s;"
+                            onmouseover="this.style.color='#FFF'" onmouseout="this.style.color='#888'">Điều Khoản Sử
+                            Dụng</a></li>
                 </ul>
             </div>
 
             <!-- Liên Hệ -->
             <div style="flex: 1; min-width: 200px;">
-                <h4 style="color: #FFF; font-size: 1.1rem; margin-top: 0; margin-bottom: 20px; font-weight: 700;">💬 Liên Hệ</h4>
+                <h4 style="color: #FFF; font-size: 1.1rem; margin-top: 0; margin-bottom: 20px; font-weight: 700;">💬
+                    Liên Hệ</h4>
                 <ul style="list-style: none; padding: 0; margin: 0; color: #888;">
                     <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
                         <span style="font-size: 1.2rem;">👤</span> Bùi Bảo Huy
@@ -943,8 +977,9 @@
                 </ul>
             </div>
         </div>
-        
-        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; text-align: center; color: #666; font-size: 0.9rem;">
+
+        <div
+            style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; text-align: center; color: #666; font-size: 0.9rem;">
             &copy; 2026 Magic - AI. Bảo lưu mọi quyền.
         </div>
     </footer>
@@ -1109,7 +1144,7 @@
 
                         // Kích hoạt render preview
                         cropImageDOM.src = event.target.result;
-                        if(cropModalDOM) cropModalDOM.style.display = "flex";
+                        if (cropModalDOM) cropModalDOM.style.display = "flex";
                     };
                     reader.readAsDataURL(file);
                 }
@@ -1144,7 +1179,7 @@
         const handleGenerate = async () => {
             const generateBtn = document.getElementById("generate-btn");
             if (!generateBtn) return;
-            
+
             if (!window.finalCroppedBase64) {
                 alert("Vui lòng tải lên và cắt ảnh selfie của bạn trước nhé! 📸");
                 return;
@@ -1178,7 +1213,7 @@
 
             const itemDivs = emotionsMap.map((emo, index) => {
                 const wrap = document.createElement("div");
-                wrap.style.aspectRatio = "1"; 
+                wrap.style.aspectRatio = "1";
                 wrap.style.background = "#fff";
                 wrap.style.borderRadius = "16px";
                 wrap.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
@@ -1187,12 +1222,12 @@
                 wrap.style.justifyContent = "center";
                 wrap.style.position = "relative";
                 wrap.style.overflow = "hidden";
-                
+
                 const loader = document.createElement("div");
                 loader.innerHTML = `<div style="font-size:2rem; animation: spin 1s infinite linear;">🪄</div><div style="font-size:0.8rem; color:#888; font-weight:800; margin-top:5px; text-transform:uppercase;">${emo.label}</div>`;
                 loader.style.textAlign = "center";
                 loader.className = "loader-overlay";
-                
+
                 wrap.appendChild(loader);
                 v2ResultContainer.appendChild(wrap);
                 return wrap;
@@ -1220,7 +1255,7 @@
                             img.style.width = "100%";
                             img.style.height = "100%";
                             img.style.objectFit = "cover";
-                            
+
                             const dlBtn = document.createElement("button");
                             dlBtn.innerHTML = "Tải Sticker 📥";
                             dlBtn.style.position = "absolute";
@@ -1240,7 +1275,7 @@
                                 a.download = `sticker_${index + 1}.png`;
                                 a.click();
                             };
-                            
+
                             wrapDiv.appendChild(img);
                             wrapDiv.appendChild(dlBtn);
                         } else if (data.status === "failed") {
@@ -1259,12 +1294,12 @@
                     const emo = emotionsMap[i];
                     // Append the specific emotion to the base style prompt
                     const fullPrompt = `${targetPrompt}, Expression MUST BE: ${emo.kw}. Ensure the facial muscles change drastically to reflect this emotion.`;
-                    
+
                     // Đệm nhẹ 1.5s lúc bắt đầu mỗi ô
                     if (i > 0) await new Promise(r => setTimeout(r, 1500));
 
                     let success = false;
-                    
+
                     while (!success) {
                         const response = await fetch("/api/generate", {
                             method: "POST",
@@ -1275,10 +1310,10 @@
                             })
                         });
                         const data = await response.json();
-                        
+
                         // Xử lý riêng biệt lỗi 429
                         if (response.status === 429) {
-                            console.warn(`[Ô ${i+1}] Bị nghẽn Rate Limit. Đang tự động thử lại...`);
+                            console.warn(`[Ô ${i + 1}] Bị nghẽn Rate Limit. Đang tự động thử lại...`);
                             itemDivs[i].innerHTML = `<div style='color:#666; text-align:center; padding:10px;'><div style="font-size:2.5rem; animation: spin 2s infinite linear;">⏳</div><br><small style="font-size:0.75rem; font-weight: bold; margin-top: 10px; display: block;">Đang xếp hàng chờ tải...<br>(Chống kẹt mạng)</small></div>`;
                             await new Promise(r => setTimeout(r, 3500));
                             continue;
@@ -1287,11 +1322,11 @@
                         if (response.status !== 200) {
                             console.error("API trả lỗi:", data);
                             itemDivs[i].innerHTML = `<div style='color:red; text-align:center; padding:10px;'>❌ Error<br><small style="font-size:0.7rem">${data.error || ''}</small></div>`;
-                            break; 
+                            break;
                         }
-                        
+
                         if (data.id || data.predictionId) {
-                            success = true; 
+                            success = true;
                             const finalId = data.id || data.predictionId;
                             pollSticker(finalId, itemDivs[i], i);
                         } else {
