@@ -1154,7 +1154,7 @@
             btnTextV2.innerText = " Đang xử lý... 🪄";
 
             v2ResultContainer.style.display = "grid";
-            v2ResultContainer.style.gridTemplateColumns = "1fr"; // Full width for the result
+            v2ResultContainer.style.gridTemplateColumns = ""; // Restore original 3-column CSS layout
             v2ResultContainer.innerHTML = "";
 
             // Get selected prompt
@@ -1167,11 +1167,18 @@
                 }
             }
 
-            const promptsToRun = [targetPrompt];
+            const emotionsMap = [
+                { icon: "😂", label: "Cười", kw: "broad open-mouthed laugh, big happy smile" },
+                { icon: "🥰", label: "Đáng yêu", kw: "shy, deeply blushing face, bashful" },
+                { icon: "🤔", label: "Suy nghĩ", kw: "pensive, thinking face, finger to chin" },
+                { icon: "😎", label: "Tự tin", kw: "happy, confident smile, beaming" },
+                { icon: "😘", label: "Hôn gió", kw: "playful kiss face, blowing a kiss" },
+                { icon: "😢", label: "Khóc nhè", kw: "very sad, crying face, big tearful eyes" }
+            ];
 
-            const itemDivs = promptsToRun.map((p, index) => {
+            const itemDivs = emotionsMap.map((emo, index) => {
                 const wrap = document.createElement("div");
-                wrap.style.aspectRatio = "1"; // Or auto if grid is large
+                wrap.style.aspectRatio = "1"; 
                 wrap.style.background = "#fff";
                 wrap.style.borderRadius = "16px";
                 wrap.style.boxShadow = "0 8px 30px rgba(0,0,0,0.5)";
@@ -1182,7 +1189,7 @@
                 wrap.style.overflow = "hidden";
                 
                 const loader = document.createElement("div");
-                loader.innerHTML = `<div style="font-size:2rem; animation: spin 1s infinite linear;">🪄</div><div style="font-size:0.8rem; color:#888; font-weight:800; margin-top:5px; text-transform:uppercase;">Generating Label</div>`;
+                loader.innerHTML = `<div style="font-size:2rem; animation: spin 1s infinite linear;">🪄</div><div style="font-size:0.8rem; color:#888; font-weight:800; margin-top:5px; text-transform:uppercase;">${emo.label}</div>`;
                 loader.style.textAlign = "center";
                 loader.className = "loader-overlay";
                 
@@ -1248,8 +1255,10 @@
             }
 
             try {
-                for (let i = 0; i < promptsToRun.length; i++) {
-                    const fullPrompt = promptsToRun[i];
+                for (let i = 0; i < emotionsMap.length; i++) {
+                    const emo = emotionsMap[i];
+                    // Append the specific emotion to the base style prompt
+                    const fullPrompt = `${targetPrompt}, Expression MUST BE: ${emo.kw}. Ensure the facial muscles change drastically to reflect this emotion.`;
                     
                     // Đệm nhẹ 1.5s lúc bắt đầu mỗi ô
                     if (i > 0) await new Promise(r => setTimeout(r, 1500));
