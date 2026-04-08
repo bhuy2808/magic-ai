@@ -21,13 +21,13 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         // Model ID của SDXL Image-to-Image cực kỳ ổn định
-        version: "39ed52f2a78e934b3ba6e2468156972e030e26139c9444ee8a43d9607216a9e6",
+        version: "da1e64448dc795f680da39f7331575850901e9d5735041438902882f0578667c",
         input: {
           image: `data:image/jpeg;base64,${imageBase64}`,
           prompt: masterPrompt,
           negative_prompt: "(photorealistic:1.3), photo, real, human, bad anatomy, deformed hands, extra fingers, blurry, low quality, distorted face, distorted text, signature, watermark, copy-paste look, bad background, messy layout.",
-          prompt_strength: 0.8, // TĂNG LÊN 0.8 ĐỂ AI DÁM VẼ BIỂU CẢM MỚI
-          guidance_scale: 15,    // ÉP AI NGHE LỜI PROMPT HƠN ẢNH GỐC
+          prompt_strength: 0.75, // TĂNG LÊN 0.8 ĐỂ AI DÁM VẼ BIỂU CẢM MỚI
+          guidance_scale: 12,    // ÉP AI NGHE LỜI PROMPT HƠN ẢNH GỐC
           num_inference_steps: 40,
           scheduler: "K_EULER_ANCESTRAL"
         }
