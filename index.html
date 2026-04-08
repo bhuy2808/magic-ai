@@ -782,7 +782,7 @@
         <!-- Biến Hình Sticker V2 Section -->
         <section class="photoai-sticker-creator" id="stickerCreatorV2Section"
             style="padding: 100px 20px; background: #0d0d0d; border-top: 1px solid rgba(255,255,255,0.05);">
-            <div class="container" style="max-width: 900px;">
+            <div class="container" style="max-width: 1100px;">
                 <h2 style="font-size: 2.8rem; font-weight: 800; text-align: center; margin-bottom: 20px;">
                     Biến Hình Sticker – Tỏa Sáng Chất Riêng ✨
                 </h2>
@@ -791,145 +791,270 @@
                 </p>
 
                 <div class="creator-card"
-                    style="background: #111; border: 1px solid rgba(255,255,255,0.08); border-radius: 32px; padding: 40px; display: flex; flex-direction: column; gap: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+                    style="background: #111; border: 1px solid rgba(255,255,255,0.08); border-radius: 32px; padding: 40px; display: flex; flex-direction: column; gap: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
 
-                    <div style="display: flex; gap: 40px; flex-wrap: wrap;">
-                        <!-- Left Column: Upload -->
-                        <div class="creator-left" style="flex: 1; min-width: 300px;">
-                            <h3 style="margin-top: 0; font-size: 1.4rem; color: #FFF; margin-bottom: 20px;">1. Ảnh của
-                                bạn 📷</h3>
-                            <div class="upload-zone" id="uploadV2Zone"
-                                onclick="document.getElementById('uploadV2').click()"
-                                style="min-height: 250px; position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #1a1a1a; border: 2px dashed rgba(255,255,255,0.1); border-radius: 24px; transition: all 0.3s; overflow: hidden;">
+                    <style>
+                        /* === Style Cards Grid === */
+                        #customPromptsGrid {
+                            display: grid;
+                            grid-template-columns: repeat(6, 1fr);
+                            gap: 12px;
+                        }
 
-                                <div id="upIconV2" style="font-size: 3rem; margin-bottom: 10px;">👤</div>
-                                <div id="upTextV2" style="color: #888; font-weight: 500;">Bấm hoặc Kéo thả ảnh Selfie
-                                </div>
-                                <div id="upSubV2" style="color: #555; font-size: 0.85rem; margin-top: 5px;">Gương mặt rõ
-                                    ràng là tốt nhất</div>
+                        #customPromptsGrid .style-card {
+                            background: rgba(255, 255, 255, 0.05);
+                            border: 2px solid rgba(255, 255, 255, 0.08);
+                            border-radius: 16px;
+                            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                            padding: 0;
+                            cursor: pointer;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: flex-start;
+                            text-align: center;
+                            overflow: hidden;
+                        }
 
-                                <img id="previewImgV2" alt="Preview"
-                                    style="display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 5; border-radius: 22px;" />
+                        #customPromptsGrid .style-card:hover {
+                            transform: translateY(-4px);
+                            background: rgba(255, 255, 255, 0.1);
+                            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+                            border-color: rgba(255, 255, 255, 0.25);
+                        }
+
+                        #customPromptsGrid .style-card.active {
+                            background: linear-gradient(135deg, rgba(255, 139, 167, 0.15), rgba(255, 194, 199, 0.15));
+                            border-color: #FF8BA7;
+                            box-shadow: 0 6px 25px rgba(255, 139, 167, 0.3);
+                        }
+
+                        #customPromptsGrid .style-card .card-thumb {
+                            width: 100%;
+                            aspect-ratio: 1 / 1;
+                            object-fit: cover;
+                            display: block;
+                            pointer-events: none;
+                            border-bottom: 1px solid rgba(255,255,255,0.06);
+                        }
+
+                        #customPromptsGrid .style-card .card-label {
+                            font-size: 0.78rem;
+                            color: #FFF;
+                            font-weight: 700;
+                            pointer-events: none;
+                            line-height: 1.3;
+                            padding: 10px 6px;
+                            white-space: nowrap;
+                        }
+
+                        /* === Upload Bar === */
+                        .creator-upload-bar {
+                            display: flex;
+                            align-items: center;
+                            gap: 20px;
+                            padding: 16px 24px;
+                            background: rgba(255, 255, 255, 0.03);
+                            border: 2px dashed rgba(255, 255, 255, 0.12);
+                            border-radius: 20px;
+                            cursor: pointer;
+                            transition: all 0.3s;
+                            position: relative;
+                        }
+
+                        .creator-upload-bar:hover {
+                            border-color: #FF8BA7;
+                            background: rgba(255, 139, 167, 0.05);
+                            box-shadow: 0 4px 20px rgba(255, 139, 167, 0.15);
+                        }
+
+                        .creator-upload-bar.has-image {
+                            border-style: solid;
+                            border-color: #FF8BA7;
+                            background: rgba(255, 139, 167, 0.08);
+                        }
+
+                        .upload-bar-preview-wrap {
+                            width: 64px;
+                            height: 64px;
+                            min-width: 64px;
+                            border-radius: 50%;
+                            background: #222;
+                            border: 2px solid rgba(255, 255, 255, 0.1);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            overflow: hidden;
+                            position: relative;
+                        }
+
+                        .upload-bar-avatar {
+                            font-size: 1.8rem;
+                            z-index: 1;
+                        }
+
+                        .upload-bar-preview {
+                            display: none;
+                            position: absolute;
+                            inset: 0;
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            z-index: 2;
+                            border-radius: 50%;
+                        }
+
+                        .upload-bar-text {
+                            flex: 1;
+                        }
+
+                        .upload-bar-title {
+                            color: #FFF;
+                            font-weight: 700;
+                            font-size: 1rem;
+                            margin-bottom: 4px;
+                        }
+
+                        .upload-bar-sub {
+                            color: #777;
+                            font-size: 0.82rem;
+                        }
+
+                        .upload-bar-cta {
+                            background: linear-gradient(135deg, #FF8BA7, #FFC2C7);
+                            color: #FFF;
+                            font-weight: 700;
+                            font-size: 0.85rem;
+                            padding: 10px 22px;
+                            border-radius: 12px;
+                            white-space: nowrap;
+                            transition: all 0.2s;
+                            box-shadow: 0 4px 12px rgba(255, 139, 167, 0.3);
+                        }
+
+                        .creator-upload-bar:hover .upload-bar-cta {
+                            transform: scale(1.05);
+                            box-shadow: 0 6px 18px rgba(255, 139, 167, 0.45);
+                        }
+
+                        /* === Responsive: Tablet (<=768px) === */
+                        @media (max-width: 768px) {
+                            #customPromptsGrid {
+                                grid-template-columns: repeat(3, 1fr);
+                                gap: 10px;
+                            }
+
+                            #customPromptsGrid .style-card .card-label {
+                                font-size: 0.72rem;
+                                padding: 8px 4px;
+                            }
+                        }
+
+                        /* === Responsive: Phone (<=480px) === */
+                        @media (max-width: 480px) {
+                            #customPromptsGrid {
+                                grid-template-columns: repeat(3, 1fr);
+                                gap: 8px;
+                            }
+
+                            #customPromptsGrid .style-card .card-label {
+                                font-size: 0.65rem;
+                                padding: 6px 3px;
+                                white-space: normal;
+                            }
+
+                            .creator-card {
+                                padding: 20px !important;
+                            }
+
+                            .creator-upload-bar {
+                                flex-direction: column;
+                                text-align: center;
+                                padding: 24px 16px;
+                                gap: 12px;
+                            }
+
+                            .upload-bar-preview-wrap {
+                                width: 80px;
+                                height: 80px;
+                            }
+
+                            .upload-bar-cta {
+                                width: 100%;
+                                text-align: center;
+                                padding: 12px;
+                            }
+                        }
+                    </style>
+
+                    <!-- Step 1: Chọn phong cách (Horizontal Row) -->
+                    <div>
+                        <h3 style="margin-top: 0; font-size: 1.3rem; color: #FFF; margin-bottom: 16px;">1. Chọn phong cách sticker muốn tạo 🎨</h3>
+
+                        <div id="customPromptsGrid">
+
+                            <div class="style-card active">
+                                <img class="card-thumb" src="assets/images/thumb_pixar_1775626694282.png" alt="3D Pixar">
+                                <div class="card-label">🌟 3D Pixar</div>
+                                <textarea id="customPrompt1" style="display: none;">A professional 3D Pixar-style sticker of ONE SINGLE character. The character MUST retain the exact facial identity, hair, and clothing from the reference photo. White sticker border, soft cinematic 3D render, clean pastel background, 8k, high quality.</textarea>
                             </div>
-                            <input type="file" id="uploadV2" accept="image/*" style="display: none;" />
+
+                            <div class="style-card">
+                                <img class="card-thumb" src="assets/images/thumb_anime_1775626709236.png" alt="Anime">
+                                <div class="card-label">🎌 Anime</div>
+                                <textarea id="customPrompt2" style="display: none;">High-quality Anime sticker, Studio Ghibli or Makoto Shinkai style. Single character, vibrant colors, clean line art. Character must have the same hair, eyes, and outfit as the reference photo. Thick white sticker border, flat shaded, 2D aesthetic.</textarea>
+                            </div>
+
+                            <div class="style-card">
+                                <img class="card-thumb" src="assets/images/thumb_chibi_1775626724981.png" alt="Chibi">
+                                <div class="card-label">🧸 Chibi</div>
+                                <textarea id="customPrompt3" style="display: none;">Cute Chibi 3D sticker, big expressive eyes, small body. 3D stylized render. Must keep the identity, glasses, and clothes of the person in the photo. High-gloss finish, white sticker border, kawaii aesthetic, toy-like look.</textarea>
+                            </div>
+
+                            <div class="style-card">
+                                <img class="card-thumb" src="assets/images/thumb_vector_1775626738235.png" alt="Vector">
+                                <div class="card-label">📐 Vector</div>
+                                <textarea id="customPrompt4" style="display: none;">Minimalist vector sticker art, flat design, bold lines, limited color palette. Character illustration based on the reference photo's identity. Isolated on white background with sticker stroke. Clean, professional graphic design style.</textarea>
+                            </div>
+
+                            <div class="style-card">
+                                <img class="card-thumb" src="assets/images/thumb_comic_1775626753391.png" alt="Comic">
+                                <div class="card-label">💥 Comic</div>
+                                <textarea id="customPrompt5" style="display: none;">Superhero comic book style sticker, bold ink lines, Ben-Day dots, vibrant heroic colors. The character is a stylized superhero version of the person in the photo. Action pose, white sticker border, Marvel/DC aesthetic.</textarea>
+                            </div>
+
+                            <div class="style-card">
+                                <img class="card-thumb" src="assets/images/thumb_cyberpunk_1775626767014.png" alt="Cyberpunk">
+                                <div class="card-label">🌃 Cyberpunk</div>
+                                <textarea id="customPrompt6" style="display: none;">Cyberpunk aesthetic sticker, neon glowing accents, futuristic clothing. Character identity from the photo with tech-wear elements. Synthwave color palette (pink, blue, purple). White sticker border, 3D render, high detail.</textarea>
+                            </div>
+
                         </div>
+                    </div>
 
-                        <!-- Right Column: Style & Action -->
-                        <div class="creator-right" style="flex: 1.5; min-width: 300px;">
-                            <h3 style="margin-top: 0; font-size: 1.4rem; color: #FFF; margin-bottom: 20px;">2. Chọn
-                                phong cách sticker muốn tạo 🎨</h3>
-
-                            <style>
-                                #customPromptsGrid .style-card {
-                                    background: rgba(255, 255, 255, 0.05);
-                                    border: 2px solid rgba(255, 255, 255, 0.05);
-                                    border-radius: 16px;
-                                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                                    padding: 15px;
-                                    cursor: pointer;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    text-align: center;
-                                    min-height: 70px;
-                                }
-
-                                #customPromptsGrid .style-card:hover {
-                                    transform: translateY(-5px);
-                                    background: rgba(255, 255, 255, 0.1);
-                                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-                                    border-color: rgba(255, 255, 255, 0.2);
-                                }
-
-                                #customPromptsGrid .style-card.active {
-                                    background: linear-gradient(135deg, rgba(255, 139, 167, 0.15), rgba(255, 194, 199, 0.15));
-                                    border-color: #FF8BA7;
-                                    box-shadow: 0 8px 30px rgba(255, 139, 167, 0.3);
-                                }
-
-                                #customPromptsGrid .style-card .card-text {
-                                    font-size: 1.05rem;
-                                    color: #FFF;
-                                    font-weight: 800;
-                                    pointer-events: none;
-                                    line-height: 1.4;
-                                }
-                            </style>
-
-                            <div class="style-grid" id="customPromptsGrid"
-                                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px;">
-
-                                <div class="style-card active">
-                                    <div class="card-text">
-                                        <img src="assets/images/thumb_pixar_1775626694282.png"
-                                            style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><br>
-                                        🌟 Phong cách<br>3D Pixar
-                                    </div>
-                                    <textarea id="customPrompt1" placeholder="Nhập prompt cho phong cách 3D Pixar..."
-                                        style="display: none;">A professional 3D Pixar-style sticker of ONE SINGLE character. The character MUST retain the exact facial identity, hair, and clothing from the reference photo. White sticker border, soft cinematic 3D render, clean pastel background, 8k, high quality.</textarea>
-                                </div>
-
-                                <div class="style-card">
-                                    <div class="card-text">
-                                        <img src="assets/images/thumb_anime_1775626709236.png"
-                                            style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><br>
-                                        🎌 Phong cách<br>Anime Nhật Bản
-                                    </div>
-                                    <textarea id="customPrompt2" placeholder="Nhập prompt cho phong cách Anime..."
-                                        style="display: none;">High-quality Anime sticker, Studio Ghibli or Makoto Shinkai style. Single character, vibrant colors, clean line art. Character must have the same hair, eyes, and outfit as the reference photo. Thick white sticker border, flat shaded, 2D aesthetic.</textarea>
-                                </div>
-
-                                <div class="style-card">
-                                    <div class="card-text">
-                                        <img src="assets/images/thumb_chibi_1775626724981.png"
-                                            style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><br>
-                                        🧸 Phong cách<br>Chibi Cute
-                                    </div>
-                                    <textarea id="customPrompt3" placeholder="Nhập prompt cho phong cách Chibi..."
-                                        style="display: none;">Cute Chibi 3D sticker, big expressive eyes, small body. 3D stylized render. Must keep the identity, glasses, and clothes of the person in the photo. High-gloss finish, white sticker border, kawaii aesthetic, toy-like look.</textarea>
-                                </div>
-
-                                <div class="style-card">
-                                    <div class="card-text">
-                                        <img src="assets/images/thumb_vector_1775626738235.png"
-                                            style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><br>
-                                        📐 Phong cách<br>Vector/Flat Design
-                                    </div>
-                                    <textarea id="customPrompt4" placeholder="Nhập prompt cho phong cách Vector..."
-                                        style="display: none;">Minimalist vector sticker art, flat design, bold lines, limited color palette. Character illustration based on the reference photo's identity. Isolated on white background with sticker stroke. Clean, professional graphic design style.</textarea>
-                                </div>
-
-                                <div class="style-card">
-                                    <div class="card-text">
-                                        <img src="assets/images/thumb_comic_1775626753391.png"
-                                            style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><br>
-                                        💥 Phong cách<br>Comic/Marvel
-                                    </div>
-                                    <textarea id="customPrompt5" placeholder="Nhập prompt cho phong cách Comic..."
-                                        style="display: none;">Superhero comic book style sticker, bold ink lines, Ben-Day dots, vibrant heroic colors. The character is a stylized superhero version of the person in the photo. Action pose, white sticker border, Marvel/DC aesthetic.</textarea>
-                                </div>
-
-                                <div class="style-card">
-                                    <div class="card-text">
-                                        <img src="assets/images/thumb_cyberpunk_1775626767014.png"
-                                            style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><br>
-                                        🌃 Phong cách<br>Cyberpunk/Neon
-                                    </div>
-                                    <textarea id="customPrompt6" placeholder="Nhập prompt cho phong cách Cyberpunk..."
-                                        style="display: none;">Cyberpunk aesthetic sticker, neon glowing accents, futuristic clothing. Character identity from the photo with tech-wear elements. Synthwave color palette (pink, blue, purple). White sticker border, 3D render, high detail.</textarea>
-                                </div>
-
-                            </div>
-
-                            <div id="generate-form" style="pointer-events: auto;">
-                                <button type="button" class="btn-generate" id="generate-btn" onclick="handleGenerate()"
-                                    style="pointer-events: auto !important; opacity: 1 !important; width: 100%; padding: 20px; border-radius: 18px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #FF8BA7, #FFC2C7); color: #FFF; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 25px rgba(255, 139, 167, 0.4);">
-                                    <span class="spinner" id="spinnerV2"
-                                        style="display: none; width: 24px; height: 24px; border: 3px solid #FFF; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></span>
-                                    <span id="btnTextV2">Tạo Sticker ✨</span>
-                                </button>
-                            </div>
+                    <!-- Step 2: Upload ảnh (Full-width upload bar) -->
+                    <div class="creator-upload-bar" id="uploadV2Zone"
+                        onclick="document.getElementById('uploadV2').click()">
+                        <div class="upload-bar-preview-wrap">
+                            <img id="previewImgV2" alt="Preview" class="upload-bar-preview" />
+                            <div class="upload-bar-avatar" id="upIconV2">📷</div>
                         </div>
+                        <div class="upload-bar-text">
+                            <div id="upTextV2" class="upload-bar-title">Tải lên ảnh Selfie của bạn</div>
+                            <div id="upSubV2" class="upload-bar-sub">Gương mặt rõ ràng, góc chụp thẳng sẽ cho kết quả đẹp nhất</div>
+                        </div>
+                        <div class="upload-bar-cta">Chọn ảnh</div>
+                    </div>
+                    <input type="file" id="uploadV2" accept="image/*" style="display: none;" />
+
+                    <!-- Step 3: Generate Button -->
+                    <div id="generate-form" style="pointer-events: auto;">
+                        <button type="button" class="btn-generate" id="generate-btn" onclick="handleGenerate()"
+                            style="pointer-events: auto !important; opacity: 1 !important; width: 100%; padding: 20px; border-radius: 18px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #FF8BA7, #FFC2C7); color: #FFF; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 25px rgba(255, 139, 167, 0.4);">
+                            <span class="spinner" id="spinnerV2"
+                                style="display: none; width: 24px; height: 24px; border: 3px solid #FFF; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></span>
+                            <span id="btnTextV2">Tạo Sticker ✨</span>
+                        </button>
                     </div>
 
                     <!-- Result Grid (Underneath) -->
@@ -1425,9 +1550,16 @@
                 const previewImgV2DOM = document.getElementById("previewImgV2");
                 previewImgV2DOM.src = dataUrl;
                 previewImgV2DOM.style.display = "block";
-                document.getElementById("upIconV2").style.opacity = 0;
-                document.getElementById("upTextV2").style.opacity = 0;
-                document.getElementById("upSubV2").style.opacity = 0;
+                document.getElementById("upIconV2").style.display = "none";
+                document.getElementById("upTextV2").innerText = "Ảnh đã tải lên ✓";
+                document.getElementById("upSubV2").style.display = "none";
+
+                // Update upload bar visual state
+                const uploadBar = document.getElementById("uploadV2Zone");
+                if (uploadBar) uploadBar.classList.add("has-image");
+                const cta = uploadBar ? uploadBar.querySelector(".upload-bar-cta") : null;
+                if (cta) cta.innerText = "Đổi ảnh";
+
                 cropModalDOM.style.display = "none";
             });
         }
