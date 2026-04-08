@@ -816,22 +816,39 @@
 
                         <!-- Right Column: Style & Action -->
                         <div class="creator-right" style="flex: 1.5; min-width: 300px;">
-                            <h3 style="margin-top: 0; font-size: 1.4rem; color: #FFF; margin-bottom: 20px;">2. Chọn
-                                Phong Cách 🎨</h3>
-                            <div class="style-grid" id="v2StyleGrid"
-                                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; margin-bottom: 30px;">
-                                <div class="style-card active" data-style="3D Cartoon"
-                                    style="padding: 15px; font-size: 0.95rem;">🎮 3D Cartoon</div>
-                                <div class="style-card" data-style="Anime Kawaii"
-                                    style="padding: 15px; font-size: 0.95rem;">🌸 Anime Kawaii</div>
-                                <div class="style-card" data-style="Chibi Gamer"
-                                    style="padding: 15px; font-size: 0.95rem;">🕹️ Chibi Gamer</div>
-                                <div class="style-card" data-style="Watercolor"
-                                    style="padding: 15px; font-size: 0.95rem;">🎨 Watercolor</div>
-                                <div class="style-card" data-style="Pop Art" style="padding: 15px; font-size: 0.95rem;">
-                                    💥 Pop Art</div>
-                                <div class="style-card" data-style="3D Caricature"
-                                    style="padding: 15px; font-size: 0.95rem;">🤪 3D Caricature</div>
+                            <h3 style="margin-top: 0; font-size: 1.4rem; color: #FFF; margin-bottom: 20px;">2. Nhập 6 Prompt Tự Do 🎨</h3>
+                            <div class="style-grid" id="customPromptsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                                
+                                <div class="style-card" style="padding: 10px; cursor: default; display: flex; flex-direction: column;">
+                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold;">Box 1</div>
+                                    <textarea id="customPrompt1" placeholder="(VD: Chibi, đang cười...)" style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
+                                </div>
+                                
+                                <div class="style-card" style="padding: 10px; cursor: default; display: flex; flex-direction: column;">
+                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold;">Box 2</div>
+                                    <textarea id="customPrompt2" placeholder="(VD: Anime, chớp mắt...)" style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
+                                </div>
+                                
+                                <div class="style-card" style="padding: 10px; cursor: default; display: flex; flex-direction: column;">
+                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold;">Box 3</div>
+                                    <textarea id="customPrompt3" placeholder="(VD: Cyber Punk, ngầu...)" style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
+                                </div>
+                                
+                                <div class="style-card" style="padding: 10px; cursor: default; display: flex; flex-direction: column;">
+                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold;">Box 4</div>
+                                    <textarea id="customPrompt4" placeholder="Để trống nếu chưa có ý tưởng..." style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
+                                </div>
+                                
+                                <div class="style-card" style="padding: 10px; cursor: default; display: flex; flex-direction: column;">
+                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold;">Box 5</div>
+                                    <textarea id="customPrompt5" placeholder="Để trống nếu chưa có ý tưởng..." style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
+                                </div>
+                                
+                                <div class="style-card" style="padding: 10px; cursor: default; display: flex; flex-direction: column;">
+                                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 5px; font-weight: bold;">Box 6</div>
+                                    <textarea id="customPrompt6" placeholder="Để trống nếu chưa có ý tưởng..." style="width: 100%; height: 60px; background: transparent; border: none; color: #FFF; outline: none; font-size: 0.9rem; resize: none; font-family: inherit;"></textarea>
+                                </div>
+
                             </div>
 
                             <div id="generate-form" style="pointer-events: auto;">
@@ -839,7 +856,7 @@
                                     style="pointer-events: auto !important; opacity: 1 !important; width: 100%; padding: 20px; border-radius: 18px; font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #FF8BA7, #FFC2C7); color: #FFF; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 25px rgba(255, 139, 167, 0.4);">
                                     <span class="spinner" id="spinnerV2"
                                         style="display: none; width: 24px; height: 24px; border: 3px solid #FFF; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></span>
-                                    <span id="btnTextV2">Tạo Ngay 6 Sticker Biểu Cảm ✨</span>
+                                    <span id="btnTextV2">Tạo Ngay 6 Sticker ✨</span>
                                 </button>
                             </div>
                         </div>
@@ -1056,27 +1073,11 @@
         }
 
 
-        // --- Sticker AI V2 Logic ---
         const uploadV2 = document.getElementById("uploadV2");
         const previewImgV2 = document.getElementById("previewImgV2");
         const upIconV2 = document.getElementById("upIconV2");
         const upTextV2 = document.getElementById("upTextV2");
         const upSubV2 = document.getElementById("upSubV2");
-        const generateV2Btn = document.getElementById("generateV2Btn");
-        const spinnerV2 = document.getElementById("spinnerV2");
-        const btnTextV2 = document.getElementById("btnTextV2");
-        const v2StyleCards = document.querySelectorAll("#v2StyleGrid .style-card");
-        const v2ResultContainer = document.getElementById("v2ResultContainer");
-
-        let currentActiveStyle = "3D Cartoon";
-
-        v2StyleCards.forEach(card => {
-            card.addEventListener("click", () => {
-                v2StyleCards.forEach(c => c.classList.remove("active"));
-                card.classList.add("active");
-                currentActiveStyle = card.getAttribute("data-style");
-            });
-        });
 
         if (uploadV2) {
             uploadV2.onchange = function (e) {
@@ -1108,7 +1109,7 @@
 
                         // Kích hoạt render preview
                         cropImageDOM.src = event.target.result;
-                        cropModalDOM.style.display = "flex";
+                        if(cropModalDOM) cropModalDOM.style.display = "flex";
                     };
                     reader.readAsDataURL(file);
                 }
@@ -1116,58 +1117,36 @@
             };
         }
 
-        function getResizedBase64(file, maxSize) {
-            maxSize = maxSize || 512;
-            return new Promise(function (resolve, reject) {
-                var img = new Image();
-                img.onload = function () {
-                    var w = img.width, h = img.height;
-                    if (w > maxSize || h > maxSize) {
-                        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
-                        else { w = Math.round(w * maxSize / h); h = maxSize; }
-                    }
-                    var canvas = document.createElement('canvas');
-                    canvas.width = w;
-                    canvas.height = h;
-                    var ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, w, h);
-                    resolve(canvas.toDataURL('image/jpeg', 0.6).split(',')[1]);
-                };
-                img.onerror = reject;
-                img.src = URL.createObjectURL(file);
-            });
-        }
+        const generateV2Btn = document.getElementById("generateV2Btn");
+        const spinnerV2 = document.getElementById("spinnerV2");
+        const btnTextV2 = document.getElementById("btnTextV2");
+        const v2ResultContainer = document.getElementById("v2ResultContainer");
 
         const handleGenerate = async () => {
-            console.log("Nút đã hoạt động!");
-            
             const generateBtn = document.getElementById("generate-btn");
             if (!generateBtn) return;
             
-            // Đã tắt yêu cầu upload ảnh selfie (không cần giữ mặt gốc nữa)
-            // if (!window.finalCroppedBase64) {
-            //     alert("Vui lòng tải lên và cắt ảnh selfie của bạn trước nhé! 📸");
-            //     return;
-            // }
+            if (!window.finalCroppedBase64) {
+                alert("Vui lòng tải lên và cắt ảnh selfie của bạn trước nhé! 📸");
+                return;
+            }
 
             spinnerV2.style.display = "inline-block";
-            btnTextV2.innerText = " Đang xuất xưởng 6 khuôn bậc cảm xúc... 🪄";
+            btnTextV2.innerText = " Đang xử lý... 🪄";
 
             v2ResultContainer.style.display = "grid";
             v2ResultContainer.innerHTML = "";
 
-            const emotionsMap = [
-                { icon: "😂", label: "Cười", kw: "smiling, laughing" },
-                { icon: "🥰", label: "Yêu thương", kw: "loving, hearts, cute" },
-                { icon: "🤔", label: "Suy nghĩ", kw: "thinking, wondering" },
-                { icon: "😉", label: "Nháy mắt", kw: "winking, playful" },
-                { icon: "😘", label: "Hôn gió", kw: "blowing a kiss" },
-                { icon: "😢", label: "Khóc nhè", kw: "crying, sad" }
+            const prompts = [
+                document.getElementById("customPrompt1").value.trim() || "A cute cartoon sticker",
+                document.getElementById("customPrompt2").value.trim() || "A cute cartoon sticker",
+                document.getElementById("customPrompt3").value.trim() || "A cute cartoon sticker",
+                document.getElementById("customPrompt4").value.trim() || "A cute cartoon sticker",
+                document.getElementById("customPrompt5").value.trim() || "A cute cartoon sticker",
+                document.getElementById("customPrompt6").value.trim() || "A cute cartoon sticker",
             ];
 
-            let resizedBase64 = window.finalCroppedBase64;
-
-            const itemDivs = emotionsMap.map((emo) => {
+            const itemDivs = prompts.map((p, index) => {
                 const wrap = document.createElement("div");
                 wrap.style.aspectRatio = "1";
                 wrap.style.background = "#fff";
@@ -1180,7 +1159,7 @@
                 wrap.style.overflow = "hidden";
                 
                 const loader = document.createElement("div");
-                loader.innerHTML = `<div style="font-size:2rem; animation: spin 1s infinite linear;">🪄</div><div style="font-size:0.8rem; color:#888; font-weight:800; margin-top:5px; text-transform:uppercase;">${emo.label}</div>`;
+                loader.innerHTML = `<div style="font-size:2rem; animation: spin 1s infinite linear;">🪄</div><div style="font-size:0.8rem; color:#888; font-weight:800; margin-top:5px; text-transform:uppercase;">Sticker ${index + 1}</div>`;
                 loader.style.textAlign = "center";
                 loader.className = "loader-overlay";
                 
@@ -1191,7 +1170,7 @@
 
             v2ResultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-            async function pollSticker(predictionId, wrapDiv, emotionLabel, emotionIcon, currentEmo) {
+            async function pollSticker(predictionId, wrapDiv, index) {
                 const startTime = Date.now();
                 const interval = setInterval(async () => {
                     if (Date.now() - startTime > 120000) {
@@ -1212,20 +1191,6 @@
                             img.style.height = "100%";
                             img.style.objectFit = "cover";
                             
-                            const labelDiv = document.createElement("div");
-                            labelDiv.innerHTML = `${emotionIcon} ${emotionLabel}`;
-                            labelDiv.style.position = "absolute";
-                            labelDiv.style.bottom = "10px";
-                            labelDiv.style.left = "50%";
-                            labelDiv.style.transform = "translateX(-50%)";
-                            labelDiv.style.background = "rgba(0,0,0,0.6)";
-                            labelDiv.style.backdropFilter = "blur(5px)";
-                            labelDiv.style.color = "#FFF";
-                            labelDiv.style.padding = "6px 12px";
-                            labelDiv.style.borderRadius = "20px";
-                            labelDiv.style.fontSize = "0.85rem";
-                            labelDiv.style.fontWeight = "bold";
-                            
                             const dlBtn = document.createElement("button");
                             dlBtn.innerHTML = "Tải Sticker 📥";
                             dlBtn.style.position = "absolute";
@@ -1242,12 +1207,11 @@
                             dlBtn.onclick = () => {
                                 const a = document.createElement("a");
                                 a.href = imgUrl;
-                                a.download = `stickerme_${currentActiveStyle.replace(/\s+/g, '_')}_${currentEmo.label}.png`;
+                                a.download = `sticker_${index + 1}.png`;
                                 a.click();
                             };
                             
                             wrapDiv.appendChild(img);
-                            wrapDiv.appendChild(labelDiv);
                             wrapDiv.appendChild(dlBtn);
                         } else if (data.status === "failed") {
                             clearInterval(interval);
@@ -1261,24 +1225,10 @@
             }
 
             try {
-                for (let i = 0; i < emotionsMap.length; i++) {
-                    const emo = emotionsMap[i];
+                for (let i = 0; i < prompts.length; i++) {
+                    const fullPrompt = prompts[i];
                     
-                    let fullPrompt = `A highly stylized ${currentActiveStyle} of the person in the uploaded image, with ${emo.kw} expression, highly detailed.`;
-                    
-                    if (currentActiveStyle === "3D Caricature") {
-                        fullPrompt = `A highly stylized 3D caricature of the person in the uploaded image, with ${emo.kw} expression, expressive facial features, and playful exaggeration. Rendered in a smooth, polished style with clean materials and soft ambient lighting. Bold color background to emphasize the character’s charm and presence.`;
-                    } else if (currentActiveStyle === "3D Cartoon") {
-                        fullPrompt = `A cute 3D cartoon style sticker of the person, with ${emo.kw} expression, high quality, colorful background.`;
-                    } else if (currentActiveStyle === "Anime Kawaii") {
-                        fullPrompt = `A kawaii anime style sticker of the person, with ${emo.kw} expression, cute styling, pastel colors.`;
-                    } else if (currentActiveStyle === "Chibi Gamer") {
-                        fullPrompt = `A chibi gamer style sticker of the person, with ${emo.kw} expression, gaming aesthetic, vibrant lighting.`;
-                    } else if (currentActiveStyle === "Watercolor") {
-                        fullPrompt = `A beautiful watercolor painting style sticker of the person, with ${emo.kw} expression, artistic, soft blending.`;
-                    } else if (currentActiveStyle === "Pop Art") {
-                        fullPrompt = `A vibrant pop art style sticker of the person, with ${emo.kw} expression, comic book style, graphic background.`;
-                    }
+                    // Đệm nhẹ 1.5s lúc bắt đầu mỗi ô
                     if (i > 0) await new Promise(r => setTimeout(r, 1500));
 
                     let success = false;
@@ -1288,33 +1238,30 @@
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
-                                imageBase64: resizedBase64,
-                                prompt: fullPrompt,
-                                style: currentActiveStyle
+                                imageBase64: window.finalCroppedBase64,
+                                prompt: fullPrompt
                             })
                         });
                         const data = await response.json();
                         
-                        // Xử lý riêng biệt lỗi 429 (Mạng kẹt do giới hạn Rate Limit Khắc Nghe của con Bot Free)
+                        // Xử lý riêng biệt lỗi 429
                         if (response.status === 429) {
                             console.warn(`[Ô ${i+1}] Bị nghẽn Rate Limit. Đang tự động thử lại...`);
-                            // Hiển thị giao diện "Đang xếp hàng chờ" cực mượt chứ không hiện lỗi đỏ đỏ nữa
                             itemDivs[i].innerHTML = `<div style='color:#666; text-align:center; padding:10px;'><div style="font-size:2.5rem; animation: spin 2s infinite linear;">⏳</div><br><small style="font-size:0.75rem; font-weight: bold; margin-top: 10px; display: block;">Đang xếp hàng chờ tải...<br>(Chống kẹt mạng)</small></div>`;
-                            // Đợi hẳn 3.5 giây rồi mới đấm lại lệnh 
                             await new Promise(r => setTimeout(r, 3500));
-                            continue; // Bắt đầu lại vòng lặp của đúng ô thứ i này
+                            continue;
                         }
 
                         if (response.status !== 200) {
                             console.error("API trả lỗi:", data);
                             itemDivs[i].innerHTML = `<div style='color:red; text-align:center; padding:10px;'>❌ Error<br><small style="font-size:0.7rem">${data.error || ''}</small></div>`;
-                            break; // Ngưng thử và bỏ qua ô này
+                            break; 
                         }
                         
                         if (data.id || data.predictionId) {
-                            success = true; // Đánh dấu thành công để thoát khỏi vòng waiting limit
+                            success = true; 
                             const finalId = data.id || data.predictionId;
-                            pollSticker(finalId, itemDivs[i], emo.label, emo.icon, emo);
+                            pollSticker(finalId, itemDivs[i], i);
                         } else {
                             itemDivs[i].innerHTML = "<div style='color:red;'>❌ API Info Error</div>";
                             break;
@@ -1349,27 +1296,29 @@
         const cropImageDOM = document.getElementById("cropImage");
         const confirmCropBtnDOM = document.getElementById("confirmCropBtn");
 
-        confirmCropBtnDOM.addEventListener("click", () => {
-            if (!window.cropperInstance) return;
-            const canvas = window.cropperInstance.getCroppedCanvas({
-                width: 512,
-                height: 512,
-                fillColor: '#fff',
-                imageSmoothingEnabled: true,
-                imageSmoothingQuality: 'high',
+        if (confirmCropBtnDOM) {
+            confirmCropBtnDOM.addEventListener("click", () => {
+                if (!window.cropperInstance) return;
+                const canvas = window.cropperInstance.getCroppedCanvas({
+                    width: 512,
+                    height: 512,
+                    fillColor: '#fff',
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high',
+                });
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+                window.finalCroppedBase64 = dataUrl.split(',')[1];
+
+                const previewImgV2DOM = document.getElementById("previewImgV2");
+                previewImgV2DOM.src = dataUrl;
+                previewImgV2DOM.style.display = "block";
+                document.getElementById("upIconV2").style.opacity = 0;
+                document.getElementById("upTextV2").style.opacity = 0;
+                document.getElementById("upSubV2").style.opacity = 0;
+                cropModalDOM.style.display = "none";
             });
-
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-            window.finalCroppedBase64 = dataUrl.split(',')[1];
-
-            const previewImgV2DOM = document.getElementById("previewImgV2");
-            previewImgV2DOM.src = dataUrl;
-            previewImgV2DOM.style.display = "block";
-            document.getElementById("upIconV2").style.opacity = 0;
-            document.getElementById("upTextV2").style.opacity = 0;
-            document.getElementById("upSubV2").style.opacity = 0;
-            cropModalDOM.style.display = "none";
-        });
+        }
     </script>
 </body>
 
