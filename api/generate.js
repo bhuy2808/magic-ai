@@ -1,18 +1,19 @@
 export default async function handler(req, res) {
-  // 1. Cấu hình Headers
+  // 1. Cấu hình Headers (Để Frontend gọi API không bị lỗi)
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") return res.status(200).end();
 
   try {
-    const { imageBase64 } = req.body;
+    const { imageBase64, prompt } = req.body; // Nhận ảnh và prompt từ Frontend
     const apiToken = process.env.REPLICATE_API_TOKEN;
 
- // MASTER PROMPT MỚI: Trung tính, ép AI chỉ nhìn vào khuôn mặt của Grid
-const masterPrompt = "A grid of 6 different professional 3D Pixar-style sticker busts. (CRITICAL: Every sticker must feature the exact same unique facial identity, skin tone, hair style, hair color, and specific distinct features as the **person** in the reference photo. If the person has glasses, they must be retained; if not, do not add them). Each of the 6 stickers MUST have a COMPLETELY DIFFERENT and dramatic facial expression: 1. Laughing loudly, 2. Crying with tears, 3. Pensive/thinking, 4. Blowing a kiss, 5. Extreme anger, 6. Winking. Soft cinematic 3D render, thick white sticker borders, clean pastel background, high quality, 8k. Ensure extreme identity fidelity.";
+    if (!apiToken) {
+        return res.status(500).json({ error: "Thiếu REPLICATE_API_TOKEN trong Env" });
+    }
 
-    // 2. Gọi Replicate (Chuyển sang SDXL cho khôn hơn)
+    // 2. Gọi Replicate (Dùng model Flux-Schnell chính chủ)
     const response = await fetch("https://api.replicate.com/v1/models/black-forest-labs/flux-schnell/predictions", {
       method: "POST",
       headers: {
@@ -22,23 +23,26 @@ const masterPrompt = "A grid of 6 different professional 3D Pixar-style sticker 
       body: JSON.stringify({
         input: {
           image: `data:image/jpeg;base64,${imageBase64}`,
-          prompt: masterPrompt,
-          prompt_strength: 0.7, 
-          num_inference_steps: 4,
-          guidance_scale: 3.5,
-          output_format: "webp"
+          prompt: prompt, // Sử dụng prompt biểu cảm lẻ từ vòng lặp index.html gửi lên
+          
+          // --- THÔNG SỐ QUAN TRỌNG ---
+          prompt_strength: 0.7,   // 0.7 là mức cân bằng nhất để vừa giống mặt vừa có biểu cảm
+          num_inference_steps: 4, // Flux Schnell chạy 4 bước là cực nét
+          guidance_scale: 3.5,    // Độ tuân thủ prompt
+          output_format: "webp",
+          aspect_ratio: "1:1"
         }
       })
     });
 
-    // 3. ĐỢI PHẢN HỒI
     const prediction = await response.json();
 
     if (!response.ok) {
-      console.error("Replicate Error Details:", prediction);
-      return res.status(response.status).json({ error: prediction.detail || "Replicate rejected request" });
+      console.error("Replicate Error:", prediction);
+      return res.status(response.status).json({ error: prediction.detail || "Lỗi từ Replicate" });
     }
 
+    // Trả về kết quả cho Frontend
     return res.status(200).json(prediction);
 
   } catch (error) {
