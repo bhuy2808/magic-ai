@@ -1,5 +1,9 @@
 import Replicate from "replicate";
 
+export const config = {
+  maxDuration: 60,
+};
+
 // Nhớ là token trong Vercel phải thay cái mới nhé!
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN, 
@@ -19,7 +23,7 @@ export default async function handler(req, res) {
           main_face_image: `data:image/jpeg;base64,${imageBase64}`,
           prompt: prompt,
           true_cfg_scale: 2.0,
-          num_steps: 40
+          num_steps: 20
         }
       }
     );
