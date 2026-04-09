@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
     // Gọi đúng bản chính chủ của ByteDance để tránh lỗi 404
     const output = await replicate.run(
-      "bytedance/flux-pulid", 
+      "bytedance/flux-pulid:8baa7ef2255075b46f4d91cd238c21d31181b3e6a864463f967960bb0112525b", 
       {
         input: {
           main_face_image: `data:image/jpeg;base64,${imageBase64}`,

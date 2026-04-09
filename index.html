@@ -1678,7 +1678,7 @@
                     
                     // Dừng 11 giây trước khi chạy ô tiếp theo để lách luật 6 request/phút của Replicate
                     if (i < expressions.length - 1) {
-                        await new Promise(r => setTimeout(r, 11000));
+                        await new Promise(r => setTimeout(r, 15000));
                     }
                 }
             } catch (e) {
