@@ -912,7 +912,7 @@
                                     alt="3D Pixar">
                                 <div class="card-label">🌟 3D Pixar</div>
                                 <textarea id="customPrompt1"
-                                    style="display: none;">A professional 3D Pixar-style sticker of ONE SINGLE character. The character MUST retain the exact facial identity, hair, and clothing from the reference photo. White sticker border, soft cinematic 3D render, clean pastel background, 8k, high quality.</textarea>
+                                    style="display: none;">3D Pixar</textarea>
                             </div>
 
                             <div class="style-card">
@@ -920,7 +920,7 @@
                                     alt="Anime">
                                 <div class="card-label">🎌 Anime</div>
                                 <textarea id="customPrompt2"
-                                    style="display: none;">High-quality Anime sticker, Studio Ghibli or Makoto Shinkai style. Single character, vibrant colors, clean line art. Character must have the same hair, eyes, and outfit as the reference photo. Thick white sticker border, flat shaded, 2D aesthetic.</textarea>
+                                    style="display: none;">Anime (Studio Ghibli style)</textarea>
                             </div>
 
                             <div class="style-card">
@@ -928,7 +928,7 @@
                                     alt="Chibi">
                                 <div class="card-label">🧸 Chibi</div>
                                 <textarea id="customPrompt3"
-                                    style="display: none;">Cute Chibi 3D sticker, big expressive eyes, small body. 3D stylized render. Must keep the identity, glasses, and clothes of the person in the photo. High-gloss finish, white sticker border, kawaii aesthetic, toy-like look.</textarea>
+                                    style="display: none;">Chibi</textarea>
                             </div>
 
                             <div class="style-card">
@@ -936,7 +936,7 @@
                                     alt="Vector">
                                 <div class="card-label">📐 Vector</div>
                                 <textarea id="customPrompt4"
-                                    style="display: none;">Minimalist vector sticker art, flat design, bold lines, limited color palette. Character illustration based on the reference photo's identity. Isolated on white background with sticker stroke. Clean, professional graphic design style.</textarea>
+                                    style="display: none;">Minimalist Vector</textarea>
                             </div>
 
                             <div class="style-card">
@@ -944,7 +944,7 @@
                                     alt="Comic">
                                 <div class="card-label">💥 Comic</div>
                                 <textarea id="customPrompt5"
-                                    style="display: none;">Superhero comic book style sticker, bold ink lines, Ben-Day dots, vibrant heroic colors. The character is a stylized superhero version of the person in the photo. Action pose, white sticker border, Marvel/DC aesthetic.</textarea>
+                                    style="display: none;">Superhero Comic Book</textarea>
                             </div>
 
                             <div class="style-card">
@@ -952,7 +952,7 @@
                                     alt="Cyberpunk">
                                 <div class="card-label">🌃 Cyberpunk</div>
                                 <textarea id="customPrompt6"
-                                    style="display: none;">Cyberpunk aesthetic sticker, neon glowing accents, futuristic clothing. Character identity from the photo with tech-wear elements. Synthwave color palette (pink, blue, purple). White sticker border, 3D render, high detail.</textarea>
+                                    style="display: none;">Futuristic Cyberpunk</textarea>
                             </div>
 
                         </div>
@@ -1620,8 +1620,8 @@
                 for (let i = 0; i < expressions.length; i++) {
                     const emo = expressions[i];
                     
-                    // Câu lệnh kết hợp phong cách + biểu cảm + bắt buộc giữ đúng khuôn mặt
-                    const fullPrompt = `${basePrompt}. Expression: ${emo.kw}. Single character, EXACTLY same identity/glasses as photo, thick white border, isolated background. 8k.`;
+                    // Câu lệnh cường hóa chất lượng (Hard constraints for resolution/sharpness)
+                    const fullPrompt = `A high-quality 3D detailed ${basePrompt}-style sticker. Expression: ${emo.kw}. Single character. EXACTLY same identity/glasses as photo. EXTREME DETAIL. Photo-realistic upres. Ultra-sharp. Clean lines. Enhance facial clarity and details. thick white border. isolated background. 8k resolution.`;
 
                     let success = false;
                     while (!success) {
