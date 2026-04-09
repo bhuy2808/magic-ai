@@ -1656,7 +1656,7 @@
             try {
                 for (let i = 0; i < expressions.length; i++) {
                     const expr = expressions[i];
-                    const fullPrompt = `A professional 3D Pixar-style sticker of ONE SINGLE character. CRITICAL: The character MUST clearly retain the exact facial identity, hairstyle, and glasses of the person from the reference photo. NO GENDER CHANGE. Expression MUST BE: ${expr.kw}. High-quality 3D render, white border, clean background.`;
+                    const fullPrompt = `A high-quality 3D Pixar-style sticker of a person. Expression: ${expr.kw}. Wearing exactly the same clothes and accessories as the reference photo. Thick white sticker border, solid background, 8k.`;
 
                     if (i > 0) await new Promise(r => setTimeout(r, 1500));
 
