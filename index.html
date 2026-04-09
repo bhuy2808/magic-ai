@@ -1161,6 +1161,39 @@
                             display: none;
                         }
 
+                        .download-btn {
+                            position: absolute;
+                            bottom: 8px;
+                            right: 8px;
+                            width: 32px;
+                            height: 32px;
+                            background: rgba(255, 255, 255, 0.2);
+                            backdrop-filter: blur(10px);
+                            -webkit-backdrop-filter: blur(10px);
+                            border: 1px solid rgba(255, 255, 255, 0.3);
+                            border-radius: 50%;
+                            display: none;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                            font-size: 1.1rem;
+                            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                            z-index: 10;
+                            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                        }
+
+                        .result-slot.has-result:hover .download-btn {
+                            display: flex;
+                            transform: scale(1.1);
+                        }
+
+                        .download-btn:hover {
+                            background: #FF8BA7;
+                            border-color: #FF8BA7;
+                            color: #FFF;
+                            transform: scale(1.2) !important;
+                        }
+
                         /* Labels */
                         .workspace-labels {
                             display: flex;
@@ -1258,31 +1291,37 @@
                                 <div class="slot-placeholder"><span class="slot-icon">😂</span><span
                                         class="slot-label">Cười Lớn</span></div>
                                 <img class="result-img" alt="Sticker 1" />
+                                <button class="download-btn" title="Tải xuống">💾</button>
                             </div>
                             <div class="result-slot" data-slot="2">
                                 <div class="slot-placeholder"><span class="slot-icon">🥰</span><span
                                         class="slot-label">Bẽn Lẽn</span></div>
                                 <img class="result-img" alt="Sticker 2" />
+                                <button class="download-btn" title="Tải xuống">💾</button>
                             </div>
                             <div class="result-slot" data-slot="3">
                                 <div class="slot-placeholder"><span class="slot-icon">🤔</span><span
                                         class="slot-label">Trầm Tư</span></div>
                                 <img class="result-img" alt="Sticker 3" />
+                                <button class="download-btn" title="Tải xuống">💾</button>
                             </div>
                             <div class="result-slot" data-slot="4">
                                 <div class="slot-placeholder"><span class="slot-icon">😎</span><span
                                         class="slot-label">Tự Tin</span></div>
                                 <img class="result-img" alt="Sticker 4" />
+                                <button class="download-btn" title="Tải xuống">💾</button>
                             </div>
                             <div class="result-slot" data-slot="5">
                                 <div class="slot-placeholder"><span class="slot-icon">😘</span><span
                                         class="slot-label">Chu Môi</span></div>
                                 <img class="result-img" alt="Sticker 5" />
+                                <button class="download-btn" title="Tải xuống">💾</button>
                             </div>
                             <div class="result-slot" data-slot="6">
                                 <div class="slot-placeholder"><span class="slot-icon">😢</span><span
                                         class="slot-label">Buồn Bã</span></div>
                                 <img class="result-img" alt="Sticker 6" />
+                                <button class="download-btn" title="Tải xuống">💾</button>
                             </div>
                         </div>
                     </div>
@@ -1584,12 +1623,12 @@
             btnTextV2.innerText = " Đang xử lý... 🪄";
 
             const expressions = [
-                { kw: 'open-mouthed laugh, showing buck teeth' },
-                { kw: 'nervous wave with hands' },
-                { kw: 'pensive thinking, hand to chin' },
-                { kw: 'happy confident smile' },
-                { kw: 'playful kiss face with heart icon' },
-                { kw: 'sad crying with visible teardrops' }
+                { kw: 'sitting cross-legged and laughing loudly' },
+                { kw: 'sitting and waving bashfully with both hands' },
+                { kw: 'sitting looking pensive with hand to chin' },
+                { kw: 'happy confident smile, full-body shot sitting comfortably on a simple chair' },
+                { kw: 'playful kiss face with heart icon, full-body shot sitting leaning forward' },
+                { kw: 'sad crying with visible teardrops, full-body shot sitting curled up' }
             ];
 
             // Get all result slots
@@ -1608,6 +1647,8 @@
                     img.style.display = "none";
                     img.src = "";
                 }
+                const dlBtn = slot.querySelector(".download-btn");
+                if (dlBtn) dlBtn.onclick = null;
             });
 
             v2ResultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1620,8 +1661,8 @@
                 for (let i = 0; i < expressions.length; i++) {
                     const emo = expressions[i];
                     
-                    // Câu lệnh cường hóa chất lượng (Hard constraints for resolution/sharpness)
-                    const fullPrompt = `A high-quality 3D detailed ${basePrompt}-style sticker. Expression: ${emo.kw}. Single character. EXACTLY same identity/glasses as photo. EXTREME DETAIL. Photo-realistic upres. Ultra-sharp. Clean lines. Enhance facial clarity and details. thick white border. isolated background. 8k resolution.`;
+                    // Câu lệnh cường hóa chất lượng & Full-body shot
+                    const fullPrompt = `A high-quality 3D detailed ${basePrompt}-style sticker of ONE SINGLE character from head to toe. Expression and pose: ${emo.kw}. The character MUST clearly retain the exact facial identity, hairstyle, skin tone, and glasses of the person from the reference photo. NO GENDER CHANGE. Full-body shot. High-quality render, thick white border surrounding the whole figure, isolated background, extreme detail, 8k resolution.`;
 
                     let success = false;
                     while (!success) {
@@ -1650,18 +1691,24 @@
                             
                             // Xử lý hiển thị ảnh thành công
                             const img = resultSlots[i].querySelector(".result-img");
+                            const dlBtn = resultSlots[i].querySelector(".download-btn");
+                            
                             if(img) {
-                               // Replicate mang vè link ảnh trực tiếp hoặc trong mảng
                                const imgUrl = Array.isArray(data) ? data[0] : (data.output ? (Array.isArray(data.output) ? data.output[0] : data.output) : data);
                                img.src = imgUrl;
                                img.style.display = "block";
-                               img.style.cursor = "pointer";
-                               img.onclick = () => {
-                                   const a = document.createElement("a");
-                                   a.href = imgUrl;
-                                   a.download = `sticker_${i + 1}.png`;
-                                   a.click();
-                               };
+                               
+                               // Setup download button
+                               if (dlBtn) {
+                                   dlBtn.onclick = (e) => {
+                                       e.stopPropagation();
+                                       const a = document.createElement("a");
+                                       a.href = imgUrl;
+                                       a.download = `sticker_${i + 1}.png`;
+                                       a.click();
+                                   };
+                               }
+
                                resultSlots[i].classList.add("has-result");
                                const placeholder = resultSlots[i].querySelector(".slot-placeholder");
                                if (placeholder) placeholder.style.opacity = "0";
