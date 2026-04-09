@@ -12,10 +12,13 @@
     <!-- Cropper.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
     <style>
-        /* Circular Crop UI */
-        .cropper-view-box,
-        .cropper-face {
-            border-radius: 50%;
+        /* Rule of Thirds Grid for Cropper */
+        .cropper-view-box {
+            outline: 1px solid rgba(255, 255, 255, 0.5);
+            outline-color: rgba(255, 139, 167, 0.75);
+        }
+        .cropper-line, .cropper-point {
+            background-color: #FF8BA7;
         }
 
         /* Crop Modal Container */
@@ -1482,6 +1485,20 @@
 
 
 
+    <!-- Crop Modal -->
+    <div id="cropModal">
+        <div class="crop-container">
+            <img id="cropImage" src="" style="display:block; max-width:100%;">
+        </div>
+        <div class="crop-actions">
+            <button class="crop-btn btn-cancel"
+                onclick="document.getElementById('cropModal').style.display='none'">Hủy</button>
+            <button class="crop-btn btn-confirm" id="confirmCropBtn">Cắt ảnh ✂️</button>
+        </div>
+    </div>
+    <!-- Cropper.js JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
     <!-- SCRIPT (Reusing the EXACT SAME logic as original index.html) -->
     <script>
         // Simplified Logic as Sticker is removed
@@ -1629,9 +1646,9 @@
                                 dragMode: 'move',
                                 autoCropArea: 0.9,
                                 restore: false,
-                                guides: false,
-                                center: false,
-                                highlight: false,
+                                guides: true,
+                                center: true,
+                                highlight: true,
                                 cropBoxMovable: false,
                                 cropBoxResizable: false,
                                 toggleDragModeOnDblclick: false,
@@ -1806,18 +1823,6 @@
 
     </script>
 
-    <!-- Crop Modal -->
-    <div id="cropModal">
-        <div class="crop-container">
-            <img id="cropImage" src="" style="display:block; max-width:100%;">
-        </div>
-        <div class="crop-actions">
-            <button class="crop-btn btn-cancel"
-                onclick="document.getElementById('cropModal').style.display='none'">Hủy</button>
-            <button class="crop-btn btn-confirm" id="confirmCropBtn">Cắt ảnh ✂️</button>
-        </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script>
         const cropModalDOM = document.getElementById("cropModal");
         const cropImageDOM = document.getElementById("cropImage");
@@ -1852,5 +1857,4 @@
         }
     </script>
 </body>
-
 </html>
