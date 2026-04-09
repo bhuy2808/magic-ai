@@ -1612,54 +1612,18 @@
 
             v2ResultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            async function pollSticker(predictionId, slotDiv, index) {
-                const startTime = Date.now();
-                const interval = setInterval(async () => {
-                    if (Date.now() - startTime > 120000) {
-                        clearInterval(interval);
-                        const ph = slotDiv.querySelector(".slot-placeholder");
-                        if (ph) ph.innerHTML = `<span class="slot-icon">⏱️</span><span class="slot-label">Timeout</span>`;
-                        return;
-                    }
-                    try {
-                        const res = await fetch(`/api/check?id=${predictionId}`);
-                        const data = await res.json();
-                        if (data.status === "succeeded") {
-                            clearInterval(interval);
-                            const imgUrl = Array.isArray(data.output) ? data.output[0] : data.output;
-                            const img = slotDiv.querySelector(".result-img");
-                            if (img) {
-                                img.src = imgUrl;
-                                img.style.display = "block";
-                                img.style.cursor = "pointer";
-                                img.onclick = () => {
-                                    const a = document.createElement("a");
-                                    a.href = imgUrl;
-                                    a.download = `sticker_${index + 1}.png`;
-                                    a.click();
-                                };
-                            }
-                            slotDiv.classList.add("has-result");
-                        } else if (data.status === "failed") {
-                            clearInterval(interval);
-                            const ph = slotDiv.querySelector(".slot-placeholder");
-                            if (ph) ph.innerHTML = `<span class="slot-icon">❌</span><span class="slot-label">Failed</span>`;
-                        }
-                    } catch (e) {
-                        clearInterval(interval);
-                        const ph = slotDiv.querySelector(".slot-placeholder");
-                        if (ph) ph.innerHTML = `<span class="slot-icon">❌</span><span class="slot-label">Error</span>`;
-                    }
-                }, 3000);
-            }
-
             try {
+                // Get selected style prompt
+                const activeCard = document.querySelector("#customPromptsGrid .style-card.active");
+                const basePrompt = activeCard ? activeCard.querySelector("textarea").value : "A high-quality 3D Pixar-style sticker";
+
                 for (let i = 0; i < expressions.length; i++) {
-                    const expr = expressions[i];
-                    const fullPrompt = `A high-quality 3D Pixar-style sticker of a person. Expression: ${expr.kw}. Wearing exactly the same clothes and accessories as the reference photo. Thick white sticker border, solid background, 8k.`;
+                    const emo = expressions[i];
+                    
+                    // Câu lệnh kết hợp phong cách + biểu cảm + bắt buộc giữ đúng khuôn mặt
+                    const fullPrompt = `${basePrompt}. Expression: ${emo.kw}. Single character, EXACTLY same identity/glasses as photo, thick white border, isolated background. 8k.`;
 
                     let success = false;
-
                     while (!success) {
                         try {
                             const response = await fetch("/api/generate", {
@@ -1671,36 +1635,49 @@
                                 })
                             });
 
+                            // Nếu dính 429 từ Replicate, tự động chờ 5s rồi thử lại ngay lập tức
                             if (response.status === 429 || !response.ok) {
-                                console.warn(`[Ô ${i + 1}] Rate limited (${response.status}). Retrying in 5s...`);
-                                const ph = resultSlots[i].querySelector(".slot-placeholder");
-                                if (ph) ph.innerHTML = `<div style='color:#666;'>Rate limited. Retrying...</div>`;
+                                console.warn(`[Ô ${i + 1}] Bị nghẽn Rate Limit. Đang thử lại...`);
+                                if(resultSlots && resultSlots[i]) {
+                                    const ph = resultSlots[i].querySelector(".slot-placeholder");
+                                    if(ph) ph.innerHTML = `<div style='color:#666; font-size: 1rem;'>Nghẽn API, đang thử lại...</div>`;
+                                }
                                 await new Promise(r => setTimeout(r, 5000));
-                                continue;
+                                continue; 
                             }
 
                             const data = await response.json();
-
-                            if (data.id || data.predictionId) {
-                                success = true;
-                                const finalId = data.id || data.predictionId;
-                                pollSticker(finalId, resultSlots[i], i);
-                            } else {
-                                const ph = resultSlots[i].querySelector(".slot-placeholder");
-                                if (ph) ph.innerHTML = `<span class="slot-icon">❌</span><span class="slot-label">API Error</span>`;
-                                break;
+                            
+                            // Xử lý hiển thị ảnh thành công
+                            const img = resultSlots[i].querySelector(".result-img");
+                            if(img) {
+                               // Replicate mang vè link ảnh trực tiếp hoặc trong mảng
+                               const imgUrl = Array.isArray(data) ? data[0] : (data.output ? (Array.isArray(data.output) ? data.output[0] : data.output) : data);
+                               img.src = imgUrl;
+                               img.style.display = "block";
+                               img.style.cursor = "pointer";
+                               img.onclick = () => {
+                                   const a = document.createElement("a");
+                                   a.href = imgUrl;
+                                   a.download = `sticker_${i + 1}.png`;
+                                   a.click();
+                               };
+                               resultSlots[i].classList.add("has-result");
+                               const placeholder = resultSlots[i].querySelector(".slot-placeholder");
+                               if (placeholder) placeholder.style.opacity = "0";
                             }
-                        } catch (fetchErr) {
-                            console.warn(`[Ô ${i + 1}] Fetch error. Retrying in 5s...`, fetchErr);
+                            success = true;
+
+                        } catch (err) {
+                            console.error("Lỗi Fetch:", err);
                             const ph = resultSlots[i].querySelector(".slot-placeholder");
-                            if (ph) ph.innerHTML = `<div style='color:#666;'>Connection error. Retrying...</div>`;
-                            await new Promise(r => setTimeout(r, 5000));
-                            continue;
+                            if(ph) ph.innerHTML = `<div style='color:red;'>Lỗi nặng</div>`;
+                            break; 
                         }
                     }
-
-                    // 11s delay after each successful request to stay under 6 req/min
-                    if (success && i < expressions.length - 1) {
+                    
+                    // Dừng 11 giây trước khi chạy ô tiếp theo để lách luật 6 request/phút của Replicate
+                    if (i < expressions.length - 1) {
                         await new Promise(r => setTimeout(r, 11000));
                     }
                 }
@@ -1712,6 +1689,7 @@
                 btnTextV2.innerText = "Tạo Lại (Re-roll) 🎲";
             }
         }
+
 
     </script>
 
