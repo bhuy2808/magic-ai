@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -1583,23 +1583,13 @@
             spinnerV2.style.display = "inline-block";
             btnTextV2.innerText = " Đang xử lý... 🪄";
 
-            // Get selected prompt
-            const activeCard = document.querySelector("#customPromptsGrid .style-card.active");
-            let targetPrompt = "A cute cartoon sticker";
-            if (activeCard) {
-                const ta = activeCard.querySelector("textarea");
-                if (ta && ta.value.trim() !== "") {
-                    targetPrompt = ta.value.trim();
-                }
-            }
-
-            const emotionsMap = [
-                { icon: "😂", label: "Cười Lớn", kw: "broad open-mouthed laugh, big happy smile" },
-                { icon: "🥰", label: "Bẽn Lẽn", kw: "shy, deeply blushing face, bashful" },
-                { icon: "🤔", label: "Trầm Tư", kw: "pensive, thinking face, finger to chin" },
-                { icon: "😎", label: "Tự Tin", kw: "happy, confident smile, beaming" },
-                { icon: "😘", label: "Chu Môi", kw: "playful kiss face, blowing a kiss" },
-                { icon: "😢", label: "Buồn Bã", kw: "very sad, crying face, big tearful eyes" }
+            const expressions = [
+                { kw: 'open-mouthed laugh, showing buck teeth' },
+                { kw: 'nervous wave with hands' },
+                { kw: 'pensive thinking, hand to chin' },
+                { kw: 'happy confident smile' },
+                { kw: 'playful kiss face with heart icon' },
+                { kw: 'sad crying with visible teardrops' }
             ];
 
             // Get all result slots
@@ -1611,7 +1601,7 @@
                 const placeholder = slot.querySelector(".slot-placeholder");
                 const img = slot.querySelector(".result-img");
                 if (placeholder) {
-                    placeholder.innerHTML = `<div style="font-size:1.8rem; animation: spin 1s infinite linear;">🪄</div><span class="slot-label">${emotionsMap[i].label}</span>`;
+                    placeholder.innerHTML = `<div style="font-size:1.8rem; animation: spin 1s infinite linear;">🪄</div><span class="slot-label">${expressions[i].kw}</span>`;
                     placeholder.style.opacity = "1";
                 }
                 if (img) {
@@ -1664,9 +1654,9 @@
             }
 
             try {
-                for (let i = 0; i < emotionsMap.length; i++) {
-                    const emo = emotionsMap[i];
-                    const fullPrompt = `${targetPrompt}. Expression MUST BE: ${emo.kw}.`;
+                for (let i = 0; i < expressions.length; i++) {
+                    const expr = expressions[i];
+                    const fullPrompt = `A professional 3D Pixar-style sticker of ONE SINGLE character. CRITICAL: The character MUST clearly retain the exact facial identity, hairstyle, and glasses of the person from the reference photo. NO GENDER CHANGE. Expression MUST BE: ${expr.kw}. High-quality 3D render, white border, clean background.`;
 
                     if (i > 0) await new Promise(r => setTimeout(r, 1500));
 

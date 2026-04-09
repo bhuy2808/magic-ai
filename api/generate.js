@@ -26,9 +26,9 @@ export default async function handler(req, res) {
           prompt: prompt, // Sử dụng prompt biểu cảm lẻ từ vòng lặp index.html gửi lên
           
           // --- THÔNG SỐ QUAN TRỌNG ---
-          prompt_strength: 0.7,   // 0.7 là mức cân bằng nhất để vừa giống mặt vừa có biểu cảm
+          prompt_strength: 0.65,  // Giữ kính và identity gốc tốt hơn
           num_inference_steps: 4, // Flux Schnell chạy 4 bước là cực nét
-          guidance_scale: 3.5,    // Độ tuân thủ prompt
+          guidance_scale: 15,     // Ép AI tuân thủ expression keywords mạnh hơn
           output_format: "webp",
           aspect_ratio: "1:1"
         }
