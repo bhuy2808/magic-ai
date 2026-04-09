@@ -1163,26 +1163,25 @@
 
                         .download-btn {
                             position: absolute;
-                            bottom: 10px;
-                            right: 10px;
-                            width: 38px;
-                            height: 38px;
-                            background: #FF8BA7;
-                            color: #FFF;
-                            border: none;
-                            border-radius: 50%;
+                            top: 8px;
+                            right: 8px;
+                            width: 32px;
+                            height: 32px;
+                            background: #FFF;
+                            color: #FF8BA7;
+                            border: 2px solid #FF8BA7;
+                            border-radius: 8px;
                             display: none;
                             align-items: center;
                             justify-content: center;
                             cursor: pointer;
-                            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                            z-index: 50;
-                            box-shadow: 0 4px 12px rgba(255, 139, 167, 0.4);
+                            transition: all 0.2s;
+                            z-index: 999;
+                            box-shadow: 0 4px 10px rgba(255, 139, 167, 0.3);
                         }
 
                         .result-slot.has-result .download-btn {
                             display: flex;
-                            animation: btnPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                         }
 
                         @keyframes btnPop {
@@ -1191,9 +1190,40 @@
                         }
 
                         .download-btn:hover {
-                            background: #ff7495;
-                            transform: scale(1.1) translateY(-2px);
-                            box-shadow: 0 6px 15px rgba(255, 139, 167, 0.6);
+                            background: #FF8BA7;
+                            color: #FFF;
+                            transform: scale(1.1);
+                        }
+
+                        /* Download All Button */
+                        .download-all-area {
+                            grid-column: span 3;
+                            display: flex;
+                            justify-content: center;
+                            margin-top: 15px;
+                            padding-top: 10px;
+                            border-top: 1px solid rgba(255, 255, 255, 0.05);
+                            display: none;
+                        }
+
+                        .download-all-btn {
+                            background: linear-gradient(135deg, #FF8BA7, #FF5E8E);
+                            color: white;
+                            border: none;
+                            padding: 10px 24px;
+                            border-radius: 12px;
+                            font-weight: 600;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            cursor: pointer;
+                            transition: all 0.3s;
+                            box-shadow: 0 10px 20px rgba(255, 139, 167, 0.3);
+                        }
+
+                        .download-all-btn:hover {
+                            transform: translateY(-2px);
+                            box-shadow: 0 15px 30px rgba(255, 139, 167, 0.5);
                         }
 
                         .download-btn svg {
@@ -1344,7 +1374,15 @@
                                         class="slot-label">Buồn Bã</span></div>
                                 <img class="result-img" alt="Sticker 6" />
                                 <button class="download-btn" title="Tải xuống">
-                                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4M7 10l5 5 5-5M12 15V3"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4M7 10l5 5 5-5M12 15V3" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </button>
+                            </div>
+                            
+                            <!-- Area for Download All -->
+                            <div class="download-all-area" id="downloadAllArea">
+                                <button class="download-all-btn" onclick="downloadAllStickers()">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4M7 10l5 5 5-5M12 15V3"/></svg>
+                                    Tải Về Trọn Bộ 6 Sticker
                                 </button>
                             </div>
                         </div>
@@ -1650,9 +1688,9 @@
                 { kw: 'sitting cross-legged and laughing loudly' },
                 { kw: 'sitting and waving bashfully with both hands' },
                 { kw: 'sitting looking pensive with hand to chin' },
-                { kw: 'happy confident smile, full-body shot sitting comfortably on a simple chair' },
-                { kw: 'playful kiss face with heart icon, full-body shot sitting leaning forward' },
-                { kw: 'sad crying with visible teardrops, full-body shot sitting curled up' }
+                { kw: 'happy confident smile, sitting comfortably on a simple chair' },
+                { kw: 'playful kiss face with heart icon, sitting leaning forward' },
+                { kw: 'sad crying with visible teardrops, sitting curled up' }
             ];
 
             // Get all result slots
@@ -1685,8 +1723,8 @@
                 for (let i = 0; i < expressions.length; i++) {
                     const emo = expressions[i];
                     
-                    // Câu lệnh cường hóa chất lượng & Full-body shot (Strong Weighted Styles)
-                    const fullPrompt = `${basePrompt} sticker of ONE SINGLE character from head to toe. Expression and pose: ${emo.kw}. The character MUST clearly retain the exact facial identity, hairstyle, skin tone, and glasses of the person from the reference photo. NO GENDER CHANGE. Full-body shot. High-quality render, thick white border surrounding the whole figure, isolated background, extreme detail, 8k resolution.`;
+                    // Câu lệnh cường hóa chất lượng & Dynamic framing
+                    const fullPrompt = `${basePrompt} sticker of ONE SINGLE character. (Dynamic framing: match the crop of the reference photo. Generate a half-body portrait if the reference is a close-up, or a full-body shot if the reference shows the body:1.5). Expression and pose: ${emo.kw}. The character MUST clearly retain the exact facial identity, hairstyle, skin tone, and glasses of the person from the reference photo. NO GENDER CHANGE. High-quality render, thick white border surrounding the whole figure, isolated background, extreme detail, 8k resolution.`;
 
                     let success = false;
                     while (!success) {
@@ -1736,6 +1774,10 @@
                                resultSlots[i].classList.add("has-result");
                                const placeholder = resultSlots[i].querySelector(".slot-placeholder");
                                if (placeholder) placeholder.style.opacity = "0";
+
+                               // Hiển thị nút Tải Tất Cả nếu đã xong hết
+                               checkAllFinished();
+                            }
                             }
                             success = true;
 
