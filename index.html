@@ -1658,45 +1658,50 @@
                     const expr = expressions[i];
                     const fullPrompt = `A high-quality 3D Pixar-style sticker of a person. Expression: ${expr.kw}. Wearing exactly the same clothes and accessories as the reference photo. Thick white sticker border, solid background, 8k.`;
 
-                    if (i > 0) await new Promise(resolve => setTimeout(resolve, 3000));
-
                     let success = false;
 
                     while (!success) {
-                        const response = await fetch("/api/generate", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                imageBase64: window.finalCroppedBase64,
-                                prompt: fullPrompt
-                            })
-                        });
-                        const data = await response.json();
+                        try {
+                            const response = await fetch("/api/generate", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    imageBase64: window.finalCroppedBase64,
+                                    prompt: fullPrompt
+                                })
+                            });
 
-                        if (response.status === 429) {
-                            console.warn(`[Ô ${i + 1}] Bị nghẽn Rate Limit. Đang tự động thử lại...`);
+                            if (response.status === 429 || !response.ok) {
+                                console.warn(`[Ô ${i + 1}] Rate limited (${response.status}). Retrying in 5s...`);
+                                const ph = resultSlots[i].querySelector(".slot-placeholder");
+                                if (ph) ph.innerHTML = `<div style='color:#666;'>Rate limited. Retrying...</div>`;
+                                await new Promise(r => setTimeout(r, 5000));
+                                continue;
+                            }
+
+                            const data = await response.json();
+
+                            if (data.id || data.predictionId) {
+                                success = true;
+                                const finalId = data.id || data.predictionId;
+                                pollSticker(finalId, resultSlots[i], i);
+                            } else {
+                                const ph = resultSlots[i].querySelector(".slot-placeholder");
+                                if (ph) ph.innerHTML = `<span class="slot-icon">❌</span><span class="slot-label">API Error</span>`;
+                                break;
+                            }
+                        } catch (fetchErr) {
+                            console.warn(`[Ô ${i + 1}] Fetch error. Retrying in 5s...`, fetchErr);
                             const ph = resultSlots[i].querySelector(".slot-placeholder");
-                            if (ph) ph.innerHTML = `<div style="font-size:1.5rem; animation: spin 2s infinite linear;">⏳</div><span class="slot-label">Đang chờ...</span>`;
-                            await new Promise(r => setTimeout(r, 3500));
+                            if (ph) ph.innerHTML = `<div style='color:#666;'>Connection error. Retrying...</div>`;
+                            await new Promise(r => setTimeout(r, 5000));
                             continue;
                         }
+                    }
 
-                        if (response.status !== 200) {
-                            console.error("API trả lỗi:", data);
-                            const ph = resultSlots[i].querySelector(".slot-placeholder");
-                            if (ph) ph.innerHTML = `<span class="slot-icon">❌</span><span class="slot-label">Lỗi</span>`;
-                            break;
-                        }
-
-                        if (data.id || data.predictionId) {
-                            success = true;
-                            const finalId = data.id || data.predictionId;
-                            pollSticker(finalId, resultSlots[i], i);
-                        } else {
-                            const ph = resultSlots[i].querySelector(".slot-placeholder");
-                            if (ph) ph.innerHTML = `<span class="slot-icon">❌</span><span class="slot-label">API Error</span>`;
-                            break;
-                        }
+                    // 11s delay after each successful request to stay under 6 req/min
+                    if (success && i < expressions.length - 1) {
+                        await new Promise(r => setTimeout(r, 11000));
                     }
                 }
             } catch (e) {
