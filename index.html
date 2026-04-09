@@ -912,7 +912,7 @@
                                     alt="3D Pixar">
                                 <div class="card-label">🌟 3D Pixar</div>
                                 <textarea id="customPrompt1"
-                                    style="display: none;">3D Pixar</textarea>
+                                    style="display: none;">(3D Pixar animation style, Disney CG render, soft smooth lighting, high quality 3D:1.5).</textarea>
                             </div>
 
                             <div class="style-card">
@@ -920,7 +920,7 @@
                                     alt="Anime">
                                 <div class="card-label">🎌 Anime</div>
                                 <textarea id="customPrompt2"
-                                    style="display: none;">Anime (Studio Ghibli style)</textarea>
+                                    style="display: none;">(Classic 2D Anime style, flat cel shading, Studio Ghibli aesthetic, Makoto Shinkai, Japanese animation:2.0). NO 3D, NO REALISM, pure 2D flat art.</textarea>
                             </div>
 
                             <div class="style-card">
@@ -928,7 +928,7 @@
                                     alt="Chibi">
                                 <div class="card-label">🧸 Chibi</div>
                                 <textarea id="customPrompt3"
-                                    style="display: none;">Chibi</textarea>
+                                    style="display: none;">(Kawaii Chibi style, massive eyes, tiny body, cute Japanese 2D art, pastel colors:1.5).</textarea>
                             </div>
 
                             <div class="style-card">
@@ -936,7 +936,7 @@
                                     alt="Vector">
                                 <div class="card-label">📐 Vector</div>
                                 <textarea id="customPrompt4"
-                                    style="display: none;">Minimalist Vector</textarea>
+                                    style="display: none;">(Minimalist flat vector illustration, smooth SVG look, solid unshaded colors, geometric shapes, corporate flat design:2.0). NO 3D, NO GRADIENTS.</textarea>
                             </div>
 
                             <div class="style-card">
@@ -944,7 +944,7 @@
                                     alt="Comic">
                                 <div class="card-label">💥 Comic</div>
                                 <textarea id="customPrompt5"
-                                    style="display: none;">Superhero Comic Book</textarea>
+                                    style="display: none;">(American comic book style, graphic novel superhero, heavy thick black ink outlines, bold pop-art colors, halftone Ben-Day dots:2.0). NO 3D, pure comic illustration.</textarea>
                             </div>
 
                             <div class="style-card">
@@ -952,7 +952,7 @@
                                     alt="Cyberpunk">
                                 <div class="card-label">🌃 Cyberpunk</div>
                                 <textarea id="customPrompt6"
-                                    style="display: none;">Futuristic Cyberpunk</textarea>
+                                    style="display: none;">(Cyberpunk aesthetic, neon glowing accents, futuristic dystopian sci-fi, synthwave lighting:1.5).</textarea>
                             </div>
 
                         </div>
@@ -1685,8 +1685,8 @@
                 for (let i = 0; i < expressions.length; i++) {
                     const emo = expressions[i];
                     
-                    // Câu lệnh cường hóa chất lượng & Full-body shot
-                    const fullPrompt = `A high-quality 3D detailed ${basePrompt}-style sticker of ONE SINGLE character from head to toe. Expression and pose: ${emo.kw}. The character MUST clearly retain the exact facial identity, hairstyle, skin tone, and glasses of the person from the reference photo. NO GENDER CHANGE. Full-body shot. High-quality render, thick white border surrounding the whole figure, isolated background, extreme detail, 8k resolution.`;
+                    // Câu lệnh cường hóa chất lượng & Full-body shot (Strong Weighted Styles)
+                    const fullPrompt = `${basePrompt} sticker of ONE SINGLE character from head to toe. Expression and pose: ${emo.kw}. The character MUST clearly retain the exact facial identity, hairstyle, skin tone, and glasses of the person from the reference photo. NO GENDER CHANGE. Full-body shot. High-quality render, thick white border surrounding the whole figure, isolated background, extreme detail, 8k resolution.`;
 
                     let success = false;
                     while (!success) {
