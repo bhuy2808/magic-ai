@@ -1499,9 +1499,12 @@
     </div>
     <!-- Cropper.js JS moved to head -->
 
-    <!-- SCRIPT (Reusing the EXACT SAME logic as original index.html) -->
     <script>
-        // Simplified Logic as Sticker is removed
+        console.log("[App] Initializing Magic AI scripts...");
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("[App] DOM loaded, setting up event listeners...");
+            
+            // Simplified Logic as Sticker is removed
         const tabIdol = document.getElementById("tabIdol");
         const viewIdol = document.getElementById("viewIdol");
 
@@ -1559,6 +1562,7 @@
                 processBtnIdol.classList.add("ready");
                 resultBentoIdol.style.display = "none";
             }
+        };
         }
 
         idolCards.forEach(card => card.addEventListener("click", () => {
@@ -1711,9 +1715,7 @@
         const btnTextV2 = document.getElementById("btnTextV2");
         const v2ResultContainer = document.getElementById("v2ResultContainer");
 
-        if (generateV2Btn) {
-            generateV2Btn.onclick = handleGenerate;
-        }
+        // Assignments moved to the end of script to avoid hoisting issues
 
         // Logic make boxes selectable
         const promptCards = document.querySelectorAll("#customPromptsGrid .style-card");
@@ -1891,6 +1893,14 @@
         }
 
 
+        // --- INITIALIZATION ---
+        if (generateV2Btn) {
+            console.log("[App] Binding handleGenerate to button.");
+            generateV2Btn.onclick = handleGenerate;
+        }
+
+        console.log("[App] Script initialization complete.");
+    });
     </script>
 
 
