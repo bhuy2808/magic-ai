@@ -23,8 +23,7 @@ export default async function handler(req, res) {
           main_face_image: `data:image/jpeg;base64,${imageBase64}`,
           prompt: prompt,
           true_cfg_scale: 4.0,
-          guidance_scale: 7.5,
-          num_steps: 25
+          num_steps: 16
         }
       }
     );
