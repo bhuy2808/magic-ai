@@ -9,8 +9,9 @@
         rel="stylesheet">
     <link rel="stylesheet" href="assets/css/photoai.css">
 
-    <!-- Cropper.js CSS -->
+    <!-- Cropper.js CSS & JS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <style>
         /* Rule of Thirds Grid for Cropper */
         .cropper-view-box {
@@ -1496,8 +1497,7 @@
             <button class="crop-btn btn-confirm" id="confirmCropBtn">Cắt ảnh ✂️</button>
         </div>
     </div>
-    <!-- Cropper.js JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <!-- Cropper.js JS moved to head -->
 
     <!-- SCRIPT (Reusing the EXACT SAME logic as original index.html) -->
     <script>
@@ -1547,7 +1547,8 @@
 
 
 
-        uploadIdol.onchange = function () {
+        if (uploadIdol) {
+            uploadIdol.onchange = function () {
             const file = this.files[0];
             if (file) {
                 previewImgIdol.src = URL.createObjectURL(file);
@@ -1622,42 +1623,39 @@
 
 
         const uploadV2 = document.getElementById("uploadV2");
-        const previewImgV2 = document.getElementById("previewImgV2");
-        const upIconV2 = document.getElementById("upIconV2");
-        const upTextV2 = document.getElementById("upTextV2");
-        const upSubV2 = document.getElementById("upSubV2");
-
         if (uploadV2) {
             uploadV2.onchange = function (e) {
                 const file = e.target.files[0];
                 if (file) {
+                    console.log("[Upload] File selected:", file.name);
                     const reader = new FileReader();
                     reader.onload = function (event) {
                         const cropImageDOM = document.getElementById("cropImage");
                         const cropModalDOM = document.getElementById("cropModal");
 
-                        cropImageDOM.onload = function () {
-                            if (window.cropperInstance) {
-                                window.cropperInstance.destroy();
-                            }
-                            window.cropperInstance = new Cropper(cropImageDOM, {
-                                aspectRatio: 1,
-                                viewMode: 1,
-                                dragMode: 'move',
-                                autoCropArea: 0.9,
-                                restore: false,
-                                guides: true,
-                                center: true,
-                                highlight: true,
-                                cropBoxMovable: false,
-                                cropBoxResizable: false,
-                                toggleDragModeOnDblclick: false,
-                            });
-                        };
-
-                        // Kích hoạt render preview
-                        cropImageDOM.src = event.target.result;
-                        if (cropModalDOM) cropModalDOM.style.display = "flex";
+                        if (cropImageDOM) {
+                            cropImageDOM.onload = function () {
+                                console.log("[Upload] Crop image loaded. Initializing Cropper.js...");
+                                if (window.cropperInstance) window.cropperInstance.destroy();
+                                window.cropperInstance = new Cropper(cropImageDOM, {
+                                    aspectRatio: 1,
+                                    viewMode: 1,
+                                    dragMode: 'move',
+                                    autoCropArea: 0.9,
+                                    guides: true,
+                                    center: true,
+                                    highlight: true,
+                                    cropBoxMovable: false,
+                                    cropBoxResizable: false,
+                                    toggleDragModeOnDblclick: false,
+                                });
+                            };
+                            cropImageDOM.src = event.target.result;
+                        }
+                        if (cropModalDOM) {
+                            cropModalDOM.style.display = "flex";
+                            console.log("[Upload] Crop modal displayed.");
+                        }
                     };
                     reader.readAsDataURL(file);
                 }
@@ -1665,10 +1663,57 @@
             };
         }
 
-        const generateV2Btn = document.getElementById("generateV2Btn");
+        // --- CROP CONFIRMATION LOGIC ---
+        const confirmCropBtnDOM = document.getElementById("confirmCropBtn");
+        if (confirmCropBtnDOM) {
+            confirmCropBtnDOM.onclick = () => {
+                console.log("[Crop] Confirm button clicked.");
+                if (!window.cropperInstance) {
+                    console.warn("[Crop] No cropper instance found.");
+                    return;
+                }
+                const canvas = window.cropperInstance.getCroppedCanvas({
+                    width: 512,
+                    height: 512,
+                    fillColor: '#fff',
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high',
+                });
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+                window.finalCroppedBase64 = dataUrl.split(',')[1];
+                console.log("[Crop] Final base64 generated.");
+
+                const previewImgV2DOM = document.getElementById("previewImgV2");
+                if (previewImgV2DOM) {
+                    previewImgV2DOM.src = dataUrl;
+                    previewImgV2DOM.style.display = "block";
+                }
+
+                // Hide placeholder, show image
+                const uploadZone = document.getElementById("uploadV2Zone");
+                if (uploadZone) {
+                    const placeholder = uploadZone.querySelector(".upload-placeholder");
+                    if (placeholder) placeholder.style.display = "none";
+                    uploadZone.classList.add("has-image");
+                }
+
+                const cropModalDOM = document.getElementById("cropModal");
+                if (cropModalDOM) cropModalDOM.style.display = "none";
+                console.log("[Crop] Modal closed.");
+            };
+        }
+
+
+
+        const generateV2Btn = document.getElementById("generate-btn");
         const spinnerV2 = document.getElementById("spinnerV2");
         const btnTextV2 = document.getElementById("btnTextV2");
         const v2ResultContainer = document.getElementById("v2ResultContainer");
+
+        if (generateV2Btn) {
+            generateV2Btn.onclick = handleGenerate;
+        }
 
         // Logic make boxes selectable
         const promptCards = document.querySelectorAll("#customPromptsGrid .style-card");
@@ -1691,7 +1736,10 @@
 
         const handleGenerate = async () => {
             const generateBtn = document.getElementById("generate-btn");
-            if (!generateBtn) return;
+            if (!generateBtn) {
+                console.error("[Generate] Generate button not found!");
+                return;
+            }
 
             if (!window.finalCroppedBase64) {
                 alert("Vui lòng tải lên và cắt ảnh selfie của bạn trước nhé! 📸");
@@ -1755,12 +1803,13 @@
                                 })
                             });
 
-                            // Nếu dính 429 từ Replicate, tự động chờ 5s rồi thử lại ngay lập tức
+                            // Nếu dính 429 từ Replicate hoặc lỗi mạng, tự động chờ 5s rồi thử lại
                             if (response.status === 429 || !response.ok) {
-                                console.warn(`[Ô ${i + 1}] Bị nghẽn Rate Limit. Đang thử lại...`);
+                                const errorText = await response.text();
+                                console.warn(`[Ô ${i + 1}] Lỗi ${response.status}. Đang thử lại sau 5s...`, errorText);
                                 if(resultSlots && resultSlots[i]) {
                                     const ph = resultSlots[i].querySelector(".slot-placeholder");
-                                    if(ph) ph.innerHTML = `<div style='color:#666; font-size: 1rem;'>Nghẽn API, đang thử lại...</div>`;
+                                    if(ph) ph.innerHTML = `<div style='color:#FF8BA7; font-size: 0.9rem; text-align:center;'>Đang đợi rảnh kênh... (${response.status})</div>`;
                                 }
                                 await new Promise(r => setTimeout(r, 5000));
                                 continue; 
@@ -1792,12 +1841,9 @@
                                const placeholder = resultSlots[i].querySelector(".slot-placeholder");
                                if (placeholder) placeholder.style.opacity = "0";
 
-                               // Hiển thị nút Tải Tất Cả nếu đã xong hết
                                checkAllFinished();
                             }
-                            }
                             success = true;
-
                         } catch (err) {
                             console.error("Lỗi Fetch:", err);
                             const ph = resultSlots[i].querySelector(".slot-placeholder");
@@ -1815,46 +1861,38 @@
                 console.error("Lỗi khi tạo chuỗi Sticker:", e);
                 alert("Lỗi trong quá trình khởi tạo Sticker:\n" + e.message);
             } finally {
-                spinnerV2.style.display = "none";
-                btnTextV2.innerText = "Tạo Lại (Re-roll) 🎲";
+                if (spinnerV2) spinnerV2.style.display = "none";
+                if (btnTextV2) btnTextV2.innerText = "Tạo Lại (Re-roll) 🎲";
             }
         }
 
+        function checkAllFinished() {
+            const slots = document.querySelectorAll("#v2ResultContainer .result-slot");
+            const finished = Array.from(slots).filter(s => s.classList.contains("has-result")).length;
+            console.log(`[Check] Finished: ${finished}/6`);
+            const dlAllArea = document.getElementById("downloadAllArea");
+            if (finished === 6 && dlAllArea) {
+                dlAllArea.style.display = "flex";
+            }
+        }
 
-    </script>
-
-    <script>
-        const cropModalDOM = document.getElementById("cropModal");
-        const cropImageDOM = document.getElementById("cropImage");
-        const confirmCropBtnDOM = document.getElementById("confirmCropBtn");
-
-        if (confirmCropBtnDOM) {
-            confirmCropBtnDOM.addEventListener("click", () => {
-                if (!window.cropperInstance) return;
-                const canvas = window.cropperInstance.getCroppedCanvas({
-                    width: 512,
-                    height: 512,
-                    fillColor: '#fff',
-                    imageSmoothingEnabled: true,
-                    imageSmoothingQuality: 'high',
-                });
-
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-                window.finalCroppedBase64 = dataUrl.split(',')[1];
-
-                const previewImgV2DOM = document.getElementById("previewImgV2");
-                previewImgV2DOM.src = dataUrl;
-                previewImgV2DOM.style.display = "block";
-
-                // Hide placeholder, show image
-                const uploadZone = document.getElementById("uploadV2Zone");
-                const placeholder = uploadZone ? uploadZone.querySelector(".upload-placeholder") : null;
-                if (placeholder) placeholder.style.display = "none";
-                if (uploadZone) uploadZone.classList.add("has-image");
-
-                cropModalDOM.style.display = "none";
+        async function downloadAllStickers() {
+            const imgs = document.querySelectorAll("#v2ResultContainer .result-img");
+            imgs.forEach((img, i) => {
+                if (img.src && img.style.display !== "none") {
+                    setTimeout(() => {
+                        const a = document.createElement("a");
+                        a.href = img.src;
+                        a.download = `sticker_fullset_${i + 1}.png`;
+                        a.click();
+                    }, i * 500);
+                }
             });
         }
+
+
     </script>
+
+
 </body>
 </html>
