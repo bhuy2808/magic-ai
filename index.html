@@ -948,7 +948,7 @@
                                     alt="Comic">
                                 <div class="card-label">💥 Comic</div>
                                 <textarea id="customPrompt5"
-                                    style="display: none;">(American comic book style, graphic novel superhero, heavy thick black ink outlines, bold pop-art colors, halftone Ben-Day dots:2.0). NO 3D, pure comic illustration.</textarea>
+                                    style="display: none;">(American comic book style:1.5), (wearing a cool superhero costume, dynamic action pose:1.5).</textarea>
                             </div>
 
                             <div class="style-card">
@@ -956,7 +956,7 @@
                                     alt="Cyberpunk">
                                 <div class="card-label">🌃 Cyberpunk</div>
                                 <textarea id="customPrompt6"
-                                    style="display: none;">(Cyberpunk aesthetic, neon glowing accents, futuristic dystopian sci-fi, synthwave lighting:1.5).</textarea>
+                                    style="display: none;">(Cyberpunk aesthetic:1.5), (STRICTLY maintain the exact age and demographic of the reference photo:1.5).</textarea>
                             </div>
 
                         </div>
@@ -1752,12 +1752,12 @@
             btnTextV2.innerText = " Đang xử lý... 🪄";
 
             const expressions = [
-                { kw: 'sitting cross-legged and laughing loudly' },
-                { kw: 'sitting and waving bashfully with both hands' },
-                { kw: 'sitting looking pensive with hand to chin' },
-                { kw: 'happy confident smile, sitting comfortably on a simple chair' },
-                { kw: 'playful kiss face with heart icon, sitting leaning forward' },
-                { kw: 'sad crying with visible teardrops, sitting curled up' }
+                { kw: '(LAUGHING OUT LOUD 😆, mouth wide open showing teeth, extreme joy:1.5)' },
+                { kw: '(WINKING ONE EYE 😉, playful face, one eye completely closed:1.5)' },
+                { kw: '(PENSIVE THINKING 🤔, furrowed eyebrows, serious thinking face, hand on chin:1.5)' },
+                { kw: '(HUGE CHEERFUL SMILE 😄, very happy, big smile:1.5)' },
+                { kw: '(KISSING FACE 😘, lips tightly puckered into an O shape, blowing a kiss:1.5)' },
+                { kw: '(CRYING HEAVILY 😭, sad face, streams of tears physically rolling down cheeks, weeping:1.5)' }
             ];
 
             // Get all result slots
@@ -1791,7 +1791,7 @@
                     const emo = expressions[i];
                     
                     // Câu lệnh cường hóa chất lượng & Dynamic framing
-                    const fullPrompt = `${basePrompt} sticker of ONE SINGLE character. (Dynamic framing: match the crop of the reference photo. Generate a half-body portrait if the reference is a close-up, or a full-body shot if the reference shows the body:1.5). Expression and pose: ${emo.kw}. The character MUST clearly retain the exact facial identity, hairstyle, skin tone, and glasses of the person from the reference photo. NO GENDER CHANGE. High-quality render, thick white border surrounding the whole figure, isolated background, extreme detail, 8k resolution.`;
+                    const fullPrompt = `${basePrompt} sticker of ONE SINGLE character. (Dynamic framing: match the crop of the reference photo. Generate a half-body portrait if the reference is a close-up, or a full-body shot if the reference shows the body:1.5). Expression and pose: ${emo.kw}. The character MUST EXACTLY match the facial identity, age, and gender of the reference photo. NO GENDER CHANGE. High-quality render, thick white border surrounding the whole figure, isolated background, extreme detail, 8k resolution.`;
 
                     let success = false;
                     while (!success) {
