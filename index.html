@@ -1776,9 +1776,11 @@
                     img.style.display = "none";
                     img.src = "";
                 }
-                const dlBtn = slot.querySelector(".download-btn");
                 if (dlBtn) dlBtn.onclick = null;
             });
+
+            const dlAllAreaStart = document.getElementById("downloadAllArea");
+            if (dlAllAreaStart) dlAllAreaStart.style.display = "none";
 
             v2ResultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -1830,12 +1832,25 @@
                                
                                // Setup download button
                                if (dlBtn) {
-                                   dlBtn.onclick = (e) => {
+                                   dlBtn.onclick = async (e) => {
                                        e.stopPropagation();
-                                       const a = document.createElement("a");
-                                       a.href = imgUrl;
-                                       a.download = `sticker_${i + 1}.png`;
-                                       a.click();
+                                       try {
+                                           const resp = await fetch(imgUrl);
+                                           const blob = await resp.blob();
+                                           const url = URL.createObjectURL(blob);
+                                           const a = document.createElement("a");
+                                           a.href = url;
+                                           a.download = `sticker_${i + 1}.png`;
+                                           a.click();
+                                           URL.revokeObjectURL(url);
+                                       } catch (err) {
+                                           console.error("Single download error:", err);
+                                           // Fallback
+                                           const a = document.createElement("a");
+                                           a.href = imgUrl;
+                                           a.download = `sticker_${i + 1}.png`;
+                                           a.click();
+                                       }
                                    };
                                }
 
@@ -1854,10 +1869,16 @@
                         }
                     }
                     
-                    // Dừng 11 giây trước khi chạy ô tiếp theo để lách luật 6 request/phút của Replicate
                     if (i < expressions.length - 1) {
                         await new Promise(r => setTimeout(r, 15000));
                     }
+                }
+                
+                // Show download all area if at least one sticker exists
+                const finalSlots = document.querySelectorAll("#v2ResultContainer .result-slot.has-result");
+                const dlAllAreaFinish = document.getElementById("downloadAllArea");
+                if (finalSlots.length > 0 && dlAllAreaFinish) {
+                    dlAllAreaFinish.style.display = "flex";
                 }
             } catch (e) {
                 console.error("Lỗi khi tạo chuỗi Sticker:", e);
@@ -1869,27 +1890,35 @@
         }
 
         function checkAllFinished() {
-            const slots = document.querySelectorAll("#v2ResultContainer .result-slot");
-            const finished = Array.from(slots).filter(s => s.classList.contains("has-result")).length;
-            console.log(`[Check] Finished: ${finished}/6`);
-            const dlAllArea = document.getElementById("downloadAllArea");
-            if (finished === 6 && dlAllArea) {
-                dlAllArea.style.display = "flex";
-            }
+            // Logic moved to the end of main loop to be more robust
         }
 
         async function downloadAllStickers() {
             const imgs = document.querySelectorAll("#v2ResultContainer .result-img");
-            imgs.forEach((img, i) => {
+            let count = 0;
+            for (let i = 0; i < imgs.length; i++) {
+                const img = imgs[i];
                 if (img.src && img.style.display !== "none") {
-                    setTimeout(() => {
+                    try {
+                        const resp = await fetch(img.src);
+                        const blob = await resp.blob();
+                        const url = URL.createObjectURL(blob);
                         const a = document.createElement("a");
-                        a.href = img.src;
+                        a.href = url;
                         a.download = `sticker_fullset_${i + 1}.png`;
+                        document.body.appendChild(a);
                         a.click();
-                    }, i * 500);
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        count++;
+                        // Stagger to prevent browser blocking
+                        await new Promise(r => setTimeout(r, 800));
+                    } catch (err) {
+                        console.error("Batch download error:", err);
+                    }
                 }
-            });
+            }
+            if (count === 0) alert("Không có sticker nào để tải.");
         }
 
 
