@@ -22,7 +22,7 @@ export default async function handler(req, res) {
         input: {
           main_face_image: `data:image/jpeg;base64,${imageBase64}`,
           prompt: prompt,
-          true_cfg_scale: 4.0,
+          true_cfg: 4.0,
           num_steps: 16
         }
       }
