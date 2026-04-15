@@ -1819,7 +1819,7 @@
                             }
                             
                             // Nếu lỗi khác, ngắt vòng lặp bằng cách ném lỗi
-                            if (!response.ok) {
+                            if (!response.ok && response.status !== 429) {
                                 throw new Error('API Error: ' + response.status);
                             }
 
