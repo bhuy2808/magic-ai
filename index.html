@@ -940,8 +940,25 @@
                                     alt="Comic">
                                 <div class="card-label">💥 2D Classic</div>
                                 <textarea id="customPrompt5"
-                                    style="display: none;">A professional 2D classic vector sticker, inspired by mid-century vintage cartoon style. The subject is a direct transformation of the provided input image, preserving key recognizable features such as hairstyle, glasses, clothing patterns, and facial structure. Bold, clean black outlines. Flat, vibrant vintage color palette with no gradients or 3D shading. Thick, clean white die-cut border surrounding the entire subject. The character has simplified, expressive features typical of classic animation. Solid, neutral background. High contrast, high quality, minimal aesthetic.</textarea>
-                                <textarea class="negative-prompt" style="display: none;">3D, realistic, photorealistic, photography, complex background, gradients, soft shadows, blurry, distorted features, messy lines, text, watermark</textarea>
+                                    style="display: none;">A close-up photograph of a sheet of six distinct, die-cut vintage mid-century vector cartoon stickers, inspired by the style of early animation like Fleischer or Rubber Hose (but clean vector outlines). The arrangement is a grid of two rows and three columns, placed on a worn, textured paper background, with a few subtle paper creases and natural shadows. All stickers feature the character from the provided input image, explicitly preserving his recognizable features (distinct face structure, hair, eyeglasses, and the specific teal t-shirt color with its bear graphic).
+
+Art style: authentic vintage paper texture effect, bold, clean, hand-drawn black outlines, flat vibrant limited vintage color palette with no gradients or 3D shading. Thick, irregular clean white die-cut border surrounding each individual sticker.
+
+Top row (left to right):
+
+Joyful: The character from image_15.png (wearing glasses and bear tee) with a broad, squinting smile and small starburst icons around the head. Vietnamese text below: 'VUI QUÁ!' in bold classic vintage font.
+
+Sad: The character has tearful eyes, a downturned mouth, a small rain cloud icon, and a single tear. Text: 'BUỒN QUÁ!' in bold classic vintage font.
+
+Angry: Furious expression, face red, steam emitting from the ears, lightning bolt icons. Text: 'GIẬN DỮ!' in bold classic vintage font.
+
+Bottom row (left to right):
+4. Terrified: Character with wide terrified eyes, sweat drops, a skull icon. Text: 'SỢ QUÁ!' in bold classic vintage font.
+5. Excited: Mouth open in awe, shining bright eyes, lightbulb and star cluster icons. Text: 'THÍCH THÚ!' in bold classic vintage font.
+6. Shocked: Jaw dropped completely, wide eyes, large question marks and dramatic explosion burst icon. Text: 'HẾT HỒN!' in bold classic vintage font.
+
+The background is worn wood and a blurred old pencil. Natural daylight.</textarea>
+                                <textarea class="negative-prompt" style="display: none;">3D, realistic, photorealistic, photography, complex background, modern vector, smooth lines, gradients, soft shadows, blurry, single picture of a person, modern emoji style, clean digital art.</textarea>
                             </div>
 
                             <div class="style-card">
@@ -1375,6 +1392,15 @@
                                 </button>
                             </div>
                             
+                            <!-- Area for single sheet result -->
+                            <div class="sheet-result-slot" id="sheetResultSlot" style="display: none; grid-column: 1 / -1; width: 100%; aspect-ratio: 1; align-items: center; justify-content: center; position: relative; background: rgba(255, 255, 255, 0.05); border: 2px dashed rgba(255, 255, 255, 0.1); border-radius: 16px; overflow: hidden; padding: 20px;">
+                                <div class="slot-placeholder" id="sheetPlaceholder" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;"></div>
+                                <img class="result-img" id="sheetResultImg" alt="Sticker Sheet" style="display: none; width: 100%; height: 100%; object-fit: contain;" />
+                                <button class="download-btn" id="sheetDownloadBtn" title="Tải xuống" style="display: none; position: absolute; bottom: 25px; right: 25px;">
+                                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4M7 10l5 5 5-5M12 15V3" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </button>
+                            </div>
+
                             <!-- Area for Download All -->
                             <div class="download-all-area" id="downloadAllArea">
                                 <button class="download-all-btn" onclick="downloadAllStickers()">
@@ -1785,11 +1811,23 @@
                 const negTA = activeCard ? activeCard.querySelector(".negative-prompt") : null;
                 const negativePrompt = negTA ? negTA.value : "";
 
-                for (let i = 0; i < expressions.length; i++) {
-                    const emo = expressions[i];
-                    
-                    // Câu lệnh cường hóa chất lượng & Dynamic framing
-                    const fullPrompt = `${basePrompt} sticker of ONE SINGLE character. (Dynamic framing: match the crop of the reference photo. Generate a half-body portrait if the reference is a close-up, or a full-body shot if the reference shows the body:1.5). Expression and pose: ${emo.kw}. The character MUST EXACTLY match the facial identity, age, and gender of the reference photo. NO GENDER CHANGE. High-quality render, thick white border surrounding the whole figure, isolated background, extreme detail, 8k resolution.`;
+                const is2DClassic = activeCard && activeCard.querySelector(".card-label").innerText.includes("2D Classic");
+
+                const sheetSlot = document.getElementById("sheetResultSlot");
+                const sheetPlaceholder = document.getElementById("sheetPlaceholder");
+                const sheetResultImg = document.getElementById("sheetResultImg");
+                const sheetDownloadBtn = document.getElementById("sheetDownloadBtn");
+
+                if (is2DClassic) {
+                    resultSlots.forEach(slot => slot.style.display = "none");
+                    if (sheetSlot) sheetSlot.style.display = "flex";
+                    if (sheetPlaceholder) {
+                        sheetPlaceholder.innerHTML = `<div style="font-size:3rem; animation: spin 1s infinite linear;">🪄</div><span class="slot-label" style="font-size:1.2rem; margin-top:10px;">Đang vẽ tờ nhãn dán...</span>`;
+                        sheetPlaceholder.style.display = "flex";
+                    }
+                    if (sheetResultImg) sheetResultImg.style.display = "none";
+                    if (sheetDownloadBtn) sheetDownloadBtn.style.display = "none";
+                    if (dlAllAreaStart) dlAllAreaStart.style.display = "none";
 
                     let success = false;
                     while (!success) {
@@ -1799,87 +1837,164 @@
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                     imageBase64: window.finalCroppedBase64,
-                                    prompt: fullPrompt,
+                                    prompt: basePrompt,
                                     negativePrompt: negativePrompt
                                 })
                             });
 
-                            // Nếu dính 429 từ Replicate, tự động chờ 5s rồi thử lại
                             if (response.status === 429) {
-                                console.warn(`[Ô ${i + 1}] Lỗi 429 (Rate Limit). Đang thử lại sau 5s...`);
-                                if(resultSlots && resultSlots[i]) {
-                                    const ph = resultSlots[i].querySelector(".slot-placeholder");
-                                    if(ph) ph.innerHTML = `<div style='color:#FF8BA7; font-size: 0.9rem; text-align:center;'>Đang đợi rảnh kênh... (429)</div>`;
-                                }
+                                console.warn(`Lỗi 429 (Rate Limit). Đang thử lại sau 5s...`);
+                                if (sheetPlaceholder) sheetPlaceholder.innerHTML = `<div style='color:#FF8BA7; font-size: 1.1rem; text-align:center;'>Đang đợi rảnh kênh... (429)</div>`;
                                 await new Promise(r => setTimeout(r, 5000));
                                 continue; 
                             }
                             
-                            // Nếu lỗi khác, ngắt vòng lặp bằng cách ném lỗi
                             if (!response.ok && response.status !== 429) {
                                 throw new Error('API Error: ' + response.status);
                             }
 
                             const data = await response.json();
+                            const imgUrl = Array.isArray(data) ? data[0] : (data.output ? (Array.isArray(data.output) ? data.output[0] : data.output) : data);
                             
-                            // Xử lý hiển thị ảnh thành công
-                            const img = resultSlots[i].querySelector(".result-img");
-                            const dlBtn = resultSlots[i].querySelector(".download-btn");
-                            
-                            if(img) {
-                               const imgUrl = Array.isArray(data) ? data[0] : (data.output ? (Array.isArray(data.output) ? data.output[0] : data.output) : data);
-                               img.src = imgUrl;
-                               img.style.display = "block";
-                               
-                               // Setup download button
-                               if (dlBtn) {
-                                   dlBtn.onclick = async (e) => {
-                                       e.stopPropagation();
-                                       try {
-                                           const resp = await fetch(imgUrl);
-                                           const blob = await resp.blob();
-                                           const url = URL.createObjectURL(blob);
-                                           const a = document.createElement("a");
-                                           a.href = url;
-                                           a.download = `sticker_${i + 1}.png`;
-                                           a.click();
-                                           URL.revokeObjectURL(url);
-                                       } catch (err) {
-                                           console.error("Single download error:", err);
-                                           // Fallback
-                                           const a = document.createElement("a");
-                                           a.href = imgUrl;
-                                           a.download = `sticker_${i + 1}.png`;
-                                           a.click();
-                                       }
-                                   };
-                               }
-
-                               resultSlots[i].classList.add("has-result");
-                               const placeholder = resultSlots[i].querySelector(".slot-placeholder");
-                               if (placeholder) placeholder.style.opacity = "0";
-
-                               checkAllFinished();
+                            if (imgUrl) {
+                                if (sheetResultImg) {
+                                    sheetResultImg.src = imgUrl;
+                                    sheetResultImg.style.display = "block";
+                                }
+                                if (sheetPlaceholder) sheetPlaceholder.style.display = "none";
+                                if (sheetDownloadBtn) {
+                                    sheetDownloadBtn.style.display = "flex";
+                                    sheetDownloadBtn.onclick = async (e) => {
+                                        e.stopPropagation();
+                                        try {
+                                            const resp = await fetch(imgUrl);
+                                            const blob = await resp.blob();
+                                            const url = URL.createObjectURL(blob);
+                                            const a = document.createElement("a");
+                                            a.href = url;
+                                            a.download = `2d_classic_sheet.png`;
+                                            a.click();
+                                            URL.revokeObjectURL(url);
+                                        } catch (err) {
+                                            const a = document.createElement("a");
+                                            a.href = imgUrl;
+                                            a.download = `2d_classic_sheet.png`;
+                                            a.click();
+                                        }
+                                    };
+                                }
+                                success = true;
+                            } else {
+                                throw new Error('API Error: No image generated.');
                             }
-                            success = true;
                         } catch (err) {
-                            console.error("Lỗi Fetch:", err);
-                            const ph = resultSlots[i].querySelector(".slot-placeholder");
-                            if(ph) ph.innerHTML = `<div style='color:red;'>Lỗi nặng</div>`;
+                            console.error("Lỗi Fetch Sheet:", err);
+                            if (sheetPlaceholder) {
+                                sheetPlaceholder.innerHTML = `<div style='color:red;'>Lỗi nặng</div>`;
+                            }
                             break; 
                         }
                     }
-                    
-                    if (i < expressions.length - 1) {
-                        await new Promise(r => setTimeout(r, 15000));
+                } else {
+                    resultSlots.forEach(slot => slot.style.display = "flex");
+                    if (sheetSlot) sheetSlot.style.display = "none";
+
+                    for (let i = 0; i < expressions.length; i++) {
+                        const emo = expressions[i];
+                        
+                        // Câu lệnh cường hóa chất lượng & Dynamic framing
+                        const fullPrompt = `${basePrompt} sticker of ONE SINGLE character. (Dynamic framing: match the crop of the reference photo. Generate a half-body portrait if the reference is a close-up, or a full-body shot if the reference shows the body:1.5). Expression and pose: ${emo.kw}. The character MUST EXACTLY match the facial identity, age, and gender of the reference photo. NO GENDER CHANGE. High-quality render, thick white border surrounding the whole figure, isolated background, extreme detail, 8k resolution.`;
+
+                        let success = false;
+                        while (!success) {
+                            try {
+                                const response = await fetch("/api/generate", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({
+                                        imageBase64: window.finalCroppedBase64,
+                                        prompt: fullPrompt,
+                                        negativePrompt: negativePrompt
+                                    })
+                                });
+
+                                // Nếu dính 429 từ Replicate, tự động chờ 5s rồi thử lại
+                                if (response.status === 429) {
+                                    console.warn(`[Ô ${i + 1}] Lỗi 429 (Rate Limit). Đang thử lại sau 5s...`);
+                                    if(resultSlots && resultSlots[i]) {
+                                        const ph = resultSlots[i].querySelector(".slot-placeholder");
+                                        if(ph) ph.innerHTML = `<div style='color:#FF8BA7; font-size: 0.9rem; text-align:center;'>Đang đợi rảnh kênh... (429)</div>`;
+                                    }
+                                    await new Promise(r => setTimeout(r, 5000));
+                                    continue; 
+                                }
+                                
+                                // Nếu lỗi khác, ngắt vòng lặp bằng cách ném lỗi
+                                if (!response.ok && response.status !== 429) {
+                                    throw new Error('API Error: ' + response.status);
+                                }
+
+                                const data = await response.json();
+                                
+                                // Xử lý hiển thị ảnh thành công
+                                const img = resultSlots[i].querySelector(".result-img");
+                                const dlBtn = resultSlots[i].querySelector(".download-btn");
+                                
+                                if(img) {
+                                   const imgUrl = Array.isArray(data) ? data[0] : (data.output ? (Array.isArray(data.output) ? data.output[0] : data.output) : data);
+                                   img.src = imgUrl;
+                                   img.style.display = "block";
+                                   
+                                   // Setup download button
+                                   if (dlBtn) {
+                                       dlBtn.onclick = async (e) => {
+                                           e.stopPropagation();
+                                           try {
+                                               const resp = await fetch(imgUrl);
+                                               const blob = await resp.blob();
+                                               const url = URL.createObjectURL(blob);
+                                               const a = document.createElement("a");
+                                               a.href = url;
+                                               a.download = `sticker_${i + 1}.png`;
+                                               a.click();
+                                               URL.revokeObjectURL(url);
+                                           } catch (err) {
+                                               console.error("Single download error:", err);
+                                               // Fallback
+                                               const a = document.createElement("a");
+                                               a.href = imgUrl;
+                                               a.download = `sticker_${i + 1}.png`;
+                                               a.click();
+                                           }
+                                       };
+                                   }
+
+                                   resultSlots[i].classList.add("has-result");
+                                   const placeholder = resultSlots[i].querySelector(".slot-placeholder");
+                                   if (placeholder) placeholder.style.opacity = "0";
+
+                                   checkAllFinished();
+                                }
+                                success = true;
+                            } catch (err) {
+                                console.error("Lỗi Fetch:", err);
+                                const ph = resultSlots[i].querySelector(".slot-placeholder");
+                                if(ph) ph.innerHTML = `<div style='color:red;'>Lỗi nặng</div>`;
+                                break; 
+                            }
+                        }
+                        
+                        if (i < expressions.length - 1) {
+                            await new Promise(r => setTimeout(r, 15000));
+                        }
                     }
-                }
-                
-                // Show download all area if at least one sticker exists
-                const finalSlots = document.querySelectorAll("#v2ResultContainer .result-slot.has-result");
-                const dlAllAreaFinish = document.getElementById("downloadAllArea");
-                if (finalSlots.length > 0 && dlAllAreaFinish) {
-                    dlAllAreaFinish.style.display = "flex";
+                    
+                    // Show download all area if at least one sticker exists
+                    const finalSlots = document.querySelectorAll("#v2ResultContainer .result-slot.has-result");
+                    const dlAllAreaFinish = document.getElementById("downloadAllArea");
+                    if (finalSlots.length > 0 && dlAllAreaFinish) {
+                        dlAllAreaFinish.style.display = "flex";
+                    }
                 }
             } catch (e) {
                 console.error("Lỗi khi tạo chuỗi Sticker:", e);
