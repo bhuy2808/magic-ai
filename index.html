@@ -1763,12 +1763,12 @@
             ];
 
             const classic2DExpressions = [
-                { label: 'Vui Quá', icon: '😂', kw: 'Expression: Joyful, smiling happily, eyes squinting. Text: "VUI QUÁ!"' },
+                { label: 'Vui Quá', icon: '😂', kw: 'Expression: Joyful, wide open smile. Text: "VUI QUÁ!"' },
                 { label: 'Buồn Quá', icon: '😢', kw: 'Expression: Sad, tearful eyes, downturned mouth, single tear. Text: "BUỒN QUÁ!"' },
                 { label: 'Giận Dữ', icon: '😡', kw: 'Expression: Angry, furrowed brows, furious expression, steam icon. Text: "GIẬN DỮ!"' },
                 { label: 'Sợ Quá', icon: '😱', kw: 'Expression: Scared, wide terrified eyes, sweat drops. Text: "SỢ QUÁ!"' },
                 { label: 'Nháy Mắt', icon: '😉', kw: 'Expression: Winking, playful smile, explicitly winking one eye, sparkling star icon. Text: "NHÁY MẮT!"' },
-                { label: 'Chụt', icon: '😘', kw: 'Expression: Kissing, eyes closed, lips puckered blowing a kiss, small floating red heart icon. Text: "CHỤT!"' }
+                { label: 'Chụt', icon: '😘', kw: 'Expression: Playful blowing a kiss, winking, floating vector red heart icon. Text: "CHỤT!"' }
             ];
 
             const activeCard = document.querySelector("#customPromptsGrid .style-card.active");
@@ -1825,6 +1825,7 @@
                     }
 
                     let success = false;
+                    let retryCount = 0;
                     while (!success) {
                         try {
                             const response = await fetch("/api/generate", {
@@ -1848,10 +1849,22 @@
                                     await new Promise(r => setTimeout(r, 5000));
                                     continue; 
                                 }
+
+                                // Bypass server issue (500)
+                                if (response.status >= 500 && retryCount < 3) {
+                                    retryCount++;
+                                    console.warn(`[Ô ${i + 1}] Lỗi máy chủ 500. Thử lại lần ${retryCount}...`);
+                                    if(resultSlots && resultSlots[i]) {
+                                        const ph = resultSlots[i].querySelector(".slot-placeholder");
+                                        if(ph) ph.innerHTML = `<div style='color:#FF8BA7; font-size: 0.9rem; text-align:center;'>Máy chủ lag, thử lại lần ${retryCount}...</div>`;
+                                    }
+                                    await new Promise(r => setTimeout(r, 5000));
+                                    continue; 
+                                }
                                 
-                                // Nếu lỗi khác, ngắt vòng lặp bằng cách ném lỗi
-                                if (!response.ok && response.status !== 429) {
-                                    throw new Error('API Error: ' + response.status);
+                                // Nếu lỗi khác (Kể cả 500 sau khi hết retry), ngắt vòng lặp bằng cách ném lỗi
+                                if (!response.ok) {
+                                    throw new Error(`API Error: ${response.status} - ${response.statusText}`);
                                 }
 
                                 const data = await response.json();
