@@ -940,23 +940,8 @@
                                     alt="Comic">
                                 <div class="card-label">💥 2D Classic</div>
                                 <textarea id="customPrompt5"
-                                    style="display: none;">A single image containing a 2x3 grid of six distinct die-cut vintage 2D vector cartoon stickers. The character in all stickers is a direct cartoon transformation of the exact main subject from the input image, strictly preserving their original identity, age, gender, facial features, hair, clothing, and glasses. Art style: 1930s mid-century classic animation, clean vector, bold black outlines, flat vibrant colors, no gradients, no 3D shading. Each sticker has a thick, clean white die-cut border.
-
-Top row (left to right):
-
-Joyful: Smiling happily, eyes squinting. Text: 'VUI QUÁ!'.
-
-Sad: Tearful eyes, downturned mouth, single tear. Text: 'BUỒN QUÁ!'.
-
-Angry: Furrowed brows, furious expression, steam icon. Text: 'GIẬN DỮ!'.
-
-Bottom row (left to right):
-4. Scared: Wide terrified eyes, sweat drops. Text: 'SỢ QUÁ!'.
-5. Winking: Playful smile, explicitly winking one eye, sparkling star icon. Text: 'NHÁY MẮT!'.
-6. Kissing: Eyes closed, lips puckered blowing a kiss, small floating red heart icon. Text: 'CHỤT!'.
-
-All texts are in Vietnamese, using a bold classic vintage font. Arranged neatly on a solid off-white paper background. High contrast, clean design.</textarea>
-                                <textarea class="negative-prompt" style="display: none;">3D, realistic, photorealistic, photography, complex background, modern vector, smooth lines, gradients, soft shadows, cinematic lighting, blurry, unrecognizable features, single picture of a person, modern emoji style, clean digital art, text in languages other than Vietnamese.</textarea>
+                                    style="display: none;">A single die-cut vintage 2D vector cartoon sticker of the exact main subject from the input image. The character is a direct cartoon transformation strictly preserving their original identity, age, gender, facial features, hair, clothing, and glasses. Art style: 1930s mid-century classic animation, clean vector, bold black outlines, flat vibrant colors, no gradients, no 3D shading. The sticker has a thick, clean white die-cut border. Arranged neatly on a solid off-white paper background. High contrast, clean design.</textarea>
+                                <textarea class="negative-prompt" style="display: none;">3D, realistic, photorealistic, photography, complex background, modern vector, smooth lines, gradients, soft shadows, cinematic lighting, blurry, unrecognizable features, multiple people, modern emoji style, clean digital art, text in languages other than Vietnamese.</textarea>
                             </div>
 
                             <div class="style-card">
@@ -1768,26 +1753,44 @@ All texts are in Vietnamese, using a bold classic vintage font. Arranged neatly 
             spinnerV2.style.display = "inline-block";
             btnTextV2.innerText = " Đang xử lý... 🪄";
 
-            const expressions = [
-                { label: 'Cười Lớn', kw: '(LAUGHING OUT LOUD 😆, mouth wide open showing teeth, extreme joy:1.5)' },
-                { label: 'Nháy Mắt', kw: '(WINKING ONE EYE 😉, playful face, one eye completely closed:1.5)' },
-                { label: 'Trầm Tư', kw: '(PENSIVE THINKING 🤔, furrowed eyebrows, serious thinking face, hand on chin:1.5)' },
-                { label: 'Tự Tin', kw: '(HUGE CHEERFUL SMILE 😄, very happy, big smile:1.5)' },
-                { label: 'Chu Môi', kw: '(KISSING FACE 😘, lips tightly puckered into an O shape, blowing a kiss:1.5)' },
-                { label: 'Khóc Lớn', kw: '(CRYING HEAVILY 😭, sad face, streams of tears physically rolling down cheeks, weeping:1.5)' }
+            const defaultExpressions = [
+                { label: 'Cười Lớn', icon: '😆', kw: '(LAUGHING OUT LOUD 😆, mouth wide open showing teeth, extreme joy:1.5)' },
+                { label: 'Nháy Mắt', icon: '😉', kw: '(WINKING ONE EYE 😉, playful face, one eye completely closed:1.5)' },
+                { label: 'Trầm Tư', icon: '🤔', kw: '(PENSIVE THINKING 🤔, furrowed eyebrows, serious thinking face, hand on chin:1.5)' },
+                { label: 'Tự Tin', icon: '😄', kw: '(HUGE CHEERFUL SMILE 😄, very happy, big smile:1.5)' },
+                { label: 'Chu Môi', icon: '😘', kw: '(KISSING FACE 😘, lips tightly puckered into an O shape, blowing a kiss:1.5)' },
+                { label: 'Khóc Lớn', icon: '😭', kw: '(CRYING HEAVILY 😭, sad face, streams of tears physically rolling down cheeks, weeping:1.5)' }
             ];
+
+            const classic2DExpressions = [
+                { label: 'Vui Quá', icon: '😂', kw: 'Expression: Joyful, smiling happily, eyes squinting. Text: "VUI QUÁ!"' },
+                { label: 'Buồn Quá', icon: '😢', kw: 'Expression: Sad, tearful eyes, downturned mouth, single tear. Text: "BUỒN QUÁ!"' },
+                { label: 'Giận Dữ', icon: '😡', kw: 'Expression: Angry, furrowed brows, furious expression, steam icon. Text: "GIẬN DỮ!"' },
+                { label: 'Sợ Quá', icon: '😱', kw: 'Expression: Scared, wide terrified eyes, sweat drops. Text: "SỢ QUÁ!"' },
+                { label: 'Nháy Mắt', icon: '😉', kw: 'Expression: Winking, playful smile, explicitly winking one eye, sparkling star icon. Text: "NHÁY MẮT!"' },
+                { label: 'Chụt', icon: '😘', kw: 'Expression: Kissing, eyes closed, lips puckered blowing a kiss, small floating red heart icon. Text: "CHỤT!"' }
+            ];
+
+            const activeCard = document.querySelector("#customPromptsGrid .style-card.active");
+            const is2DClassic = activeCard && activeCard.querySelector(".card-label").innerText.includes("2D Classic");
+
+            const expressions = is2DClassic ? classic2DExpressions : defaultExpressions;
 
             // Get all result slots
             const resultSlots = document.querySelectorAll("#v2ResultContainer .result-slot");
 
             // Reset slots to loading state
             resultSlots.forEach((slot, i) => {
+                slot.style.display = "flex";
                 slot.classList.remove("has-result");
                 const placeholder = slot.querySelector(".slot-placeholder");
                 const img = slot.querySelector(".result-img");
                 if (placeholder) {
                     placeholder.innerHTML = `<div style="font-size:1.8rem; animation: spin 1s infinite linear;">🪄</div><span class="slot-label">${expressions[i].label}</span>`;
                     placeholder.style.opacity = "1";
+                    
+                    // Lên sẵn cấu trúc nội dung gốc để hiển thị lại sau khi tạo xong
+                    placeholder.dataset.finalHtml = `<span class="slot-icon">${expressions[i].icon}</span><span class="slot-label">${expressions[i].label}</span>`;
                 }
                 if (img) {
                     img.style.display = "none";
@@ -1800,50 +1803,26 @@ All texts are in Vietnamese, using a bold classic vintage font. Arranged neatly 
             const dlAllAreaStart = document.getElementById("downloadAllArea");
             if (dlAllAreaStart) dlAllAreaStart.style.display = "none";
 
+            const sheetSlot = document.getElementById("sheetResultSlot");
+            if (sheetSlot) sheetSlot.style.display = "none";
+
             v2ResultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
             try {
-                // Get selected style prompt
-                const activeCard = document.querySelector("#customPromptsGrid .style-card.active");
                 const basePrompt = activeCard ? activeCard.querySelector("textarea").value : "A high-quality 3D Pixar-style sticker";
                 const negTA = activeCard ? activeCard.querySelector(".negative-prompt") : null;
                 const negativePrompt = negTA ? negTA.value : "";
 
-                const is2DClassic = activeCard && activeCard.querySelector(".card-label").innerText.includes("2D Classic");
-
-                const sheetSlot = document.getElementById("sheetResultSlot");
-                const sheetPlaceholder = document.getElementById("sheetPlaceholder");
-                const sheetResultImg = document.getElementById("sheetResultImg");
-                const sheetDownloadBtn = document.getElementById("sheetDownloadBtn");
-
-                if (is2DClassic) {
-                    // Cấu hình nhãn dán riêng cho 2D Classic
-                    const customLabels = [
-                        { icon: '😂', text: 'Vui Quá' },
-                        { icon: '😢', text: 'Buồn Quá' },
-                        { icon: '😡', text: 'Giận Dữ' },
-                        { icon: '😱', text: 'Sợ Quá' },
-                        { icon: '😉', text: 'Nháy Mắt' },
-                        { icon: '😘', text: 'Chụt' }
-                    ];
-
-                    resultSlots.forEach((slot, idx) => {
-                        slot.style.display = "flex";
-                        slot.classList.remove("has-result");
-                        const ph = slot.querySelector(".slot-placeholder");
-                        if(ph) {
-                            ph.style.opacity = "1";
-                            ph.innerHTML = `<div style="font-size:1.8rem; animation: spin 1s infinite linear;">🪄</div><span class="slot-label" style="font-size:0.9rem;">Đang vẽ...</span>`;
-                        }
-                        const img = slot.querySelector(".result-img");
-                        if(img) {
-                            img.style.display = "none";
-                            img.src = "";
-                        }
-                    });
-
-                    if (sheetSlot) sheetSlot.style.display = "none";
-                    if (dlAllAreaStart) dlAllAreaStart.style.display = "none";
+                for (let i = 0; i < expressions.length; i++) {
+                    const emo = expressions[i];
+                    
+                    let fullPrompt = "";
+                    if (is2DClassic) {
+                        fullPrompt = `${basePrompt} ${emo.kw}`;
+                    } else {
+                        // Câu lệnh cường hóa chất lượng & Dynamic framing cho các style khác
+                        fullPrompt = `${basePrompt} sticker of ONE SINGLE character. (Dynamic framing: match the crop of the reference photo. Generate a half-body portrait if the reference is a close-up, or a full-body shot if the reference shows the body:1.5). Expression and pose: ${emo.kw}. The character MUST EXACTLY match the facial identity, age, and gender of the reference photo. NO GENDER CHANGE. High-quality render, thick white border surrounding the whole figure, isolated background, extreme detail, 8k resolution.`;
+                    }
 
                     let success = false;
                     while (!success) {
@@ -1853,127 +1832,11 @@ All texts are in Vietnamese, using a bold classic vintage font. Arranged neatly 
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({
                                     imageBase64: window.finalCroppedBase64,
-                                    prompt: basePrompt,
+                                    prompt: fullPrompt,
                                     negativePrompt: negativePrompt,
-                                    promptStrength: 0.6 // Giữ lại nét ảnh gốc tốt hơn (0.55 - 0.65)
+                                    ...(is2DClassic ? { promptStrength: 0.6 } : {})
                                 })
                             });
-
-                            if (response.status === 429) {
-                                console.warn(`Lỗi 429 (Rate Limit). Đang thử lại sau 5s...`);
-                                resultSlots.forEach(slot => {
-                                    const ph = slot.querySelector(".slot-placeholder");
-                                    if(ph) ph.innerHTML = `<div style='color:#FF8BA7; font-size: 0.9rem; text-align:center;'>Đợi rảnh kênh... (429)</div>`;
-                                });
-                                await new Promise(r => setTimeout(r, 5000));
-                                continue; 
-                            }
-                            
-                            if (!response.ok && response.status !== 429) {
-                                throw new Error('API Error: ' + response.status);
-                            }
-
-                            const data = await response.json();
-                            const imgUrl = Array.isArray(data) ? data[0] : (data.output ? (Array.isArray(data.output) ? data.output[0] : data.output) : data);
-                            
-                            if (imgUrl) {
-                                const imgFull = new Image();
-                                imgFull.crossOrigin = "Anonymous";
-                                imgFull.onload = () => {
-                                    const w = imgFull.width / 3;
-                                    const h = imgFull.height / 2;
-                                    
-                                    for (let i = 0; i < 6; i++) {
-                                        const col = i % 3;
-                                        const row = Math.floor(i / 3);
-                                        const canvas = document.createElement("canvas");
-                                        canvas.width = w;
-                                        canvas.height = h;
-                                        const ctx = canvas.getContext("2d");
-                                        ctx.drawImage(imgFull, col * w, row * h, w, h, 0, 0, w, h);
-                                        
-                                        try {
-                                            const croppedUrl = canvas.toDataURL("image/png", 0.9);
-                                            if (resultSlots[i]) {
-                                                const slotImg = resultSlots[i].querySelector(".result-img");
-                                                if (slotImg) {
-                                                    slotImg.src = croppedUrl;
-                                                    slotImg.style.display = "block";
-                                                }
-                                                
-                                                // Khôi phục nhãn gốc
-                                                const ph = resultSlots[i].querySelector(".slot-placeholder");
-                                                if (ph) {
-                                                    ph.innerHTML = `<span class="slot-icon">${customLabels[i].icon}</span><span class="slot-label">${customLabels[i].text}</span>`;
-                                                    ph.style.opacity = "0";
-                                                }
-                                                
-                                                // Nút tải xuống
-                                                const dlBtn = resultSlots[i].querySelector(".download-btn");
-                                                if (dlBtn) {
-                                                    dlBtn.onclick = (e) => {
-                                                        e.stopPropagation();
-                                                        const a = document.createElement("a");
-                                                        a.href = croppedUrl;
-                                                        a.download = `sticker_2d_classic_${i + 1}.png`;
-                                                        a.click();
-                                                    };
-                                                }
-                                                resultSlots[i].classList.add("has-result");
-                                            }
-                                        } catch(e) {
-                                            console.warn("CORS Error slicing image. Showing fallback...");
-                                            if (resultSlots[i]) {
-                                                const slotImg = resultSlots[i].querySelector(".result-img");
-                                                if(slotImg) {
-                                                    slotImg.src = imgUrl; // just original image fallback
-                                                    slotImg.style.display = "block";
-                                                }
-                                                resultSlots[i].classList.add("has-result");
-                                            }
-                                        }
-                                    }
-                                    checkAllFinished();
-                                };
-                                imgFull.onerror = () => {
-                                    alert("Lỗi tải ảnh cắt. Máy chủ chặn truy cập nguồn ảnh.");
-                                };
-                                imgFull.src = imgUrl; // Load ảnh
-                                success = true;
-                            } else {
-                                throw new Error('API Error: No image generated.');
-                            }
-                        } catch (err) {
-                            console.error("Lỗi Fetch Sheet:", err);
-                            resultSlots.forEach(slot => {
-                                const ph = slot.querySelector(".slot-placeholder");
-                                if(ph) ph.innerHTML = `<div style='color:red;'>Lỗi nặng</div>`;
-                            });
-                            break; 
-                        }
-                    }
-                } else {
-                    resultSlots.forEach(slot => slot.style.display = "flex");
-                    if (sheetSlot) sheetSlot.style.display = "none";
-
-                    for (let i = 0; i < expressions.length; i++) {
-                        const emo = expressions[i];
-                        
-                        // Câu lệnh cường hóa chất lượng & Dynamic framing
-                        const fullPrompt = `${basePrompt} sticker of ONE SINGLE character. (Dynamic framing: match the crop of the reference photo. Generate a half-body portrait if the reference is a close-up, or a full-body shot if the reference shows the body:1.5). Expression and pose: ${emo.kw}. The character MUST EXACTLY match the facial identity, age, and gender of the reference photo. NO GENDER CHANGE. High-quality render, thick white border surrounding the whole figure, isolated background, extreme detail, 8k resolution.`;
-
-                        let success = false;
-                        while (!success) {
-                            try {
-                                const response = await fetch("/api/generate", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({
-                                        imageBase64: window.finalCroppedBase64,
-                                        prompt: fullPrompt,
-                                        negativePrompt: negativePrompt
-                                    })
-                                });
 
                                 // Nếu dính 429 từ Replicate, tự động chờ 5s rồi thử lại
                                 if (response.status === 429) {
