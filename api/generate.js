@@ -16,7 +16,6 @@ export default async function handler(req, res) {
     const { imageBase64, prompt, negativePrompt, promptStrength } = req.body;
 
     const inputData = {
-      image: `data:image/jpeg;base64,${imageBase64}`,
       main_face_image: `data:image/jpeg;base64,${imageBase64}`,
       prompt: prompt,
       true_cfg: 4.0,
@@ -26,8 +25,10 @@ export default async function handler(req, res) {
     if (negativePrompt) {
       inputData.negative_prompt = negativePrompt;
     }
+    // Chuyển promptStrength (0.55-0.65) của user thành id_weight để giữ nhân diện mạnh hơn mà không phá cấu trúc grid. 
+    // Người dùng muốn giữ nhân diện tốt thì id_weight > 1.0 (ví dụ 1.2)
     if (promptStrength) {
-      inputData.prompt_strength = promptStrength;
+      inputData.id_weight = 1.2;
     }
 
     // Gọi đúng bản chính chủ của ByteDance để tránh lỗi 404

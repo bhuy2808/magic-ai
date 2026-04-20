@@ -1817,14 +1817,32 @@ All texts are in Vietnamese, using a bold classic vintage font. Arranged neatly 
                 const sheetDownloadBtn = document.getElementById("sheetDownloadBtn");
 
                 if (is2DClassic) {
-                    resultSlots.forEach(slot => slot.style.display = "none");
-                    if (sheetSlot) sheetSlot.style.display = "flex";
-                    if (sheetPlaceholder) {
-                        sheetPlaceholder.innerHTML = `<div style="font-size:3rem; animation: spin 1s infinite linear;">🪄</div><span class="slot-label" style="font-size:1.2rem; margin-top:10px;">Đang vẽ tờ nhãn dán...</span>`;
-                        sheetPlaceholder.style.display = "flex";
-                    }
-                    if (sheetResultImg) sheetResultImg.style.display = "none";
-                    if (sheetDownloadBtn) sheetDownloadBtn.style.display = "none";
+                    // Cấu hình nhãn dán riêng cho 2D Classic
+                    const customLabels = [
+                        { icon: '😂', text: 'Vui Quá' },
+                        { icon: '😢', text: 'Buồn Quá' },
+                        { icon: '😡', text: 'Giận Dữ' },
+                        { icon: '😱', text: 'Sợ Quá' },
+                        { icon: '😉', text: 'Nháy Mắt' },
+                        { icon: '😘', text: 'Chụt' }
+                    ];
+
+                    resultSlots.forEach((slot, idx) => {
+                        slot.style.display = "flex";
+                        slot.classList.remove("has-result");
+                        const ph = slot.querySelector(".slot-placeholder");
+                        if(ph) {
+                            ph.style.opacity = "1";
+                            ph.innerHTML = `<div style="font-size:1.8rem; animation: spin 1s infinite linear;">🪄</div><span class="slot-label" style="font-size:0.9rem;">Đang vẽ...</span>`;
+                        }
+                        const img = slot.querySelector(".result-img");
+                        if(img) {
+                            img.style.display = "none";
+                            img.src = "";
+                        }
+                    });
+
+                    if (sheetSlot) sheetSlot.style.display = "none";
                     if (dlAllAreaStart) dlAllAreaStart.style.display = "none";
 
                     let success = false;
@@ -1843,7 +1861,10 @@ All texts are in Vietnamese, using a bold classic vintage font. Arranged neatly 
 
                             if (response.status === 429) {
                                 console.warn(`Lỗi 429 (Rate Limit). Đang thử lại sau 5s...`);
-                                if (sheetPlaceholder) sheetPlaceholder.innerHTML = `<div style='color:#FF8BA7; font-size: 1.1rem; text-align:center;'>Đang đợi rảnh kênh... (429)</div>`;
+                                resultSlots.forEach(slot => {
+                                    const ph = slot.querySelector(".slot-placeholder");
+                                    if(ph) ph.innerHTML = `<div style='color:#FF8BA7; font-size: 0.9rem; text-align:center;'>Đợi rảnh kênh... (429)</div>`;
+                                });
                                 await new Promise(r => setTimeout(r, 5000));
                                 continue; 
                             }
@@ -1856,41 +1877,78 @@ All texts are in Vietnamese, using a bold classic vintage font. Arranged neatly 
                             const imgUrl = Array.isArray(data) ? data[0] : (data.output ? (Array.isArray(data.output) ? data.output[0] : data.output) : data);
                             
                             if (imgUrl) {
-                                if (sheetResultImg) {
-                                    sheetResultImg.src = imgUrl;
-                                    sheetResultImg.style.display = "block";
-                                }
-                                if (sheetPlaceholder) sheetPlaceholder.style.display = "none";
-                                if (sheetDownloadBtn) {
-                                    sheetDownloadBtn.style.display = "flex";
-                                    sheetDownloadBtn.onclick = async (e) => {
-                                        e.stopPropagation();
+                                const imgFull = new Image();
+                                imgFull.crossOrigin = "Anonymous";
+                                imgFull.onload = () => {
+                                    const w = imgFull.width / 3;
+                                    const h = imgFull.height / 2;
+                                    
+                                    for (let i = 0; i < 6; i++) {
+                                        const col = i % 3;
+                                        const row = Math.floor(i / 3);
+                                        const canvas = document.createElement("canvas");
+                                        canvas.width = w;
+                                        canvas.height = h;
+                                        const ctx = canvas.getContext("2d");
+                                        ctx.drawImage(imgFull, col * w, row * h, w, h, 0, 0, w, h);
+                                        
                                         try {
-                                            const resp = await fetch(imgUrl);
-                                            const blob = await resp.blob();
-                                            const url = URL.createObjectURL(blob);
-                                            const a = document.createElement("a");
-                                            a.href = url;
-                                            a.download = `2d_classic_sheet.png`;
-                                            a.click();
-                                            URL.revokeObjectURL(url);
-                                        } catch (err) {
-                                            const a = document.createElement("a");
-                                            a.href = imgUrl;
-                                            a.download = `2d_classic_sheet.png`;
-                                            a.click();
+                                            const croppedUrl = canvas.toDataURL("image/png", 0.9);
+                                            if (resultSlots[i]) {
+                                                const slotImg = resultSlots[i].querySelector(".result-img");
+                                                if (slotImg) {
+                                                    slotImg.src = croppedUrl;
+                                                    slotImg.style.display = "block";
+                                                }
+                                                
+                                                // Khôi phục nhãn gốc
+                                                const ph = resultSlots[i].querySelector(".slot-placeholder");
+                                                if (ph) {
+                                                    ph.innerHTML = `<span class="slot-icon">${customLabels[i].icon}</span><span class="slot-label">${customLabels[i].text}</span>`;
+                                                    ph.style.opacity = "0";
+                                                }
+                                                
+                                                // Nút tải xuống
+                                                const dlBtn = resultSlots[i].querySelector(".download-btn");
+                                                if (dlBtn) {
+                                                    dlBtn.onclick = (e) => {
+                                                        e.stopPropagation();
+                                                        const a = document.createElement("a");
+                                                        a.href = croppedUrl;
+                                                        a.download = `sticker_2d_classic_${i + 1}.png`;
+                                                        a.click();
+                                                    };
+                                                }
+                                                resultSlots[i].classList.add("has-result");
+                                            }
+                                        } catch(e) {
+                                            console.warn("CORS Error slicing image. Showing fallback...");
+                                            if (resultSlots[i]) {
+                                                const slotImg = resultSlots[i].querySelector(".result-img");
+                                                if(slotImg) {
+                                                    slotImg.src = imgUrl; // just original image fallback
+                                                    slotImg.style.display = "block";
+                                                }
+                                                resultSlots[i].classList.add("has-result");
+                                            }
                                         }
-                                    };
-                                }
+                                    }
+                                    checkAllFinished();
+                                };
+                                imgFull.onerror = () => {
+                                    alert("Lỗi tải ảnh cắt. Máy chủ chặn truy cập nguồn ảnh.");
+                                };
+                                imgFull.src = imgUrl; // Load ảnh
                                 success = true;
                             } else {
                                 throw new Error('API Error: No image generated.');
                             }
                         } catch (err) {
                             console.error("Lỗi Fetch Sheet:", err);
-                            if (sheetPlaceholder) {
-                                sheetPlaceholder.innerHTML = `<div style='color:red;'>Lỗi nặng</div>`;
-                            }
+                            resultSlots.forEach(slot => {
+                                const ph = slot.querySelector(".slot-placeholder");
+                                if(ph) ph.innerHTML = `<div style='color:red;'>Lỗi nặng</div>`;
+                            });
                             break; 
                         }
                     }
