@@ -13,9 +13,10 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
   try {
-    const { imageBase64, prompt, negativePrompt } = req.body;
+    const { imageBase64, prompt, negativePrompt, promptStrength } = req.body;
 
     const inputData = {
+      image: `data:image/jpeg;base64,${imageBase64}`,
       main_face_image: `data:image/jpeg;base64,${imageBase64}`,
       prompt: prompt,
       true_cfg: 4.0,
@@ -24,6 +25,9 @@ export default async function handler(req, res) {
 
     if (negativePrompt) {
       inputData.negative_prompt = negativePrompt;
+    }
+    if (promptStrength) {
+      inputData.prompt_strength = promptStrength;
     }
 
     // Gọi đúng bản chính chủ của ByteDance để tránh lỗi 404

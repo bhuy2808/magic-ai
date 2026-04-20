@@ -940,25 +940,11 @@
                                     alt="Comic">
                                 <div class="card-label">💥 2D Classic</div>
                                 <textarea id="customPrompt5"
-                                    style="display: none;">A close-up photograph of a sheet of six distinct, die-cut vintage mid-century vector cartoon stickers, inspired by the style of early animation like Fleischer or Rubber Hose (but clean vector outlines). The arrangement is a grid of two rows and three columns, placed on a worn, textured paper background, with a few subtle paper creases and natural shadows. All stickers feature the character from the provided input image, explicitly preserving his recognizable features (distinct face structure, hair, eyeglasses, and the specific teal t-shirt color with its bear graphic).
-
-Art style: authentic vintage paper texture effect, bold, clean, hand-drawn black outlines, flat vibrant limited vintage color palette with no gradients or 3D shading. Thick, irregular clean white die-cut border surrounding each individual sticker.
-
-Top row (left to right):
-
-Joyful: The character from image_15.png (wearing glasses and bear tee) with a broad, squinting smile and small starburst icons around the head. Vietnamese text below: 'VUI QUÁ!' in bold classic vintage font.
-
-Sad: The character has tearful eyes, a downturned mouth, a small rain cloud icon, and a single tear. Text: 'BUỒN QUÁ!' in bold classic vintage font.
-
-Angry: Furious expression, face red, steam emitting from the ears, lightning bolt icons. Text: 'GIẬN DỮ!' in bold classic vintage font.
-
-Bottom row (left to right):
-4. Terrified: Character with wide terrified eyes, sweat drops, a skull icon. Text: 'SỢ QUÁ!' in bold classic vintage font.
-5. Excited: Mouth open in awe, shining bright eyes, lightbulb and star cluster icons. Text: 'THÍCH THÚ!' in bold classic vintage font.
-6. Shocked: Jaw dropped completely, wide eyes, large question marks and dramatic explosion burst icon. Text: 'HẾT HỒN!' in bold classic vintage font.
-
-The background is worn wood and a blurred old pencil. Natural daylight.</textarea>
-                                <textarea class="negative-prompt" style="display: none;">3D, realistic, photorealistic, photography, complex background, modern vector, smooth lines, gradients, soft shadows, blurry, single picture of a person, modern emoji style, clean digital art.</textarea>
+                                    style="display: none;">A single image containing a 2x3 grid of six distinct die-cut vintage 2D vector cartoon stickers. The character in the stickers is a direct cartoon transformation of the exact main subject from the input image, strictly preserving their original identity, age, gender, facial features, hair, clothing, and accessories. Art style: 1930s mid-century classic animation, rubber hose style but clean vector, bold black outlines, flat vibrant colors, no gradients, no 3D shading. Each sticker has a thick clean white die-cut border.
+Top row (left to right): 1. Joyful expression with stars, text 'VUI QUÁ!'. 2. Sad expression with a tear, text 'BUỒN QUÁ!'. 3. Angry expression with steam, text 'GIẬN DỮ!'.
+Bottom row (left to right): 4. Terrified expression with sweat drops, text 'SỢ QUÁ!'. 5. Excited expression with lightbulbs, text 'THÍCH THÚ!'. 6. Shocked expression with big eyes, text 'HẾT HỒN!'.
+All texts in bold classic vintage font. Arranged neatly on a solid off-white paper background.</textarea>
+                                <textarea class="negative-prompt" style="display: none;">3D, realistic, photorealistic, photography, complex background, modern vector, smooth lines, gradients, soft shadows, cinematic lighting, blurry, single picture of a person, modern emoji style, clean digital art, morphing, unrecognizable features</textarea>
                             </div>
 
                             <div class="style-card">
@@ -1838,7 +1824,8 @@ The background is worn wood and a blurred old pencil. Natural daylight.</textare
                                 body: JSON.stringify({
                                     imageBase64: window.finalCroppedBase64,
                                     prompt: basePrompt,
-                                    negativePrompt: negativePrompt
+                                    negativePrompt: negativePrompt,
+                                    promptStrength: 0.6 // Giữ lại nét ảnh gốc tốt hơn (0.55 - 0.65)
                                 })
                             });
 
