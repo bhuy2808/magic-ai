@@ -25,12 +25,12 @@ export default async function handler(req, res) {
     if (negativePrompt) {
       inputData.negative_prompt = negativePrompt;
     }
-    // Quan trọng: Phải giảm id_weight xuống thấp (khoảng 0.65 - 0.75) để AI nhả độ chân thực ra, 
-    // cho phép style (anime/chibi) được áp dụng. Nếu để > 1.0, AI sẽ luôn ép thành ảnh người thật.
+    // Quan trọng: Tăng id_weight lên 0.90 để giữ lại độ chi tiết của khuôn mặt (kính, răng, v.v.)
+    // Nếu để 0.75 như trước thì AI sẽ vẽ ra một khuôn mặt anime quá chung chung (generic) và làm mất phụ kiện.
     if (promptStrength) {
-      inputData.id_weight = parseFloat(promptStrength) || 0.75;
+      inputData.id_weight = parseFloat(promptStrength) || 0.90;
     } else {
-      inputData.id_weight = 0.75;
+      inputData.id_weight = 0.90;
     }
 
     // Gọi đúng bản chính chủ của ByteDance để tránh lỗi 404
