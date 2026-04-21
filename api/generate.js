@@ -25,10 +25,12 @@ export default async function handler(req, res) {
     if (negativePrompt) {
       inputData.negative_prompt = negativePrompt;
     }
-    // Chuyển promptStrength (0.55-0.65) của user thành id_weight để giữ nhân diện mạnh hơn mà không phá cấu trúc grid. 
-    // Giảm từ 1.2 xuống 1.05 để AI không bị khóa chặt nét mặt gốc, cho phép nháy mắt/chu môi hoạt động.
+    // Quan trọng: Phải giảm id_weight xuống thấp (khoảng 0.65 - 0.75) để AI nhả độ chân thực ra, 
+    // cho phép style (anime/chibi) được áp dụng. Nếu để > 1.0, AI sẽ luôn ép thành ảnh người thật.
     if (promptStrength) {
-      inputData.id_weight = 1.05;
+      inputData.id_weight = parseFloat(promptStrength) || 0.75;
+    } else {
+      inputData.id_weight = 0.75;
     }
 
     // Gọi đúng bản chính chủ của ByteDance để tránh lỗi 404
